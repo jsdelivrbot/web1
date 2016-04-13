@@ -1,0 +1,172 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <script src="http://code.highcharts.com/highcharts.js"></script>
+        <script src="http://code.highcharts.com/modules/exporting.js"></script>
+        <script src="http://highcharts.github.io/export-csv/export-csv.js"></script>
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/bootstrap3_datetime/js/bootstrap-datetimepicker.js' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/bootstrap3_datetime/css/bootstrap-datetimepicker.css' %}" />
+        <link rel="stylesheet" href="{% static 'bootstrap/select2/dist/js/select2.js' %}">
+        <link rel="stylesheet" href="{% static 'bootstrap/select2/dist/css/select2.css' %}">
+    </head>
+    <body>
+        <form id="moyenne" action="" method="post" class="form-horizontal">{% csrf_token %}
+            <div class="row">
+                <select class="form-control" name="pays" id="pays" >
+                    <option selected hidden>---  Pays  ---</option>
+                    <option value="burkina">Burkina Faso</option>
+                    <option value="niger">Niger</option>
+                    <option value="senegal">Sénégal</option>
+                </select>
+            </div>
+            <div class="row">
+                <select class="form-control" name="niveau" id="niveau" >
+                    <option selected hidden><b>---  Niveau de découpage  ---</b></option>
+                    <option value="aire">Aire de santé</option>
+                    <option value="district">District</option>
+                    <option value="pays">Pays</option>
+                </select>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-3"><h5>Start</h5></div>
+                <div class="col-lg-8 input-group date" id="datedebut">
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-3"><h5>End</h5></div>
+                <div class="col-lg-8 input-group date" id="datedebut">
+                    <input type='text' class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <select class="form-control" name="pasdetemps" id="pasdetemps" >
+                    <option selected hidden>---  Résolution temporelle  ---</option>
+                    <option value="d">Quotidien</option>
+                    <option value="w">Hebdomadaire</option>
+                    <option value="m">Mensuel</option>
+                    <option value="t">Trimestriel</option>
+                </select>
+            </div>
+            <div class="row">
+                <select class="form-control" name="type" id="type" >
+                    <option selected hidden>---  Type de données  ---</option>
+                    <option value="satellite">Satellite</option>
+                    <option value="re_analyse">Ré-analyse</option>
+                    <option value="modele">Modèle</option>
+                </select>
+            </div>
+            <div class="row">
+                <select class="form-control" name="capteur" id="capteur" >
+                    <option selected hidden>---  Capteur/Source  ---</option>
+                    <option value="modis">Modis</option>
+                    <option value="aura_omi">Aura-omi</option>
+                    <option value="msg">msg</option>
+                    <option value="ecmwf">ECMWF</option>
+                    <option value="toms">TOMS</option>
+                    <option value="modele">Chimère</option>
+                </select>
+            </div>
+            <div class="row">
+                <select class="form-control" name="produit" id="produit" >
+                    <option selected hidden>---  Produit  ---</option>
+                    <option value="MYD04">MYD04</option>
+                    <option value="MYD05">MYD05</option>
+                    <option value="MYD07">MYD07</option>
+                    <option value="omaeruv">omaeruv</option>
+                    <option value="seviri_aerus">seviri-aerus</option>
+                </select>
+            </div>
+            <div class="row">
+                <select class="form-control" name="resspatiale" id="resspatiale" >
+                    <option selected hidden>---  Résolution spatiale  ---</option>
+                    <option value="003">0.03 degré</option>
+                    <option value="005">0.05 degré</option>
+                    <option value="009">0.09 degré</option>
+                    <option value="025">0.25 degré</option>
+                    <option value="075">0.75 degré</option>
+                    <option value="125">1.25 degré</option>
+                </select>
+            </div>
+            <div class="row">
+                <select class="form-control" name="stations" id="stations" >
+                    <option selected hidden>---  Station  ---</option>
+                    <option value="TOMBOUCTOU">Tombouctou</option>
+                    <option value="NIAMEY-AERO">Niamey</option>
+                    <option value="KOUTIALA">Koutiala</option>
+                    <option value="DAKAR/YOFF">Dakar/Yoff</option>
+                </select>
+            </div>
+            <div class="row">
+                <select class="form-control" name="variables" id="variables" >
+                    <option selected hidden>---  Variable  ---</option>
+                    <option value="temp">Température</option>
+                    <option value="rain">Pluie</option>
+                    <option value="wind">Vent</option>
+                    <option value="wind_dir">Direction Vent</option>
+                </select>
+            </div>
+            <div class="row">
+                <input type="submit" value="SUBMIT">
+            </div>
+        </form>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <script type="text/javascript">
+            //Select2
+            $.getScript('http://ivaynberg.github.io/select2/select2-2.1/select2.js',function(){
+
+              $("#pays").select2({
+                allowClear:true
+              });
+              
+              $("#niveau").select2({
+                closeOnSelect:false
+              });
+              
+              $("#produit").select2({
+                closeOnSelect:false
+              });
+              
+              $('.single option').click(function() {
+                // only affects options contained within the same optgroup
+                // and doesn't include this
+                $(this).siblings().prop('selected', false);
+               });
+              
+            });
+
+            //datetime picker       
+            $('#datedebut').datetimepicker({
+                format: 'dd/MM/yyyy hh:mm:ss',
+                language: 'pt-BR'
+              });
+        </script>
+    </body>
+</html>

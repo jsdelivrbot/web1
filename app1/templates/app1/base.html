@@ -1,0 +1,73 @@
+{% load staticfiles %}
+s<html lang=fr>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+              <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+              <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        
+
+        <link rel="stylesheet" type="text/css" href="{% static 'app1/css/base.css' %}" />
+        <title>TELEDM/TELEPAF</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <nav class="navbar navbar-inverse navbar-fixed-top">
+                    <ul class="nav navbar-nav">
+                        <li><a href={% url 'thredds' %}><b>Thredds</b></a></li>
+                        <li><a href={% url 'earthquakes' %}><b>Earthquakes</b></a></li>
+                        <li><a href={% url 'stations' %}><b>Stations</b></a></li>
+                        <li><a href={% url 'meteo' %}><b>Meteo</b></a></li>
+                        <li><a href={% url 'map' %}><b>Map</b></a></li>
+                        <li><a href="/accounts/logout/"><b>Logout</b></a></li>
+                    </ul>
+                </nav>
+                <header class="row">
+                    <div class="col-lg-4">
+                        <br/>
+                        <br/>
+                        <h4><b>Teledetection</b></h4>
+                        <h4><b>Poussieres</b></h4>
+                        <h4><b>Meningite</b></h4>
+                    </div>
+                    <div class="col-lg-8">
+                        <img src="{% static 'app1/css/image_en_tete1.jpeg' %}"/>
+                    </div>
+                </header>
+                <div class="row">
+                    <aside_left class="col-lg-3">
+                        {% block form %}{% endblock form %}
+                    </aside_left>
+                    <main class="col-lg-9">
+                        {% block content %}{% endblock content %}
+                    </main>
+                </div>
+                <div class="row">
+                    <footer class="col-lg-12">
+                        CRCT
+                    </footer>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                // -----------------------------------------------------------------------
+                $.each($('#nav navbar-nav').find('li'), function() {
+                    $(this).toggleClass('active', 
+                        window.location.pathname.indexOf($(this).find('a').attr('href')) > -1);
+                }); 
+                // -----------------------------------------------------------------------
+            });
+        </script>
+    </body>
+</html>

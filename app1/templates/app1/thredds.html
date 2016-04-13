@@ -1,0 +1,61 @@
+{% extends "app1/base.html" %}
+{% load leaflet_tags %}
+{% load staticfiles %}
+  {% block content %}
+  <head>
+    {% leaflet_js plugins="ALL" %}
+    {% leaflet_css plugins="ALL" %}
+    <script src="{% static 'app1/jquery/jquery-2.2.0.min.js' %}"></script>
+    <script src="{% static 'app1/jquery/L.TileLayer.BetterWMS.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'app1/css/base.css' %}" />
+  </head>
+  <body>
+    <script type="text/javascript">
+        function main_map_init (map, options) {
+            //var ncfile = "MYD04_r009_w.nc";
+            //var variable = "Deep_Blue_Aerosol_Optical_Depth_550_Land";
+            var ncfile = "MYD07_r009_d.nc";
+            var variable = "Surface_Temperature";
+            //var variable = document.getElementById('variables').value;
+            var timedate = "2007-07-15T00:00:00";
+            var dataurl = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/"+ncfile+"?service=WMS"
+            map.setView([20.0, 15.0], 4);
+            wmsLayer = L.tileLayer.wms(dataurl,{
+                layers: variable,
+                time: timedate,
+                format: 'image/png',
+                version: '1.3.0',
+                transparent: true,
+                styles: 'boxfill/rainbow',
+                colorscalerange: '210,340',
+                numcolorbands: 256,
+                tiled:true
+            })
+            wmsLayer.addTo(map);
+            var dataurl2 = '{% url "data" %}';
+            $.getJSON(dataurl2, function (data) {
+             // Add GeoJSON layer
+                L.geoJson(data, {
+                    onEachFeature: function(feature,layer){
+                        var popupText = "Station Name: " + feature.properties.station;
+                        layer.bindPopup(popupText);
+                    }            
+                }).addTo(map);
+            });
+            var popup = L.popup();
+            function onMapClick(e) {
+                popup
+                    .setLatLng(e.latlng)
+                    .setContent(e.latlng.toString())
+                    .openOn(map);
+            }
+            map.on('click', onMapClick);
+            //alert(variable)
+        }
+    </script>
+    {% leaflet_map "map" callback="main_map_init" %}
+  </body>
+  {% endblock content %}
+  {% block form %}
+    {% include "app1/form.html" %}
+  {% endblock form %}

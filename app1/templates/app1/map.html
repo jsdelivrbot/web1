@@ -1,0 +1,82 @@
+{% extends 'app1/base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <script src="http://code.highcharts.com/highcharts.js"></script>
+        <script src="http://code.highcharts.com/modules/exporting.js"></script>
+        <script src="http://highcharts.github.io/export-csv/export-csv.js"></script>
+        <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+        <script src="https://code.highcharts.com/maps/modules/data.js"></script>
+        <script src="https://code.highcharts.com/mapdata/custom/europe.js"></script>
+        <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+        <link rel="stylesheet" href="{% static 'app1/css/map.css' %}">
+    </head>
+    <body>
+        <script type="text/javascript">
+            $(function () {
+            // Instanciate the map
+                $('#container').highcharts('Map', {
+                    chart : {
+                        borderWidth : 1
+                    },
+            
+                    title : {
+                        text : 'Nordic countries'
+                    },
+                    subtitle : {
+                        text : 'Demo of drawing all areas in the map, only highlighting partial data'
+                    },
+            
+                    legend: {
+                        enabled: false
+                    },
+            
+                    series : [{
+                        name: 'Country',
+                        mapData: Highcharts.maps['custom/europe'],
+                        data: [{
+                            code: 'IS',
+                            value: 1
+                        }, {
+                            code: 'NO',
+                            value: 1
+                        }, {
+                            code: 'SE',
+                            value: 1
+                        }, {
+                            code: 'FI',
+                            value: 1
+                        }, {
+                            code: 'DK',
+                            value: 1
+                        }],
+                        joinBy: ['iso-a2', 'code'],
+                        dataLabels: {
+                            enabled: true,
+                            color: '#FFFFFF',
+                            formatter: function () {
+                                if (this.point.value) {
+                                    return this.point.name;
+                                }
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '',
+                            pointFormat: '{point.name}'
+                        }
+                    }]
+                });
+            });
+            alert(mapData)
+        </script type="text/javascript">
+            <div id="container"></div>
+        </script>
+    </body>
+</html>
+{% endblock content %}
+{% block form %}
+    <h1>Map HighCharts</h1>
+{% endblock form %}

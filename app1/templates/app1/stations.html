@@ -1,0 +1,38 @@
+{% extends "app1/base.html" %}
+{% load leaflet_tags %}
+{% load staticfiles %}
+<html>
+  {% block content %}
+  <head>
+    {% leaflet_js plugins="ALL" %}
+    {% leaflet_css plugins="ALL" %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+        function main_map_init (map, options) {
+            map.setView([20.0, 15.0], 4);
+            var dataurl = '{% url "data" %}';
+            $.getJSON(dataurl, function (data) {
+             // Add GeoJSON layer
+                L.geoJson(data, {
+                    onEachFeature: function(feature,layer){
+                        var popupText = "Station Name: " + feature.properties.station;
+                        layer.bindPopup(popupText);
+                    }            
+                }).addTo(map);
+            });
+            var popup = L.popup();
+            function onMapClick(e) {
+                popup
+                    .setLatLng(e.latlng)
+                    .setContent(e.latlng.toString())
+                    .openOn(map);
+            }
+            map.on('click', onMapClick);
+         }
+    </script>
+    {% leaflet_map "main" callback="main_map_init" %}
+  </body>
+  {% endblock content %}
+</html>

@@ -1,0 +1,57 @@
+{% extends 'app1/base.html' %}
+{% load staticfiles %}
+{% block content %}
+    <script type="text/javascript">
+        var data = {{ weatherdatas|safe }};
+        $(function () {
+            $('#container').highcharts({
+                chart: {
+                    type: 'line',
+                    zoomType: 'xy',
+                },
+                title: {
+                    text: 'Daily '+data.variable_name,
+                    x: -20 //center
+                },
+                subtitle: {
+                    text: 'Climatologie CRC',
+                    x: -20
+                },
+                xAxis: {
+                    categories: data.dates
+                },
+                yAxis: {
+                    title: {
+                        text: data.variable_name+' (°C)'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                },
+                tooltip: {
+                    valueSuffix: '°C'
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    borderWidth: 0
+                },
+                series: [{
+                    name: data.station_name,
+                    data: data.valeurs
+                }],
+                credits: {
+                    enabled: false                
+                },
+            });
+        });
+        document.write (datas);
+    </script>    
+    <div id="container" ></div>
+{% endblock content %}
+{% block form %}
+    {% include 'app1/form.html' %}
+{% endblock form %}
