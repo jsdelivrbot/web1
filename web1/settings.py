@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     'leaflet',
     'djgeojson',
     'app1',
-    'app2',
 ]
 
 LEAFLET_CONFIG = {

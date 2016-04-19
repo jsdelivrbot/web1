@@ -21,7 +21,6 @@ from django.views.generic import TemplateView
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^app1/', include('app1.urls')),
-    url(r'^app2/', include('app2.urls')),
     url(r'^user/', include('usermanagement.urls')),
     url(r'^accounts/login/$', login),
     url(r'^accounts/logout/$', logout, {'next_page':'/accounts/login/'}),

@@ -1,6 +1,10 @@
 {% extends 'app1/base.html' %}
 {% load staticfiles %}
 {% block content %}
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="http://highcharts.github.io/export-csv/export-csv.js"></script>
     <script type="text/javascript">
         var data = {{ weatherdatas|safe }};
         $(function () {
@@ -26,7 +30,7 @@
                     },
                     plotLines: [{
                         value: 0,
-                        width: 1,
+                        width: 0.5,
                         color: '#808080'
                     }]
                 },

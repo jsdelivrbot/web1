@@ -1,0 +1,161 @@
+{% extends 'app1/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<html lan=fr>
+    <head>
+        <meta charset="utf-8" />
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="http://code.highcharts.com/maps/modules/map.js"></script> 
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script src="http://highcharts.github.io/export-csv/export-csv.js"></script>
+    </head>
+    <body>
+        <div id="mapcontainer"></div>
+        <select id="dates" name="dates">
+            <option selected hidden>---  DATES  ---</option>
+        </select>
+        <select id="district" name="district">
+            <option selected hidden>---  DISTRICT/AIRE  ---</option>
+        </select>
+        <div id="plotcontainer"></div>
+
+        <script type="text/javascript">
+
+            
+            //fonction d affichage carto
+            $(document).ready(function () {
+                // Preparation des données
+                var mapdatas = {{ mapdatas|safe }};
+                var shape = mapdatas.shape;
+                var list_districts = mapdatas.districts;
+                var dates = mapdatas.dates;
+                var datas = mapdatas.vmean;
+                var series_temporelles = mapdatas.series_temporelles;
+                var st = series_temporelles[10];
+                alert(st.data);
+                var dist = null;
+                $.getJSON("{% static 'app1/shapes/' %}"+shape, function (geojson) {
+            
+                    // Initiate the chart
+                    $('#mapcontainer').highcharts('Map', {
+            
+                        title : {
+                            text : 'Statistiques de '+shape
+                        },
+            
+                        mapNavigation: {
+                            enabled: true,
+                            buttonOptions: {
+                                verticalAlign: 'bottom'
+                            }
+                        },
+            
+                        colorAxis: {
+                        },
+            
+                        series : [{
+                            data : datas.d8,
+                            mapData: geojson,
+                            joinBy: ['code','name'],
+                            name: 'vmean',
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            states: {
+                                hover: {
+                                    color: '#BADA55'
+                                }
+                            },
+                            dataLabels: {
+                                enabled: true,
+                                format: '{point.properties.name}'
+                            }
+                        }],
+                        credits: {
+                            enabled: false                
+                        },
+                    });
+                });
+
+                // load dates,district
+                var numbers = dates;
+                var option = '';
+                for (var i=0;i<numbers.length;i++){
+                   option += '<option value="'+ numbers[i] + '">' + numbers[i] + '</option>';
+                }
+                $('#dates').append(option);
+    
+                var numbers = list_districts;
+                var option = '';
+                for (var i=0;i<numbers.length;i++){
+                   option += '<option value="'+ i + '">' + numbers[i] + '</option>';
+                }
+                $('#district').append(option);
+
+                // fonction graphe serie temporelle
+                var chart = new Highcharts.Chart({
+                    chart: {
+                        renderTo:'plotcontainer',
+                        zoomType: 'xy',
+                    },
+                    title: {
+                        text: 'Daily ',
+                        x: -20 //center
+                    },
+                    subtitle: {
+                        text: 'Climatologie CRC',
+                        x: -20
+                    },
+                    xAxis: {
+                        categories: dates
+                    },
+                    yAxis: {
+                        title: {
+                            text: ' (°C)'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 0.5,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        valueSuffix: '°C'
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        borderWidth: 0
+                    },
+                    plotOptions: {
+                        area: {
+                            fillOpacity: 0.3,
+                            stacking: 'normal',
+                            lineWidth: 3,
+                            marker: {
+                                lineWidth: 3,
+                                enabled: true
+                            }
+                        }
+                    },
+                    series: [{
+                        name: st.name,
+                        data: st.data
+                    }],
+                    credits: {
+                        enabled: false                
+                    },
+                });
+            $('#district').change(function() {
+                chart.series[0].update(series_temporelles[$(this).val()]);
+        	});
+            $('select').select2();
+            });
+        </script>
+        
+    </body>
+</html>
+{% endblock content %}
+{% block form %}
+    {% include 'app1/form.html' %}
+{% endblock form %}

@@ -1,6 +1,5 @@
 from django.contrib.gis import admin
 from app1.models import * #Country,Station,MeteoData
-from app2.models import * #DataTypes,Capteurs_Sources, Produits, ResolutionsSpatiales, ResolutionsTemporelles, Variables
 
 
 class VariablesAdmin(admin.ModelAdmin):
@@ -15,6 +14,3 @@ class ProduitsAdmin(admin.ModelAdmin):
 
 
 admin.site.register([Country,Station,MeteoData], admin.OSMGeoAdmin)
-admin.site.register([DataTypes,Capteurs_Sources, ResolutionsSpatiales, ResolutionsTemporelles])
-admin.site.register([Produits], ProduitsAdmin)
-admin.site.register([Variables],VariablesAdmin)

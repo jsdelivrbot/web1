@@ -5,7 +5,6 @@
   <head>
     {% leaflet_js plugins="ALL" %}
     {% leaflet_css plugins="ALL" %}
-    <script src="{% static 'app1/jquery/jquery-2.2.0.min.js' %}"></script>
     <script src="{% static 'app1/jquery/L.TileLayer.BetterWMS.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'app1/css/base.css' %}" />
   </head>
@@ -53,7 +52,7 @@
             //alert(variable)
         }
     </script>
-    {% leaflet_map "map" callback="main_map_init" %}
+    {% leaflet_map "map" callback="main_map_init"  %}
   </body>
   {% endblock content %}
   {% block form %}
