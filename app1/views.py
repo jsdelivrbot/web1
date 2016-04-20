@@ -60,25 +60,25 @@ def maps(request):
         shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
         print niveau,pays
         ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)        
-        vmean = ldf['vmean'].replace(np.nan,'null')
-        list_dist = sorted(vmean.columns.values.tolist())
+        dfmean = ldf['vmean'].replace(np.nan,'null')
+        list_dist = dfmean.columns.values.tolist()
         list_dist = [a.encode('ascii','ignore') for a in list_dist]
-        vmean.reset_index(inplace=True)
-        vmean.rename(columns={'index':'date'},inplace=True)
-        list_dates = vmean.date.values.tolist()
-        vmean_dict = {}
-        series_temporelles = []
+        dfmean.reset_index(inplace=True)
+        dfmean.rename(columns={'index':'date'},inplace=True)
+        list_dates = dfmean.date.values.tolist()
+        mean = []
+        series_temporelles = {}
         for d in range(len(list_dates)):
             list_dict = []
             for dist in list_dist:
-                list_dict.append({'code':dist,'value':vmean[dist][d]})
-            vmean_dict['d'+str(d)] = list_dict
+                list_dict.append({"code":dist,"value":dfmean[dist][d]})
+            mean.append(list_dict)
         for dn in list_dist:
-            series_temporelles.append({'name':dn,'data':vmean[dn].values.tolist()})
-        vmean_Garango = vmean.Garango.values.tolist()
-#        series_temporelles = {dn:vmean[dn].values.tolist() for dn in list_dist}
+            series_temporelles[dn] = {'name':dn,'data':dfmean[dn].values.tolist()}
+#        vmean_Garango = vmean.Garango.values.tolist()
+#        series_temporelles = {dn:dfmean[dn].values.tolist() for dn in list_dist}
         geojson = pays+"_"+niveau+"_sante.geojson"
-        dictmapdata = {'dates':list_dates,'districts':list_dist,'vmean':vmean_dict,'shape':geojson, "series_temporelles":series_temporelles}
+        dictmapdata = {'dates':list_dates,'districts':list_dist,'vmean':mean,'shape':geojson, "series_temporelles":series_temporelles}
         jsmapdatas = json.dumps(dictmapdata, cls=DjangoJSONEncoder)
         return render_to_response('app1/map1.html',{'mapdatas':jsmapdatas},context_instance=RequestContext(request))
     else:

@@ -149,7 +149,6 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
     #listdist='//'.join(geodf[geodf.columns[0]].tolist())# liste des districts/aires de santé qui sera chargée dans le .nc comme attribut de la dimension index
     print "shapefile utilise: ",fshape.split("/")[-1]
     print "nombre de districts/aires de sante: ",nbdist
-    print geodf
     ###############################################################################################################
     
     
@@ -276,7 +275,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
     list_df = {}
     for n in tmpvar_dict:
         df = n+'_df'
-        df = pd.DataFrame (np.concatenate([tmpvar_dict[n][d_t] for d_t in range(0,len(tmpvar_dict[n]))], axis=0), index=index, columns=columns_name)
+        df = pd.DataFrame (np.concatenate([tmpvar_dict[n][d_t] for d_t in range(0,len(tmpvar_dict[n]))], axis=0), index=index, columns=columns_name).round(4)
 #        df.T.to_excel(writer, sheet_name=name)
         list_df[n] = df
         

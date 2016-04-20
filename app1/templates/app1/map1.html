@@ -29,15 +29,14 @@
                 var shape = mapdatas.shape;
                 var list_districts = mapdatas.districts;
                 var dates = mapdatas.dates;
-                var datas = mapdatas.vmean;
+                var datas = mapdatas.vmean[0];
                 var series_temporelles = mapdatas.series_temporelles;
-                var st = series_temporelles[10];
-                alert(st.data);
+                var st = series_temporelles['Garango'];
                 var dist = null;
+                alert(series_temporelles['Toma']);
                 $.getJSON("{% static 'app1/shapes/' %}"+shape, function (geojson) {
-            
                     // Initiate the chart
-                    $('#mapcontainer').highcharts('Map', {
+                    mapChart = $('#mapcontainer').highcharts('Map', {
             
                         title : {
                             text : 'Statistiques de '+shape
@@ -52,11 +51,22 @@
             
                         colorAxis: {
                         },
-            
+                        plotOptions:{
+                        	series:{
+                            	point:{
+                                	events:{
+                                    	click: function(){
+                                            var district_name = this.name;
+                                        	chart.series[0].update(series_temporelles[this.name]);
+                                        }
+                                    }
+                                }
+                            }
+                        },
                         series : [{
-                            data : datas.d8,
+                            data : datas,
                             mapData: geojson,
-                            joinBy: ['code','name'],
+                            joinBy: ['name','code'],
                             name: 'vmean',
                             allowPointSelect: true,
                             cursor: 'pointer',
@@ -80,7 +90,7 @@
                 var numbers = dates;
                 var option = '';
                 for (var i=0;i<numbers.length;i++){
-                   option += '<option value="'+ numbers[i] + '">' + numbers[i] + '</option>';
+                   option += '<option value="'+ i + '">' + numbers[i] + '</option>';
                 }
                 $('#dates').append(option);
     
@@ -136,7 +146,7 @@
                                 lineWidth: 3,
                                 enabled: true
                             }
-                        }
+                        },
                     },
                     series: [{
                         name: st.name,
@@ -148,7 +158,12 @@
                 });
             $('#district').change(function() {
                 chart.series[0].update(series_temporelles[$(this).val()]);
-        	});
+        	 });
+            $('#dates').change(function() {
+                alert(chart.series[1]);
+                chart.series[0].update(mapdatas.vmean[$(this).val()]);
+                
+            });
             $('select').select2();
             });
         </script>
