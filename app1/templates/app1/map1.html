@@ -14,57 +14,53 @@
         <select id="dates" name="dates">
             <option selected hidden>---  DATES  ---</option>
         </select>
-        <select id="district" name="district">
-            <option selected hidden>---  DISTRICT/AIRE  ---</option>
+        <select id="calcul" name="calcul">
+            <option selected hidden>---  calcul  ---</option>
+            <option value="vmean">valeurs moyennes</option>
+            <option value="vmax">valeurs maximales</option>
+            <option value="vmin">valeurs minimales</option>
+            <option value="vstd">valeurs d'écart type</option>
         </select>
         <div id="plotcontainer"></div>
 
-        <script type="text/javascript">
-
-            
-            //fonction d affichage carto
+        <script type="text/javascript">            
             $(document).ready(function () {
                 // Preparation des données
-                var mapdatas = {{ mapdatas|safe }};
-                var shape = mapdatas.shape;
-                var list_districts = mapdatas.districts;
-                var dates = mapdatas.dates;
-                var datas = mapdatas.vmean[0];
-                var series_temporelles = mapdatas.series_temporelles;
-                var st = series_temporelles['Garango'];
-                var dist = null;
-                alert(series_temporelles['Toma']);
-                $.getJSON("{% static 'app1/shapes/' %}"+shape, function (geojson) {
-                    // Initiate the chart
+                var jsdatas = {{ jsdatas|safe }};
+                var datas = jsdatas.datas;
+                var series_temporelles = datas.lvmean.series_temporelles;
+                alert(datas.lvmean.all_dist[0][0].value);
+                //fonction d affichage carto
+                $.getJSON("{% static 'app1/shapes/' %}"+jsdatas.shape, function (geojson) {
                     mapChart = $('#mapcontainer').highcharts('Map', {
-            
                         title : {
-                            text : 'Statistiques de '+shape
+                            text : 'Statistiques de '+jsdatas.shape
                         },
-            
                         mapNavigation: {
                             enabled: true,
                             buttonOptions: {
                                 verticalAlign: 'bottom'
                             }
                         },
-            
                         colorAxis: {
                         },
                         plotOptions:{
                         	series:{
                             	point:{
-                                	events:{
-                                    	click: function(){
-                                            var district_name = this.name;
-                                        	chart.series[0].update(series_temporelles[this.name]);
+                                    	events:{
+                                        	click: function(){
+                                                var newserie = series_temporelles[this.name];
+                                                newserie.data = $.map(newserie.data, function (value) {
+                                                    return isNaN(value) ? { y: null } : value;
+                                                });
+                                                chart.series[0].update(newserie);               
+                                            }
                                         }
-                                    }
                                 }
                             }
                         },
                         series : [{
-                            data : datas,
+                            data : datas.lvmean.all_dist[0],
                             mapData: geojson,
                             joinBy: ['name','code'],
                             name: 'vmean',
@@ -86,26 +82,21 @@
                     });
                 });
 
-                // load dates,district
-                var numbers = dates;
+                // load dates
+                var numbers = jsdatas.dates;
                 var option = '';
                 for (var i=0;i<numbers.length;i++){
                    option += '<option value="'+ i + '">' + numbers[i] + '</option>';
                 }
                 $('#dates').append(option);
-    
-                var numbers = list_districts;
-                var option = '';
-                for (var i=0;i<numbers.length;i++){
-                   option += '<option value="'+ i + '">' + numbers[i] + '</option>';
-                }
-                $('#district').append(option);
 
                 // fonction graphe serie temporelle
                 var chart = new Highcharts.Chart({
                     chart: {
+                        type:'line',
                         renderTo:'plotcontainer',
                         zoomType: 'xy',
+                        panKey: 'ctrl',
                     },
                     title: {
                         text: 'Daily ',
@@ -116,15 +107,15 @@
                         x: -20
                     },
                     xAxis: {
-                        categories: dates
+                        categories: jsdatas.dates
                     },
                     yAxis: {
                         title: {
                             text: ' (°C)'
                         },
                         plotLines: [{
-                            value: 0,
-                            width: 0.5,
+                            value: 1,
+                            width: 1,
                             color: '#808080'
                         }]
                     },
@@ -138,31 +129,23 @@
                         borderWidth: 0
                     },
                     plotOptions: {
-                        area: {
-                            fillOpacity: 0.3,
-                            stacking: 'normal',
-                            lineWidth: 3,
-                            marker: {
-                                lineWidth: 3,
-                                enabled: true
-                            }
-                        },
+                        series: {
+                            connectNulls: false
+                        }
                     },
                     series: [{
-                        name: st.name,
-                        data: st.data
+                        name: 'Garango',
+                        data: series_temporelles.Garango,
+                        dashStyle: 'shortdot',
                     }],
                     credits: {
                         enabled: false                
                     },
                 });
-            $('#district').change(function() {
-                chart.series[0].update(series_temporelles[$(this).val()]);
-        	 });
+
             $('#dates').change(function() {
-                alert(chart.series[1]);
-                chart.series[0].update(mapdatas.vmean[$(this).val()]);
-                
+                alert($(this).val());
+                mapChart.series[0].update(mapdatas.vmean[$(this).val()]);
             });
             $('select').select2();
             });

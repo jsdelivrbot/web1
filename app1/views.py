@@ -9,8 +9,9 @@ import json
 import numpy as np
 
 from app1.models import Station, Country, MeteoData
-from app1.form import DatePickerForm
+from app1.form import FormDatas
 from moy_dist_parallel import calc_moy
+from traitement import traitementDF
 
 
 def thredds(request):
@@ -40,11 +41,12 @@ def meteo(request):
     else:
         return render_to_response('app1/meteo.html',{}, context_instance=RequestContext(request))        
 
-def datepicker(request):
-    return render_to_response('app1/datepicker.html', {'form':DatePickerForm})
+def form_test(request):
+    return render_to_response('app1/form_test.html', {'form':FormDatas})
 
 def maps(request):
-    print request.POST
+    formdata = FormDatas()    
+    print formdata
     if request.method == 'POST':
         ddirout = "/home/sebastien/Bureau/"
         deb = "2007-01-01" #request.POST['datedebut'] #
@@ -60,26 +62,31 @@ def maps(request):
         shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
         print niveau,pays
         ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)        
-        dfmean = ldf['vmean'].replace(np.nan,'null')
-        list_dist = dfmean.columns.values.tolist()
-        list_dist = [a.encode('ascii','ignore') for a in list_dist]
-        dfmean.reset_index(inplace=True)
-        dfmean.rename(columns={'index':'date'},inplace=True)
-        list_dates = dfmean.date.values.tolist()
-        mean = []
-        series_temporelles = {}
-        for d in range(len(list_dates)):
-            list_dict = []
-            for dist in list_dist:
-                list_dict.append({"code":dist,"value":dfmean[dist][d]})
-            mean.append(list_dict)
-        for dn in list_dist:
-            series_temporelles[dn] = {'name':dn,'data':dfmean[dn].values.tolist()}
+        val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
+        datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
+        print datas['lvmean']['series_temporelles']['Garango']['data']
+        list_dates = ldf['vmean'].index.values.tolist()
+#        dfmean = ldf['vmean'].replace(np.nan,'NaN')
+#        list_dist = dfmean.columns.values.tolist()
+#        list_dist = [a.encode('ascii','ignore') for a in list_dist]
+#        dfmean.reset_index(inplace=True)
+#        dfmean.rename(columns={'index':'date'},inplace=True)
+#        list_dates = dfmean.date.values.tolist()
+#        mean = []
+#        series_temporelles = {}
+#        for d in range(len(list_dates)):
+#            list_dict = []
+#            for dist in list_dist:
+#                list_dict.append({"code":dist,"value":dfmean[dist][d]})
+#            mean.append(list_dict)
+#        for dn in list_dist:
+#            series_temporelles[dn] = {'name':dn,'data':dfmean[dn].values.tolist()}
 #        vmean_Garango = vmean.Garango.values.tolist()
 #        series_temporelles = {dn:dfmean[dn].values.tolist() for dn in list_dist}
         geojson = pays+"_"+niveau+"_sante.geojson"
-        dictmapdata = {'dates':list_dates,'districts':list_dist,'vmean':mean,'shape':geojson, "series_temporelles":series_temporelles}
-        jsmapdatas = json.dumps(dictmapdata, cls=DjangoJSONEncoder)
-        return render_to_response('app1/map1.html',{'mapdatas':jsmapdatas},context_instance=RequestContext(request))
+        dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson}
+        jsdatas = json.dumps(dictdatas, cls=DjangoJSONEncoder)
+        print type(dictdatas)
+        return render_to_response('app1/map1.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
     else:
         return render_to_response('app1/map.html',{},context_instance=RequestContext(request))
