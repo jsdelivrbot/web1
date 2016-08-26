@@ -81,7 +81,6 @@
                         },
                     });
                 });
-
                 // load dates
                 var numbers = jsdatas.dates;
                 var option = '';
@@ -89,7 +88,6 @@
                    option += '<option value="'+ i + '">' + numbers[i] + '</option>';
                 }
                 $('#dates').append(option);
-
                 // fonction graphe serie temporelle
                 var chart = new Highcharts.Chart({
                     chart: {
@@ -142,7 +140,6 @@
                         enabled: false                
                     },
                 });
-
             $('#dates').change(function() {
                 alert($(this).val());
                 mapChart.series[0].update(mapdatas.vmean[$(this).val()]);

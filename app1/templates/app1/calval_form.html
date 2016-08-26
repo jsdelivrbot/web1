@@ -1,0 +1,215 @@
+{% extends 'app1/base.html' %}
+{% load staticfiles %}
+{% block form %}
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/select2/dist/css/select2.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'app1/css/form.css' %}" />
+        
+    </head>
+    <body>
+        </br>
+        <form id="moyenne" action="" method="post" class="form-horizontal">{% csrf_token %}
+            <div class="row">
+                <label>Données Satellite/ré-analyse/modèle</label>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <label>Source 1</label>
+                </div>
+                <div class="col-lg-6">
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="checkbox" value="any" onclick="active();" >Source 2</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <select class="form-control" name="type1" id="typeSel1" >
+                        <option selected hidden>Type de données</option>
+                    </select>
+                    <select class="form-control" name="capteur1" id="capteurSel1" >
+                        <option selected hidden>Capteur/Source</option>
+                    </select>
+                    <select class="form-control" name="produit1" id="produitSel1" >
+                        <option selected hidden>Produit</option>
+                    </select>
+                    <select class="form-control" name="variable1" id="variableSel1" >
+                        <option selected hidden>Variable</option>
+                    </select>
+                    <select class="form-control" name="resospatiale1" id="resospatialeSel1" >
+                        <option selected hidden>Résolution spatiale</option>
+                    </select>
+                    <select class="form-control" name="level1" id="levelSel1" >
+                        <option selected hidden>Layer</option>
+                    </select>
+                </div>
+                <div class="col-lg-6">
+                    <select class="form-control" name="type2" id="typeSel2" disabled="true" >
+                        <option selected hidden>Type de données</option>
+                    </select>
+                    <select class="form-control" name="capteur2" id="capteurSel2" disabled="true" >
+                        <option selected hidden>Capteur/Source</option>
+                    </select>
+                    <select class="form-control" name="produit2" id="produitSel2" disabled="true" >
+                        <option selected hidden>Produit</option>
+                    </select>
+                    <select class="form-control" name="variable2" id="variableSel2" disabled="true" >
+                        <option selected hidden>Variable</option>
+                    </select>
+                    <select class="form-control" name="resospatiale2" id="resospatialeSel2" disabled="true" >
+                        <option selected hidden>Résolution spatiale</option>
+                    </select>
+                    <select class="form-control" name="level2" id="levelSel2" disabled="true" >
+                        <option selected hidden>Layer</option>
+                    </select>
+                </div>
+            </div>
+            </br>
+            </br>
+            <div class="row">
+                <label>Période de traitement : </label>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="date1" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
+                            <input id="date1" name="datedebut" type="text" class="date-picker form-control"/>
+                        </div>
+                    </div>
+                    </br>
+                    <div class="row">
+                        <select class="form-control" name="pasdetemps" id="pasdetemps" >
+                            <option selected hidden>Pas de Temps</option>
+                            <option value="d">Quotidien</option>
+                            <option value="w">Hebdomadaire</option>
+                            <option value="m">Mensuel</option>
+                            <option value="t">Trimestriel</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="date2" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
+                            <input id="date2" name="datefin" type="text" class="date-picker form-control"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </br>
+            </br>
+            <div class="row">
+                <label>Zone d'étude (-180° 90° 180° -90° ou buffer)</label>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <input type="text" class="input-small" name="ulx" id="ulx" placeholder="West"/>
+                    </div>
+                    <div class="row">
+                        <input type="text" class="input-small" name="uly" id="uly" placeholder="North"/>
+                    </div>
+                    <div class="row">
+                        <input type="text" class="input-small" name="lrx" id="lrx" placeholder="East"/>
+                    </div>
+                    <div class="row">
+                        <input type="text" class="input-small" name="lry" id="lry" placeholder="South"/>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row">
+                        <select class="form-control" name="buffer" id="buffer" >
+                            <option selected hidden>Buffer</option>
+                            <option value="9">9</option>
+                            <option value="12">12</option>
+                            <option value="15">15</option>
+                            <option value="18">18</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            </br>
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="row">
+                        <label>Données In Situ</label>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="row">
+                                <label>Aeronet</label>
+                                <select class="form-control" name="aeronetstation" id="stationSel" >
+                                    <option selected hidden>Station</option>
+                                    <option value="TOMBOUCTOU">Tombouctou</option>
+                                    <option value="NIAMEY-AERO">Niamey</option>
+                                    <option value="KOUTIALA">Koutiala</option>
+                                    <option value="DAKAR/YOFF">Dakar/Yoff</option>
+                                </select>
+                                <select class="form-control" name="variableaeronet" id="stationSel" >
+                                    <option selected hidden>Variable</option>
+                                    <option value="TOMBOUCTOU">Tombouctou</option>
+                                    <option value="NIAMEY-AERO">Niamey</option>
+                                    <option value="KOUTIALA">Koutiala</option>
+                                    <option value="DAKAR/YOFF">Dakar/Yoff</option>
+                                </select>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <select class="form-control" name="niveau" id="niveau" >
+                                    <option selected hidden>niveau de traitement</option>
+                                    <option value="1_5">1.5</option>
+                                    <option value="2">2</option>
+                                </select>
+                            </div>
+                            <br/>
+                            <div class="row">
+                                <label>TEOM</label>
+                                <select class="form-control" name="teomstation" id="teomstationSel" >
+                                    <option selected hidden>Station</option>
+                                    <option value="Banizoumbou">Banizoumbou</option>
+                                    <option value="Cinzana">Cinzana</option>
+                                    <option value="Dedougou">Dedougou</option>
+                                </select>
+                                <select class="form-control" name="teomvariable" id="teomvariableSel" >
+                                    <option selected hidden>Variable</option>
+                                    <option value="concentration">Concentration</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div>
+                        <label>Données épidémiologiques</label>
+                        </div>
+                        </br>
+                        <div class="row">
+                            <select class="form-control" name="pays" id="paysSel" >
+                                <option selected hidden>Pays</option>
+                            </select>
+                            <select class="form-control" name="district" id="districtSel" >
+                                <option selected hidden>District</option>
+                            </select>
+                            <select class="form-control" name="epidemiovariable" id="variableSel" >
+                                <option selected hidden>Variable</option>
+                                <option value="incidence">incidence</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </br>
+            <div class="row">
+                <input type="submit" value="SUBMIT">
+            </div>
+        </form>            
+
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="{% static 'bootstrap/select2/dist/js/select2.js' %}"></script>
+        <script src="{% static 'app1/jsPerso/calval_form.js' %}"></script>        
+    </body>
+</html>
+{% endblock form %}

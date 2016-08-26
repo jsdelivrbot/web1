@@ -288,7 +288,7 @@ if __name__ == "__main__":
     
     ddirout = "/home/sebastien/Bureau/"
     deb = "2007-01-01"     #"1979" a ...
-    fin = "2007-06-30"
+    fin = "2007-03-31"
     pays = "burkina"       #"burkina","mali","niger","senegal"
     niveau = "district"    #"pays","district","aire"
     types = "satellite"    #"satellite","re_analyse"
@@ -296,7 +296,7 @@ if __name__ == "__main__":
     prod = "MYD04"         #"MYD04","MYD05","MYD07","omaeruv","seviri_aerus","macc","era_interim"
     res_temp = "w"         #"d","w","m","t"
     res = "009"            #"003","005","009","025","075","125"
-    varname = 'Deep_Blue_Aerosol_Optical_Depth_550_Land'
+    varname = 'Deep_Blue_Surface_Reflectance_Land_412_nm'
     shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
     
     ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)

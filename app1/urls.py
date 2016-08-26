@@ -14,6 +14,8 @@ urlpatterns = [
     #url(r'^data.geojson$', GeoJSONLayerView.as_view(model=Station),name='data'),
     url(r'data.geojson$', views.StationLayer.as_view(model=Station),name='data'),
     url(r'^meteo/$', login_required(views.meteo), name='meteo'),
-    url(r'^form/$', login_required(views.form_test), name='form_test'),
     url(r'^map/$', login_required(views.maps), name='map'),
+    url(r'^calval/$', login_required(views.calval), name='calval'),
+    url(r'^data_mapping/$', login_required(views.viewer), name='data_mapping'),
+    url(r'^point_viewer/$', login_required(views.pointViewer), name='point_viewer'),
 ]

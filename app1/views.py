@@ -6,10 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
 import json
-import numpy as np
 
 from app1.models import Station, Country, MeteoData
-from app1.form import FormDatas
+#from app1.form import FormDatas
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
 
@@ -17,6 +16,12 @@ from traitement import traitementDF
 def thredds(request):
     print request.POST
     return render_to_response('app1/thredds.html')
+
+def viewer(request):
+    return render_to_response('app1/data_mapping.html')
+
+def pointViewer(request):
+    return render_to_response('app1/point_viewer.html')
 
 @login_required
 def earthquakes(request):
@@ -41,16 +46,13 @@ def meteo(request):
     else:
         return render_to_response('app1/meteo.html',{}, context_instance=RequestContext(request))        
 
-def form_test(request):
-    return render_to_response('app1/form_test.html', {'form':FormDatas})
-
 def maps(request):
-    formdata = FormDatas()    
-    print formdata
+#    formdata = FormDatas()    
+    print request.POST
     if request.method == 'POST':
         ddirout = "/home/sebastien/Bureau/"
-        deb = "2007-01-01" #request.POST['datedebut'] #
-        fin = "2007-06-30" #request.POST['datefin'] #
+        deb = request.POST['datedebut'] #"2007-01-01"
+        fin = request.POST['datefin'] #"2007-06-30"
         pays = request.POST['pays']  
         niveau = request.POST['decoupage'] 
         types = request.POST['type'] 
@@ -58,35 +60,52 @@ def maps(request):
         prod = request.POST['produit']
         res_temp = request.POST['pasdetemps']
         res = request.POST['resospatiale']
-        varname = 'Deep_Blue_Aerosol_Optical_Depth_550_Land'
+        varname = request.POST['variable'] #'Deep_Blue_Aerosol_Optical_Depth_550_Land'
         shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
-        print niveau,pays
         ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)        
         val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
         datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
-        print datas['lvmean']['series_temporelles']['Garango']['data']
         list_dates = ldf['vmean'].index.values.tolist()
-#        dfmean = ldf['vmean'].replace(np.nan,'NaN')
-#        list_dist = dfmean.columns.values.tolist()
-#        list_dist = [a.encode('ascii','ignore') for a in list_dist]
-#        dfmean.reset_index(inplace=True)
-#        dfmean.rename(columns={'index':'date'},inplace=True)
-#        list_dates = dfmean.date.values.tolist()
-#        mean = []
-#        series_temporelles = {}
-#        for d in range(len(list_dates)):
-#            list_dict = []
-#            for dist in list_dist:
-#                list_dict.append({"code":dist,"value":dfmean[dist][d]})
-#            mean.append(list_dict)
-#        for dn in list_dist:
-#            series_temporelles[dn] = {'name':dn,'data':dfmean[dn].values.tolist()}
-#        vmean_Garango = vmean.Garango.values.tolist()
-#        series_temporelles = {dn:dfmean[dn].values.tolist() for dn in list_dist}
         geojson = pays+"_"+niveau+"_sante.geojson"
         dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson}
         jsdatas = json.dumps(dictdatas, cls=DjangoJSONEncoder)
-        print type(dictdatas)
         return render_to_response('app1/map1.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
     else:
         return render_to_response('app1/map.html',{},context_instance=RequestContext(request))
+
+def calval(request):
+    print request.POST
+    if request.method == 'POST':
+#        ulx = request.POST[]
+#        uly = request.POST[]
+#        lrx =request.POST[]
+#        lry = request.POST[]
+        z_buffer = request.POST['buffer']
+        pas_de_temps = request.POST['pasdetemps']
+        datedebut = request.POST['datedebut']
+        datefin = request.POST['datefin']
+        type1 = request.POST['type1']
+        sat1 = request.POST['capteur1']
+        prd_sat1 = request.POST['produit1']
+        res_sat1 = request.POST['resospatiale1']
+        variable_sat1 = request.POST['variable1']
+        level_sat1 = request.POST['level1']
+        if 'type2' in request.POST:
+            type2 = request.POST['type2']
+            sat2 = request.POST['capteur2']
+            prd_sat2 = request.POST['produit2']
+            res_sat2 = request.POST['resospatiale2']
+            variable_sat2 = request.POST['variable2']
+            level_sat2 = request.POST['level2']
+        nom_station1 = request.POST['aeronetstation']
+        variable_station1 = request.POST['variableaeronet']
+        niveau = request.POST['niveau']
+        nom_station2 = request.POST['teomstation']
+        variable_station2 = request.POST['teomvariable']
+        pays = request.POST['pays']
+        district = request.POST['district']
+        variable_meningite = request.POST['epidemiovariable']
+        print [z_buffer,datedebut, datefin,pas_de_temps,type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,nom_station1,variable_station1,niveau,nom_station2,variable_station2,pays,district,variable_meningite]
+        return render_to_response('app1/calval.html',{},context_instance=RequestContext(request))
+    else:
+        return render_to_response('app1/calval_form.html',{},context_instance=RequestContext(request))

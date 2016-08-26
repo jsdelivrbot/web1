@@ -16,7 +16,7 @@
             var ncfile = "MYD07_r009_d.nc";
             var variable = "Surface_Temperature";
             //var variable = document.getElementById('variables').value;
-            var timedate = "2007-07-15T00:00:00";
+            var timedate = "2007-01-15T00:00:00";
             var dataurl = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/"+ncfile+"?service=ncWMS"
             map.setView([20.0, 15.0], 4);
             wmsLayer = L.tileLayer.wms(dataurl,{
@@ -26,7 +26,7 @@
                 version: '1.3.0',
                 transparent: true,
                 styles: 'boxfill/rainbow',
-                colorscalerange: '210,340',
+                colorscalerange: '265,340',
                 numcolorbands: 256,
                 tiled:true
             })

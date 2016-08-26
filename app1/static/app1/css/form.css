@@ -7,3 +7,22 @@
   margin: 0;
   padding: 0;
 }
+
+@import url('//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css');
+
+.ui-datepicker {
+   background: #C0C0C0;
+   border: 2px solid #707070;
+   color: #000000;
+ }
+
+.select2-search {
+    background-color: #666;
+}
+
+.select2-search input {
+    background-color: #666;
+}
+.select2-results {
+    background-color: #666;
+}
