@@ -1,8 +1,18 @@
-var selection_geographique = {"benin":["tanguita", "Nikki"],
+var selectGeographique = {"benin":["tanguita", "Nikki"],
                               "burkina":["Diapaga","Bogande"],
                               "mali":["San", "Koro"],
                               "senegal":["Dakar", "Saint-Louis"],
                             };
+var variablesEpidemio = ["incidence"];
+
+var stationsAeronet = [];
+
+var variablesAeronet = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom"];
+
+var stationsTeom = [];
+
+var variablesTeom = [];
+
 var listvar = {"satellite":{"modis":{
                                     "MYD04":{
                                               "reso_spatiale":["009","025","075","125"],
@@ -150,8 +160,7 @@ function active(){
         };
         selectSource2[3].onchange = function(){		 
     
-            selectSource2[5].length = 1;
-    		 
+            resetSelect(selectSource2, 5)    		 
             if (this.selectedIndex < 1)
                 return; // absence de choix
             
@@ -169,6 +178,7 @@ function active(){
         for (i = 0; i < selectSource2.length; i++){
             selectSource2[i].disabled=true;
         }
+        resetSelect(selectSource2, 0)
     }
 } 
 
@@ -179,7 +189,7 @@ function setForm(){
     //type capteur produit variable resospatiale level
     var selectSource1 = $("[id$='S1']");
 
-    //Load type
+    //chargement du type1
     setSelect(listvar, selectSource1[0]);
 
     //choix du type
@@ -190,6 +200,7 @@ function setForm(){
             return; // absence de choix
         //charge les choix de capteur
         setSelect(listvar[this.value], selectSource1[1]);
+        $("[id^='date']").datepicker("setDate", null);
     	};
     
     //choix du capteur
@@ -198,9 +209,9 @@ function setForm(){
         resetSelect(selectSource1, 2);
         if (this.selectedIndex < 1)
             return; // absence de choix
-        //charge les choix de produits
+        //chargement des choix de produits
         setSelect(listvar[typeS1.value][this.value], selectSource1[2]);
-        
+        $("[id^='date']").datepicker("setDate", null);
     };
     	
     //choix du produit
@@ -270,18 +281,22 @@ function setForm(){
     };
     
     //Load pays
-    for (var ps in selection_geographique) {
+    //setSelect(selectGeographique, $("#paysSel"));
+    for (var ps in selectGeographique) {
         paysSel.options[paysSel.options.length] = new Option(ps, ps);
     }
     
     //pays Changed
     $('#paysSel').on('change', function(){
     
-        districtSel.length = 1; // remove all options bar first
+        $("#districtSel").length = 1;
+        $("#districtSel").removeAttribute("selected");
+        $("#districtSel").select2().select2('');
+        
         if (this.selectedIndex < 1)
             return; // done
         	 
-        var dist = selection_geographique[this.value];
+        var dist = selectGeographique[this.value];
         for (var i = 0; i< dist.length; i++) {
             districtSel.options[districtSel.options.length] = new Option(dist[i], dist[i]);
         }
@@ -296,6 +311,20 @@ function setForm(){
             event.preventDefault();
     });
     
+    $("#lrx").on("change", function(){
+        if (parseInt($("#lrx").val()) < parseInt($("#ulx").val())){
+            alert("La longitude EST ne peut pas être inférieure à la longitude OUEST");
+            $("#lrx").val("");
+        }
+    });
+    
+    $("#lry").on("change", function(){
+        if (parseInt($("#lry").val()) > parseInt($("#uly").val())){
+            alert("La latitude SUD ne peut pas être inférieure à la latitude NORD");
+            $("#lry").val("");
+        }
+    });
+
     $('#buffer').on('change', function(){
         $('.input-small').val("");
     });
@@ -303,7 +332,6 @@ function setForm(){
     $('.input-small').click(function(){
         $("#buffer option").removeAttr("selected");
         $("#buffer").select2().select2("");
-        //alert('clicked');
     });
 }
 
@@ -311,7 +339,7 @@ function setForm(){
 //**********************************MAIN*****************************************//
 
 window.onload = function(){
-    $('select').select2();
+    $('select').select2({dropdownAutoWidth : true});
     setForm();
     active();
 }
