@@ -11,6 +11,7 @@ from app1.models import Station, Country, MeteoData
 #from app1.form import FormDatas
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
+from scatter_plot import scatter_plot
 
 
 def thredds(request):
@@ -47,7 +48,6 @@ def meteo(request):
         return render_to_response('app1/meteo.html',{}, context_instance=RequestContext(request))        
 
 def maps(request):
-#    formdata = FormDatas()    
     print request.POST
     if request.method == 'POST':
         ddirout = "/home/sebastien/Bureau/"
@@ -76,11 +76,18 @@ def maps(request):
 def calval(request):
     print request.POST
     if request.method == 'POST':
-#        ulx = request.POST[]
-#        uly = request.POST[]
-#        lrx =request.POST[]
-#        lry = request.POST[]
-        z_buffer = request.POST['buffer']
+        if request.POST['ulx']:
+            ulx = float(request.POST['ulx'])
+            uly = float(request.POST['uly'])
+            lrx = float(request.POST['lrx'])
+            lry = float(request.POST['lry'])
+            z_buffer = request.POST['buffer']
+        else:
+            z_buffer = int(request.POST['buffer'])
+            ulx = request.POST['ulx']
+            uly = request.POST['uly']
+            lrx = request.POST['lrx']
+            lry = request.POST['lry']
         pas_de_temps = request.POST['pasdetemps']
         datedebut = request.POST['datedebut']
         datefin = request.POST['datefin']
@@ -97,15 +104,31 @@ def calval(request):
             res_sat2 = request.POST['resospatiale2']
             variable_sat2 = request.POST['variable2']
             level_sat2 = request.POST['level2']
-        nom_station1 = request.POST['aeronetstation']
-        variable_station1 = request.POST['variableaeronet']
+        else:
+            type2 = ""
+            sat2 = ""
+            prd_sat2 = ""
+            res_sat2 = ""
+            variable_sat2 = ""
+            level_sat2 = ""
+        nom_station1 = request.POST['stationsaeronet']
+        variable_station1 = request.POST['variablesaeronet']
         niveau = request.POST['niveau']
-        nom_station2 = request.POST['teomstation']
-        variable_station2 = request.POST['teomvariable']
+        nom_station2 = request.POST['stationsteom']
+        variable_station2 = request.POST['variablesteom']
+        periode = request.POST['integration']
         pays = request.POST['pays']
         district = request.POST['district']
-        variable_meningite = request.POST['epidemiovariable']
-        print [z_buffer,datedebut, datefin,pas_de_temps,type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,nom_station1,variable_station1,niveau,nom_station2,variable_station2,pays,district,variable_meningite]
-        return render_to_response('app1/calval.html',{},context_instance=RequestContext(request))
+        variable_meningite = request.POST['variablesepidemio']
+        df = scatter_plot(ulx,uly,lrx,lry,z_buffer,
+                     pas_de_temps,periode,datedebut, datefin,
+                     type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
+                     type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
+                     nom_station1,variable_station1,niveau,
+                     nom_station2,variable_station2,
+                     pays,district,variable_meningite)
+        print df
+        return render_to_response('app1/test.html', {'test': request.POST}, context_instance=RequestContext(request))
+        #return render_to_response('app1/calval.html',{},context_instance=RequestContext(request))
     else:
         return render_to_response('app1/calval_form.html',{},context_instance=RequestContext(request))

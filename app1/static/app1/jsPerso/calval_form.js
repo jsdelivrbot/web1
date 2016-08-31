@@ -5,13 +5,13 @@ var selectGeographique = {"benin":["tanguita", "Nikki"],
                             };
 var variablesEpidemio = ["incidence"];
 
-var stationsAeronet = [];
+var stationsAeronet = ["Banizoumbou", "Cinzana", "Dakar"];
 
 var variablesAeronet = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom"];
 
-var stationsTeom = [];
+var stationsTeom = ["Banizoumbou", "Cinzana", "Dedougou"];
 
-var variablesTeom = [];
+var variablesTeom = ["concentration"];
 
 var listvar = {"satellite":{"modis":{
                                     "MYD04":{
@@ -231,7 +231,7 @@ function setForm(){
             selectSource1[4].options[selectSource1[4].options.length] = new Option(resospatiale[i][0]+'.'+resospatiale[i].slice(1,5)+' deg', resospatiale[i]);
         }
 
-        for (var v = 0; v < vbl.length; v++) {
+        for (var v in vbl) {
             selectSource1[3].options[selectSource1[3].options.length] = new Option(vbl[v], vbl[v]);
         }
         
@@ -280,28 +280,31 @@ function setForm(){
         }
     };
     
-    //Load pays
-    //setSelect(selectGeographique, $("#paysSel"));
+    //chargement liste des pays
     for (var ps in selectGeographique) {
         paysSel.options[paysSel.options.length] = new Option(ps, ps);
     }
-    
-    //pays Changed
+
     $('#paysSel').on('change', function(){
-    
-        $("#districtSel").length = 1;
-        $("#districtSel").removeAttribute("selected");
-        $("#districtSel").select2().select2('');
-        
-        if (this.selectedIndex < 1)
-            return; // done
-        	 
         var dist = selectGeographique[this.value];
-        for (var i = 0; i< dist.length; i++) {
-            districtSel.options[districtSel.options.length] = new Option(dist[i], dist[i]);
+        var slct = $("[id^='district']");
+        resetSelect(slct, 0);
+        for (var tp in dist) {
+        		districtSel.options[districtSel.options.length] = new Option(dist[tp], dist[tp]);
         }
     });
-
+    for (var v in stationsAeronet){
+        stationsaeronetSel.options[stationsaeronetSel.options.length] = new Option(stationsAeronet[v], stationsAeronet[v]);
+    }
+    for (var v in variablesAeronet){
+        variablesaeronetSel.options[variablesaeronetSel.options.length] = new Option(variablesAeronet[v], variablesAeronet[v]);
+    }
+    for (var v in stationsTeom){
+        stationsteomSel.options[stationsteomSel.options.length] = new Option(stationsTeom[v], stationsTeom[v]);
+    }
+    for (var v in variablesTeom){
+        variablesteomSel.options[variablesteomSel.options.length] = new Option(variablesTeom[v], variablesTeom[v]);
+    }
     $('.input-small').keypress(function(event) {
 
         if(event.which == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46) 
@@ -310,14 +313,28 @@ function setForm(){
         else if((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57))
             event.preventDefault();
     });
-    
+
+    $("#ulx").on("change", function(){
+        if (parseInt($("#lrx").val()) < parseInt($("#ulx").val())){
+            alert("La longitude EST ne peut pas être inférieure à la longitude OUEST");
+            $("#lrx").val("");
+        }
+    });
+
     $("#lrx").on("change", function(){
         if (parseInt($("#lrx").val()) < parseInt($("#ulx").val())){
             alert("La longitude EST ne peut pas être inférieure à la longitude OUEST");
             $("#lrx").val("");
         }
     });
-    
+
+    $("#uly").on("change", function(){
+        if (parseInt($("#lry").val()) > parseInt($("#uly").val())){
+            alert("La latitude SUD ne peut pas être inférieure à la latitude NORD");
+            $("#lry").val("");
+        }
+    });
+
     $("#lry").on("change", function(){
         if (parseInt($("#lry").val()) > parseInt($("#uly").val())){
             alert("La latitude SUD ne peut pas être inférieure à la latitude NORD");

@@ -3,6 +3,9 @@ import numpy as np
 from moy_dist_parallel import calc_moy
 
 def traitementDF(ldf,var):
+    """
+    Conversion dataframe issue de calc_moy en dict pour jquery    
+    """
     dfvar = ldf[var].replace(np.nan,'NaN')
     list_dist = dfvar.columns.values.tolist()
     list_dist = [a.encode('ascii','ignore') for a in list_dist]

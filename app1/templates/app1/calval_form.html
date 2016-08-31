@@ -137,45 +137,48 @@
                     <label>Données In Situ</label>
                 </div>
                 <div class="row">
-                    <div class="col-lg-6">
-                        <div class="row">
-                            <h5><em>Aeronet</em></h5>
-                            <select class="form-control" name="aeronetstation" id="stationSel" >
-                                <option data-hidden="true">Station</option>
-                                <option value="TOMBOUCTOU">Tombouctou</option>
-                                <option value="NIAMEY-AERO">Niamey</option>
-                                <option value="KOUTIALA">Koutiala</option>
-                                <option value="DAKAR/YOFF">Dakar/Yoff</option>
-                            </select>
-                            <select class="form-control" name="variableaeronet" id="stationSel" >
-                                <option data-hidden="true">Variable</option>
-                                <option value="TOMBOUCTOU">Tombouctou</option>
-                                <option value="NIAMEY-AERO">Niamey</option>
-                                <option value="KOUTIALA">Koutiala</option>
-                                <option value="DAKAR/YOFF">Dakar/Yoff</option>
-                            </select>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <h5><em>Aeronet</em></h5>
+                                <select class="form-control" name="stationsaeronet" id="stationsaeronetSel" >
+                                    <option data-hidden="true">Station</option>
+                                </select>
+                                <select class="form-control" name="variablesaeronet" id="variablesaeronetSel" >
+                                    <option data-hidden="true">Variable</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <select class="form-control" name="niveau" id="niveau" >
+                                    <option data-hidden="true">niveau de traitement</option>
+                                    <option value="1_5">1.5</option>
+                                    <option value="2">2</option>
+                                </select>
+                            </div>
+                            <br/>
                         </div>
-                        <div class="row">
-                            <select class="form-control" name="niveau" id="niveau" >
-                                <option data-hidden="true">niveau de traitement</option>
-                                <option value="1_5">1.5</option>
-                                <option value="2">2</option>
-                            </select>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <h5><em>TEOM</em></h5>
+                                <select class="form-control" name="stationsteom" id="stationsteomSel" >
+                                    <option data-hidden="true">Station</option>
+                                </select>
+                                <select class="form-control" name="variablesteom" id="variablesteomSel" >
+                                    <option data-hidden="true">Variable</option>
+                                </select>
+                            </div>
                         </div>
-                        <br/>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="row">
-                            <h5><em>TEOM</em></h5>
-                            <select class="form-control" name="teomstation" id="teomstationSel" >
-                                <option data-hidden="true">Station</option>
-                                <option value="Banizoumbou">Banizoumbou</option>
-                                <option value="Cinzana">Cinzana</option>
-                                <option value="Dedougou">Dedougou</option>
-                            </select>
-                            <select class="form-control" name="teomvariable" id="teomvariableSel" >
-                                <option data-hidden="true">Variable</option>
-                                <option value="concentration">Concentration</option>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h5>Periode d'intégration</h5>
+                            <h6>(Aeronet/Teom)</h6>
+                        </div>
+                        <div class="col-lg-6">
+                            <select class="form-control" name="integration" id="integrationSel" >
+                                <option data-hidden="true"></option>
+                                <option value="1">+-1h</option>
+                                <option value="1">+-5h</option>
                             </select>
                         </div>
                     </div>
@@ -195,7 +198,7 @@
                             <select class="form-control" name="district" id="districtSel" >
                                 <option data-hidden="true">District</option>
                             </select>
-                            <select class="form-control" name="epidemiovariable" id="variableSel" >
+                            <select class="form-control" name="variablesepidemio" id="variablesepidemioSel" >
                                 <option data-hidden="true">Variable</option>
                                 <option value="incidence">incidence</option>
                             </select>
