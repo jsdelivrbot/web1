@@ -1,13 +1,13 @@
-var selectGeographique = {"benin":["tanguita", "Nikki"],
-                              "burkina":["Diapaga","Bogande"],
-                              "mali":["San", "Koro"],
-                              "senegal":["Dakar", "Saint-Louis"],
+var selectGeographique = {"Benin":["tanguita", "Nikki"],
+                              "Burkina":["Diapaga","Bogande"],
+                              "Mali":["San", "Koro"],
+                              "Senegal":["Dakar", "Saint-Louis"],
                             };
 var variablesEpidemio = ["incidence"];
 
 var stationsAeronet = ["Banizoumbou", "Cinzana", "Dakar"];
 
-var variablesAeronet = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom"];
+var variablesAeronet = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom", "FineModeFraction_500nm[eta]"];
 
 var stationsTeom = ["Banizoumbou", "Cinzana", "Dedougou"];
 

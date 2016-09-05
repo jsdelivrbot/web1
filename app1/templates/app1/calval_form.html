@@ -1,6 +1,4 @@
-{% extends 'app1/base.html' %}
 {% load staticfiles %}
-{% block form %}
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/select2/dist/css/select2.css' %}">
@@ -177,8 +175,8 @@
                         <div class="col-lg-6">
                             <select class="form-control" name="integration" id="integrationSel" >
                                 <option data-hidden="true"></option>
-                                <option value="1">+-1h</option>
-                                <option value="1">+-5h</option>
+                                <option value="+-1">+-1h</option>
+                                <option value="+-5">+-5h</option>
                             </select>
                         </div>
                     </div>
@@ -217,4 +215,3 @@
         <script src="{% static 'app1/jsPerso/calval_form.js' %}"></script>        
     </body>
 </html>
-{% endblock form %}

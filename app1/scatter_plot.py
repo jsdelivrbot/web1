@@ -4,17 +4,26 @@ import pandas as pd
 import numpy as np
 from netCDF4 import Dataset, num2date, date2num
 from scipy.stats import linregress
-from datetime import datetime
-import sys
+from datetime import datetime, timedelta
+import subprocess
 import warnings
 warnings.filterwarnings("ignore")
 
-pd.set_option('display.width',120)
-pd.set_option('display.max_columns', 50)
-pd.set_option('display.max_rows', 150)
-
-
 ddir = "/home/sebastien/Bureau/teledm/donnees/"
+
+
+def skipRows(debut,fin, filename):
+    start = datetime.strftime(debut, format="%Y-%m-%d %H:%M:%S")
+    end = datetime.strftime(fin + timedelta(days=1), format="%Y-%m-%d %H:%M:%S")
+    grep1 = subprocess.check_output(['grep', '-n', '^'+start, filename]).splitlines()
+    id1 = [int(s[:s.index(':')]) for s in grep1][0]
+    grep2 = subprocess.check_output(['grep', '-n', '^'+end, filename]).splitlines()
+    id2 = [int(s[:s.index(':')]) -1 for s in grep2][0]
+    grep3 = subprocess.check_output(['wc', '-l', filename]).split('/')
+    id3 = int(grep3[0])
+    bad_lines = range(1,id1) + range(id2,id3)
+    return bad_lines
+
 
 def pxFlag(arr):
     nbpx = arr[-3]
@@ -23,12 +32,6 @@ def pxFlag(arr):
     array = np.zeros(3)
     array[:] = np.nan
     pxvalide = np.where((arr[:-3] > (moy - std*2)) & (arr[:-3] < (moy + std*2)))[0].size
-    if nbpx != 0:
-        pct = (pxvalide / float(nbpx))*100
-    else:
-        pct = np.nan
-    print('array {}'.format(arr))
-    print('{} px valides, nb pixels {}, pourcentage: {}'.format(pxvalide, nbpx, pct))
     if (nbpx / arr[:-3].size > 0.33) & (pxvalide > 0):
         array[0] = pxvalide
         if ((pxvalide / float(nbpx)) >= 0.33) & ((pxvalide / float(nbpx)) < 0.66):
@@ -39,10 +42,8 @@ def pxFlag(arr):
             array[2] = 1
         else:
             array[2] = 3
-        print np.round(nbpx,1),'  ',pxvalide,'  ',np.round(pxvalide / float(nbpx),1),'  ',array[2]
         return array
     else:
-        print 'nan'
         return array
 
 
@@ -87,7 +88,8 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
         colpx = buff
     #######
     vals1 = vals.reshape(vals.shape[0],vals.shape[1]*vals.shape[2])
-    df = pd.DataFrame(vals1,index=pd.date_range(num2date(temps[idj1],temps.units),num2date(temps[idj2],temps.units),freq='D') + pd.offsets.Hour(h_passage))
+    index = pd.date_range(num2date(temps[idj1],temps.units),num2date(temps[idj2],temps.units),freq='D') + pd.offsets.Hour(h_passage)
+    df = pd.DataFrame(vals1,index=index)
     nc.close()
     df.columns = [(str(df.columns[n])+"_"+prd_sat) for n in range(len(df.columns))]
     df['nbpx_'+prd_sat] = (vals.shape[1]*vals.shape[2])-np.ma.count_masked(vals,axis=(1,2))#calcul du nb de pixels non nuls
@@ -99,7 +101,6 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
     mpx = df[df.columns[:colpx+3]].values
     lmpx = [np.squeeze(x,0) for x in np.split(mpx,mpx.shape[0], axis=0)]
     df[['nbpxvalide_'+prd_sat, 'moy_'+prd_sat, 'px_flag_'+prd_sat]] = np.vstack([pxFlag(m) for m in lmpx])
-
     return df, colpx
     
 def count_nb_pixel(x):
@@ -108,12 +109,13 @@ def count_nb_pixel(x):
     return nb
     
 def count(x):
-    # fonction qui calcule la moyenne si le nb de px non nul/nb px > 0.7 sinon retourne nan
+    # fonction qui calcule la moyenne si le nb de px non nul/nb px >= 0.7 sinon retourne nan
     try:
-        if np.count_nonzero(~np.isnan(x))/float(np.count_nonzero(x)) > 0.7:
+        if np.count_nonzero(~np.isnan(x))/float(np.count_nonzero(x)) >= 0.7:
             v = np.nanmean(x)
         else:
             v =  np.nan
+            print 'nan'
     except ZeroDivisionError:
         v =  np.nan
     return v
@@ -126,8 +128,6 @@ def scatter_stats(df,prd1,prd2):
         slope, intercept, r_value, p_value, std_err = linregress(df[['moy_'+prd2,'moy_'+prd1]][mask])
         r2 = round(r_value**2, 5)
         line = slope*df['moy_'+prd2].values+intercept
-        print "slope ",slope
-        print "intercept ",intercept
         return line, r2, mask,slope,intercept
     else:
         return 0,0,0,0,0
@@ -135,49 +135,46 @@ def scatter_stats(df,prd1,prd2):
 def read_csv(csv_file,in_situ,variable_csv, debut, fin,per,df_in):
     # fonction intégrant les données issues du .csv(csv_file) dans le dataframe (df_in), dans l'intervalle de temps debut/fin
     # in_situ = teom ou aeronet, per = périodicité
-    datas = pd.read_csv(csv_file, sep=',', parse_dates={'datetime':['date']}, header=0, index_col=0)
-    var = [variable_csv]+["Solar_Zenith_Angle"]
-    if datas.index[0] <= debut and debut <= datas.index[-1]:
-        df_in["moy_"+in_situ] = np.nan
-        index = pd.date_range(debut,fin+pd.offsets.Day(1))
-        df_csv = pd.DataFrame(datas[str(debut):str(fin+pd.offsets.Day(1))][var])
-        for i in df_in.index :
-                    if per == '+-1h':
-			# si le nombre de valeurs >=4 dansl'intervalle +-1h
-                        if (df_csv[variable_csv][i-pd.offsets.Hour(1):i+pd.offsets.Hour(1)].count() >=4) and (df_csv["Solar_Zenith_Angle"][i] <= 71.):
-                            df_in["moy_"+in_situ].ix[i] = df_csv[variable_csv][i-pd.offsets.Hour(1):i+pd.offsets.Hour(1)].mean()
-                    elif per == '+-5h':
-			# si le nombre de valeurs >=4 dansl'intervalle +-1h
-                        if (df_csv[variable_csv][i-pd.offsets.Hour(5):i+pd.offsets.Hour(5)].count() >=10) and (df_csv["Solar_Zenith_Angle"][i] <= 71.):
-                            df_in["moy_"+in_situ].ix[i] = df_csv[variable_csv][i-pd.offsets.Hour(5):i+pd.offsets.Hour(5)].mean()
+    print csv_file
+    df_in["moy_" + in_situ] = np.nan
+    bad_lines = skipRows(debut, fin, csv_file)
+    df_csv = pd.read_csv(csv_file, sep=',', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable_csv, "Solar_Zenith_Angle"], skiprows=bad_lines)
+    for i in df_in.index :
+        if per == '+-1h':
+            # si le nombre de valeurs >=4 dansl'intervalle +-1h
+            if (df_csv[variable_csv][i-pd.offsets.Hour(1):i+pd.offsets.Hour(1)].count() >= 4) and (df_csv["Solar_Zenith_Angle"][i] <= 71.):
+                df_in["moy_"+in_situ].ix[i] = df_csv[variable_csv][i-pd.offsets.Hour(1):i+pd.offsets.Hour(1)].mean()
+        elif per == '+-5h':
+            # si le nombre de valeurs >=10 dansl'intervalle +-5h
+            if (df_csv[variable_csv][i-pd.offsets.Hour(5):i+pd.offsets.Hour(5)].count() >= 10) and (df_csv["Solar_Zenith_Angle"][i] <= 71.):
+                df_in["moy_"+in_situ].ix[i] = df_csv[variable_csv][i-pd.offsets.Hour(5):i+pd.offsets.Hour(5)].mean()
     return df_in
 
-def tempo(path_mening,dist,freq,debut,ydeb,fin,df_in,prdsat1,prdsat2=[]):
-        # fonction recalculant la période considérée(debut/fin, ydeb) au pas de temps hebdo ou mensuel(freq) et intégrant les données méningite(path_mening) pour le district considéré(dist) pour les produits (prdsat1,prdsat2) de la dataframe df_in
-	# freq = pas de temps, 
-    index = pd.date_range(start=debut,end=fin, freq=freq[0])
-    df_out = pd.DataFrame(df_in['pre_moy_'+prdsat1].resample(freq[0], lambda x: count(x)),index=index,columns=['pre_moy_'+prdsat1])
-    df_out['nb_px_'+prdsat1] = df_in['moy_'+prdsat1].resample(freq[0], lambda x: count_nb_pixel(x))[index]
-    df_out['moy_'+prdsat1] = df_in['moy_'+prdsat1].resample(freq[0], lambda x: count(x))[index]
+def tempo(path_mening,dist,freq,debut,fin,df_in,prdsat1,prdsat2=[]):
+        # fonction recalculant la période considérée(debut/fin) au pas de temps hebdo ou mensuel(freq) et intégrant les données méningite(path_mening) pour le district considéré(dist) pour les produits (prdsat1,prdsat2) de la dataframe df_in
+    # freq = pas de temps, 
+    df_out = pd.DataFrame(df_in['pre_moy_'+prdsat1].resample(freq[0], lambda x: count(x)), columns=['pre_moy_'+prdsat1])
+    df_out['nb_px_'+prdsat1] = df_in['moy_'+prdsat1].resample(freq[0], lambda x: count_nb_pixel(x)).values
+    df_out['moy_'+prdsat1] = df_in['moy_'+prdsat1].resample(freq[0], lambda x: count(x)).values
     if len(prdsat2):
-        df_out['moy_'+prdsat2] = df_in['moy_'+prdsat2].resample(freq[0], lambda x: count(x))[index]
-        df_out['pre_moy_'+prdsat2] = df_in['pre_moy_'+prdsat2].resample(freq[0], lambda x: count(x))[index]
+        df_out['moy_'+prdsat2] = df_in['moy_'+prdsat2].resample(freq[0], lambda x: count(x)).values
+        df_out['pre_moy_'+prdsat2] = df_in['pre_moy_'+prdsat2].resample(freq[0], lambda x: count(x)).values
     if "moy_aeronet" in df_in.columns:
-        df_out['moy_aeronet'] = df_in['moy_aeronet'].resample(freq[0], lambda x: count(x))[index]
+        df_out['moy_aeronet'] = df_in['moy_aeronet'].resample(freq[0], lambda x: count(x)).values
     if "moy_teom" in df_in.columns:
-        df_out['moy_teom'] = df_in['moy_teom'].resample(freq[0], lambda x: count(x))[index]
-        df_out.insert(0,'semaine',df_out.index.weekofyear)
+        df_out['moy_teom'] = df_in['moy_teom'].resample(freq[0], lambda x: count(x)).values
+    df_out.insert(0, "semaine", df_out.index.weekofyear)
     if path_mening:
         df_meningite = pd.read_csv(path_mening,parse_dates={'datetime':['date']},header=0,index_col=0)
-        if ydeb in df_meningite.index.year:
-            if freq[0] =="w":
-                df_mening = df_meningite[(df_meningite['district']== dist) & (df_meningite['semaine'].isin(df_out['semaine']))][str(ydeb)]       
+        if debut.year in df_meningite.index.year:
+            if freq[0] =="W":
+                df_mening = df_meningite[(df_meningite['district']== dist) & (df_meningite['semaine'].isin(df_out['semaine']))][str(debut.year)]       
                 df_out = pd.merge(df_out,df_mening[['semaine','cas','population','incidence']],right_index=True,on='semaine')
             else:
                 df_meningite.insert(1,'month',df_meningite.index.month)
-                df_mening = df_meningite[(df_meningite['district']== dist) & (np.in1d(df_meningite.index.month,df_out.index.month))][str(ydeb)]
-                df_out['population'] = df_mening.population.resample('M',how=max)[index]
-                df_out['cas'] = df_mening.cas.resample('M',how=sum)[index]
+                df_mening = df_meningite[(df_meningite['district']== dist) & (np.in1d(df_meningite.index.month,df_out.index.month))][str(debut.year)]
+                df_out['population'] = df_mening.population.resample('M',how=max)[df_out.index]
+                df_out['cas'] = df_mening.cas.resample('M',how=sum)[df_out.index]
                 df_out['incidence'] = 100000*df_out.cas.div(df_out.population, axis=0)
     return df_out
 
@@ -201,6 +198,8 @@ def scatter_plot(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
                  nom_station1,variable_station1,niveau,
                  nom_station2,variable_station2,
                  pays,district,variable_meningite):
+
+
     start = datetime.strptime(datedeb, "%Y-%m-%d")
     end = datetime.strptime(datefin, "%Y-%m-%d")
 
@@ -237,8 +236,6 @@ def scatter_plot(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
     if pays and district and variable_meningite:
         path_meningite = ddir+'in_situ/meningite/'+pays+'_meningite.csv'
     ####################################################################################
-    #type_station1 = "moy_aeronet"
-    #type_station2 = "moy_teom"    
     if nom_station1:
         nom_station = nom_station1
     else:
@@ -256,16 +253,20 @@ def scatter_plot(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
         if pas_de_temps == 'day':
             dfout = df_sat1
         else:
-            dfout = tempo(path_meningite,district,pas_de_temps,start,ystart,end,df_sat1,prd_sat1)
+            dfout = tempo(path_meningite,district,pas_de_temps,start,end,df_sat1,prd_sat1)
         if nom_station1:
-            line_station1, coef_r2_1, mask01,a01,b01 = scatter_stats(dfout,prd_sat1, "aeronet")
+            line_station1, rCarre_1, mask1,a1,b1 = scatter_stats(dfout,prd_sat1, "aeronet")
         else:
-            line_station1, coef_r2_1, mask01,a01,b01 = 0,0,0,0,0
+            line_station1, rCarre_1, mask1,a1,b1 = 0,0,0,0,0
         if nom_station2:
-            line_station2, coef_r2_2, mask02,a02,b02 = scatter_stats(dfout,prd_sat1,"teom")
+            line_station2, rCarre_2, mask2,a2,b2 = scatter_stats(dfout,prd_sat1,"teom")
         else:
-            line_station2, coef_r2_2, mask02,a02,b02 = 0,0,0,0,0
-        return dfout, line_station1, coef_r2_1, mask01,a01,b01,line_station2, coef_r2_2,mask02,a02,b02
+            line_station2, rCarre_2, mask2,a2,b2 = 0,0,0,0,0
+        mat = {}
+        mat['dates'] = [d.date() for d in dfout.index[:].to_datetime()]
+        for c in dfout.columns:
+            mat[c] = dfout[c].values.tolist()
+        return {"matrice": mat, "line_station1": line_station1, "rCarre_1": rCarre_1, "mask1": mask1, "a1": a1, "b1": b1, "line_station2": line_station2, "rCarre_2": rCarre_2, "mask2": mask2, "a2": a2, "b2": b2}
 
     
     else:
@@ -282,74 +283,68 @@ def scatter_plot(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
         if pas_de_temps == 'day':
             dfout = df_sat1_2
         else:
-            dfout = tempo(path_meningite,district,pas_de_temps,start,ystart,end,df_sat1_2,prd_sat1,prd_sat2)
-        line_sat, coef_r2_sat, mask_sat,a,b = scatter_stats(dfout,prd_sat1, prd_sat2)
-        return dfout,line_sat, coef_r2_sat, mask_sat,a,b
+            dfout = tempo(path_meningite,district,pas_de_temps,start,end,df_sat1_2,prd_sat1,prd_sat2)
+        line_sat, rCarre_sat, mask_sat,a,b = scatter_stats(dfout,prd_sat1, prd_sat2)
+        mat = {}
+        mat['dates'] = [d.date() for d in dfout.index[:].to_datetime()]
+        for c in dfout.columns:
+            mat[c] = dfout[c].values.tolist()
+        return {"matrice": mat,"line_sat": line_sat, "rCarre_sat": rCarre_sat, "mask_sat": mask_sat, "a": a,"b": b}
 
 if __name__ == '__main__':
 
 ###################### test #########################################################
 #####################################################################################
 
-	args = sys.argv[1]
-	lines = []
-	with open(args,'r') as param:
-	    for l in param:
-		lines += [l]
-
-	ddir = "/home/sebastien/Bureau/teledm/donnees/"
-	ddirout = "/home/sebastien/Bureau/"
-	ulx = lines[1][:-1]
-	if ulx: ulx = float(ulx)
-	uly = lines[3][:-1]
-	if uly: uly = float(uly)
-	lrx = lines[5][:-1]
-	if lrx: lrx = float(lrx)
-	lry = lines[7][:-1]
-	if lry: lry = float(lry)
-	z_buffer = int(lines[9][:-1])
-	pas_de_temps = lines[11][:-1]
-	periode = lines[13][:-1]
-	ystart = int(lines[15][:-1])
-	mstart= int(lines[17][:-1])
-	dstart = int(lines[19][:-1])
-	yend = int(lines[21][:-1])
-	mend = int(lines[23][:-1])
-	dend = int(lines[25][:-1])
-	log = ""#'ok'
-	##############################image satellite 1 ####################################
-	type1 = lines[27][:-1]
-	sat1 = lines[29][:-1]
-	prd_sat1 = lines[31][:-1]
-	res_sat1 = lines[33][:-1]
-	variable_sat1 = lines[35][:-1]
-	level_sat1 = int(lines[37][:-1])
-	if level_sat1 == -1: level_sat1 = ''
-	############################# image satellite 2 ####################################
-	type2 = lines[41][:-1]
-	sat2 = lines[43][:-1]
-	prd_sat2 =lines[45][:-1]
-	res_sat2 = lines[47][:-1]
-	variable_sat2 = lines[49][:-1]
-	level_sat2 = int(lines[51][:-1])
-	if level_sat2 == -1: level_sat2 = ''
-	############################ donnees in situ 1 ######################################
-	type0 = 'in_situ'
-	prd_station1 = 'aeronet'
-	niveau = lines[57][:-1]
-	nom_station1 =lines[53][:-1]
-	variable_station1 = lines[55][:-1]
-	########################### donnees in situ 2 #######################################
-	prd_station2 = 'teom'
-	nom_station2 = lines[59][:-1]
-	variable_station2 = lines[61][:-1]
-	########################### donnees in situ 3 #######################################
-	pays = lines[63][:-1]
-	district = lines[65][:-1]
-	variable_meningite = lines[69][:-1]
-	######################################################################################
-	######################################################################################
-	print nom_station1, nom_station2
-	resultats = scatter_plot(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,ystart,mstart,dstart,yend,mend,dend, type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2, nom_station1,variable_station1,niveau,nom_station2,variable_station2,pays,district,variable_meningite)
-	resultats[0].to_csv(ddirout+"qlt_flag.csv")
-	print "fichier traite"
+    ddir = "/home/sebastien/Bureau/teledm/donnees/"
+    ddirout = "/home/sebastien/Bureau/"
+    ulx = ""
+    uly = ""
+    lrx = ""
+    lry = ""
+    z_buffer = 9
+    pas_de_temps = "Week"
+    periode = "+-5h"
+    datedebut = "2006-10-01"
+    datefin = "2007-03-31"
+    log = ""#'ok'
+    ##############################image satellite 1 ####################################
+    type1 = "satellite"
+    sat1 = "modis"
+    prd_sat1 = "MYD04"
+    res_sat1 = "009"
+    variable_sat1 = "Deep_Blue_Aerosol_Optical_Depth_550_Land"
+    level_sat1 = ""
+    ############################# image satellite 2 ####################################
+    type2 = ""
+    sat2 = ""
+    prd_sat2 = ""
+    res_sat2 = ""
+    variable_sat2 = ""
+    level_sat2 = ""
+    ############################ donnees in situ 1 ######################################
+    type0 = 'in_situ'
+    prd_station1 = 'aeronet'
+    niveau = "1_5"
+    nom_station1 = "Banizoumbou"
+    variable_station1 = "FineModeFraction_500nm[eta]"
+    ########################### donnees in situ 2 #######################################
+    prd_station2 = 'teom'
+    nom_station2 = "Cinzana"
+    variable_station2 = "concentration"
+    ########################### donnees in situ 3 #######################################
+    pays = "Burkina"
+    district = "Sapouy"
+    variable_meningite = "incidence"
+    ######################################################################################
+    ######################################################################################
+    resultats = scatter_plot(ulx,uly,lrx,lry,z_buffer,
+                             pas_de_temps,periode,datedebut, datefin,
+                             type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
+                             type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
+                             nom_station1,variable_station1,niveau,
+                             nom_station2,variable_station2,
+                             pays,district,variable_meningite)
+    #resultats["matrice"].to_csv(ddirout+"qlt_flag.csv")
+    #print resultats[0]
+    print "fichier traite"

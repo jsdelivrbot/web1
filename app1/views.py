@@ -69,7 +69,7 @@ def maps(request):
         geojson = pays+"_"+niveau+"_sante.geojson"
         dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson}
         jsdatas = json.dumps(dictdatas, cls=DjangoJSONEncoder)
-        return render_to_response('app1/map1.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
+        return render_to_response('app1/map_plot.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
     else:
         return render_to_response('app1/map.html',{},context_instance=RequestContext(request))
 
@@ -117,9 +117,21 @@ def calval(request):
         nom_station2 = request.POST['stationsteom']
         variable_station2 = request.POST['variablesteom']
         periode = request.POST['integration']
-        pays = request.POST['pays']
-        district = request.POST['district']
-        variable_meningite = request.POST['variablesepidemio']
+        if request.POST['pays'] == "Pays":
+            pays = ""
+            district = ""
+            variable_meningite = ""
+        else:
+            pays = request.POST['pays']
+            district = request.POST['district']
+            variable_meningite = request.POST['variablesepidemio']
+        print [ulx,uly,lrx,lry,z_buffer,
+                 pas_de_temps,periode,datedebut, datefin,
+                 type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
+                 type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
+                 nom_station1,variable_station1,niveau,
+                 nom_station2,variable_station2,
+                 pays,district,variable_meningite]
         df = scatter_plot(ulx,uly,lrx,lry,z_buffer,
                      pas_de_temps,periode,datedebut, datefin,
                      type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
@@ -127,8 +139,8 @@ def calval(request):
                      nom_station1,variable_station1,niveau,
                      nom_station2,variable_station2,
                      pays,district,variable_meningite)
-        print df
-        return render_to_response('app1/test.html', {'test': request.POST}, context_instance=RequestContext(request))
+        #jsdatas = json.dumps({'df': df}, cls=DjangoJSONEncoder)
+        return render_to_response('app1/calval_plot.html', {'jsdatas': df}, context_instance=RequestContext(request))
         #return render_to_response('app1/calval.html',{},context_instance=RequestContext(request))
     else:
-        return render_to_response('app1/calval_form.html',{},context_instance=RequestContext(request))
+        return render_to_response('app1/calval.html',{},context_instance=RequestContext(request))

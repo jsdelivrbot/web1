@@ -29,7 +29,6 @@
                 var jsdatas = {{ jsdatas|safe }};
                 var datas = jsdatas.datas;
                 var series_temporelles = datas.lvmean.series_temporelles;
-                alert(datas.lvmean.all_dist[0][0].value);
                 //fonction d affichage carto
                 $.getJSON("{% static 'app1/shapes/' %}"+jsdatas.shape, function (geojson) {
                     mapChart = $('#mapcontainer').highcharts('Map', {
