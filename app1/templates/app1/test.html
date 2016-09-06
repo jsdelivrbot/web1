@@ -1,3 +1,7 @@
 {% load staticfiles %}
-    {{ test }}
+    
+    <script type="text/javascript">
+        var test = {{ test | safe }};
+        alert(test.dates);
+    </script>
         

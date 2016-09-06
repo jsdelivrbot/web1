@@ -74,7 +74,6 @@ def maps(request):
         return render_to_response('app1/map.html',{},context_instance=RequestContext(request))
 
 def calval(request):
-    print request.POST
     if request.method == 'POST':
         if request.POST['ulx']:
             ulx = float(request.POST['ulx'])
@@ -125,13 +124,15 @@ def calval(request):
             pays = request.POST['pays']
             district = request.POST['district']
             variable_meningite = request.POST['variablesepidemio']
-        print [ulx,uly,lrx,lry,z_buffer,
+        v = [ulx,uly,lrx,lry,z_buffer,
                  pas_de_temps,periode,datedebut, datefin,
                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
                  nom_station1,variable_station1,niveau,
                  nom_station2,variable_station2,
                  pays,district,variable_meningite]
+        for i in range(len(v)):
+            print v[i]
         df = scatter_plot(ulx,uly,lrx,lry,z_buffer,
                      pas_de_temps,periode,datedebut, datefin,
                      type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
@@ -139,8 +140,10 @@ def calval(request):
                      nom_station1,variable_station1,niveau,
                      nom_station2,variable_station2,
                      pays,district,variable_meningite)
-        #jsdatas = json.dumps({'df': df}, cls=DjangoJSONEncoder)
-        return render_to_response('app1/calval_plot.html', {'jsdatas': df}, context_instance=RequestContext(request))
-        #return render_to_response('app1/calval.html',{},context_instance=RequestContext(request))
+        print df
+        jsdatas = json.dumps(df, cls=DjangoJSONEncoder)
+        
+        return render_to_response('app1/calval_plot.html', {'jsdatas': jsdatas}, context_instance=RequestContext(request))
+        #return render_to_response('app1/test.html',{"test": jsdatas},context_instance=RequestContext(request))
     else:
         return render_to_response('app1/calval.html',{},context_instance=RequestContext(request))

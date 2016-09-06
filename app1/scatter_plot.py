@@ -115,7 +115,6 @@ def count(x):
             v = np.nanmean(x)
         else:
             v =  np.nan
-            print 'nan'
     except ZeroDivisionError:
         v =  np.nan
     return v
@@ -128,9 +127,9 @@ def scatter_stats(df,prd1,prd2):
         slope, intercept, r_value, p_value, std_err = linregress(df[['moy_'+prd2,'moy_'+prd1]][mask])
         r2 = round(r_value**2, 5)
         line = slope*df['moy_'+prd2].values+intercept
-        return line, r2, mask,slope,intercept
+        return line.tolist(), r2, slope, intercept, df['moy_'+prd1][mask].values.tolist(), df['moy_'+prd2][mask].values.tolist()
     else:
-        return 0,0,0,0,0
+        return 0,0,0,0,0,0
     
 def read_csv(csv_file,in_situ,variable_csv, debut, fin,per,df_in):
     # fonction intégrant les données issues du .csv(csv_file) dans le dataframe (df_in), dans l'intervalle de temps debut/fin
@@ -250,23 +249,35 @@ def scatter_plot(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
         #chargement des donnees teom
         if nom_station2:
             df_sat1 = read_csv(path_station2,"teom", variable_station2, start, end,periode,df_sat1)
-        if pas_de_temps == 'day':
+        if pas_de_temps == 'D':
             dfout = df_sat1
         else:
             dfout = tempo(path_meningite,district,pas_de_temps,start,end,df_sat1,prd_sat1)
         if nom_station1:
-            line_station1, rCarre_1, mask1,a1,b1 = scatter_stats(dfout,prd_sat1, "aeronet")
+            line_station1, rCarre_1, a1,b1, prd1_mask1, station1_mask1 = scatter_stats(dfout,prd_sat1, "aeronet")
         else:
-            line_station1, rCarre_1, mask1,a1,b1 = 0,0,0,0,0
+            line_station1, rCarre_1, a1,b1, prd1_mask1, station1_mask1 = 0,0,0,0,0,0
         if nom_station2:
-            line_station2, rCarre_2, mask2,a2,b2 = scatter_stats(dfout,prd_sat1,"teom")
+            line_station2, rCarre_2, a2,b2, prd1_mask2, station2_mask2 = scatter_stats(dfout,prd_sat1,"teom")
         else:
-            line_station2, rCarre_2, mask2,a2,b2 = 0,0,0,0,0
+            line_station2, rCarre_2, a2,b2, prd1_mask2, station2_mask2 = 0,0,0,0,0,0
         mat = {}
         mat['dates'] = [d.date() for d in dfout.index[:].to_datetime()]
         for c in dfout.columns:
             mat[c] = dfout[c].values.tolist()
-        return {"matrice": mat, "line_station1": line_station1, "rCarre_1": rCarre_1, "mask1": mask1, "a1": a1, "b1": b1, "line_station2": line_station2, "rCarre_2": rCarre_2, "mask2": mask2, "a2": a2, "b2": b2}
+        mat['mask1_moy_'+prd_sat1] = prd1_mask1
+        mat['mask2_moy_'+prd_sat1] = prd1_mask2
+        mat['line_aeronet'] = line_station1
+        mat['rCarre_1'] = rCarre_1
+        mat['mask1_moy_aeronet'] = station1_mask1
+        mat['a1'] = a1
+        mat['b1'] = b1
+        mat['line_teom'] = line_station2
+        mat['rCarre_2'] = rCarre_2
+        mat['mask1_moy_teom'] = station2_mask2
+        mat['a2'] = a2
+        mat['b2'] = b2
+        return mat
 
     
     else:
@@ -280,16 +291,36 @@ def scatter_plot(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
         #chargement des donnees teom
         if nom_station2:
             df_sat1_2 = read_csv(path_station2,"teom", variable_station2, start, end,periode,df_sat1_2)
-        if pas_de_temps == 'day':
+        if pas_de_temps == 'D':
             dfout = df_sat1_2
         else:
             dfout = tempo(path_meningite,district,pas_de_temps,start,end,df_sat1_2,prd_sat1,prd_sat2)
-        line_sat, rCarre_sat, mask_sat,a,b = scatter_stats(dfout,prd_sat1, prd_sat2)
+        line_sat, rCarre_sat,a1,b1, prd_sat1_mask1, prd_sat2_mask1 = scatter_stats(dfout,prd_sat1, prd_sat2)
+        if nom_station1:
+            line_station1, rCarre_2, a2,b2, prd1_mask2, station1_mask2 = scatter_stats(dfout,prd_sat1, "aeronet")
+        elif nom_station2:
+            line_station2, rCarre_2, a2,b2, prd1_mask2, station2_mask2 = scatter_stats(dfout,prd_sat1,"teom")
+        else:
+            line_station2, rCarre_2, a2,b2, prd1_mask2, station2_mask2 = 0,0,0,0,0,0
         mat = {}
         mat['dates'] = [d.date() for d in dfout.index[:].to_datetime()]
         for c in dfout.columns:
             mat[c] = dfout[c].values.tolist()
-        return {"matrice": mat,"line_sat": line_sat, "rCarre_sat": rCarre_sat, "mask_sat": mask_sat, "a": a,"b": b}
+        mat['mask1_moy_'+prd_sat1] = prd_sat1_mask1.tolist()
+        mat['mask1_moy_'+prd_sat2] = prd_sat2_mask1.tolist()
+        mat['line_sat'] = line_sat.tolist()
+        mat['rCarre_sat'] = rCarre_sat
+        mat['a1'] = a1
+        mat['b1'] = b1
+        mat['line_aeronet'] = line_station1.tolist()
+        mat['rCarre_1'] = rCarre_1
+        mat['mask1_moy_aeronet'] = station1_mask1.tolist()
+        mat['line_teom'] = line_station2.tolist()
+        mat['rCarre_2'] = rCarre_2
+        mat['mask1_moy_teom'] = station2_mask2.tolist()
+        mat['a2'] = a2
+        mat['b2'] = b2
+        return mat
 
 if __name__ == '__main__':
 
@@ -303,7 +334,7 @@ if __name__ == '__main__':
     lrx = ""
     lry = ""
     z_buffer = 9
-    pas_de_temps = "Week"
+    pas_de_temps = "W"
     periode = "+-5h"
     datedebut = "2006-10-01"
     datefin = "2007-03-31"

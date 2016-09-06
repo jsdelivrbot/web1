@@ -1,5 +1,5 @@
 var selectGeographique = {"Benin":["tanguita", "Nikki"],
-                              "Burkina":["Diapaga","Bogande"],
+                              "Burkina":["Diapaga","Bogande", "Sapouy"],
                               "Mali":["San", "Koro"],
                               "Senegal":["Dakar", "Saint-Louis"],
                             };
