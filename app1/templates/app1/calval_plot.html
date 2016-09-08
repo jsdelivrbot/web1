@@ -9,13 +9,21 @@
         <div class="row" id="plot1"></div>
         <div class="row" id="plot2"></div>
         <div class="row" id="plot3"></div>
+        <div class="row" id="container"></div>
         <script type="text/javascript">
             $(document).ready(function () {
                 var data = {{ jsdatas | safe }};
                 $('#plot1').highcharts({
-                    chart: {
-                        type: 'scatter',
-                        zoomType: 'xy'
+                    xAxis: {
+                        title: {
+                            enabled: true,
+                            text: data.prd1 + ' (' + data.prd1Var + ')'
+                        },
+                    },
+                    yAxis: {
+                        title: {
+                            text: data.sat + ' (' + data.satVar + ')'
+                        }
                     },
                     title: {
                         text: data.prd1 + ' ' + data.station1 + '/' + data.sat + ' ' + data.zone
@@ -23,66 +31,52 @@
                     subtitle: {
                         text: 'Source: CRCT'
                     },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'left',
+                        x: 80,
+                        verticalAlign: 'top',
+                        y: 55,
+                        floating: true,
+                        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#F5F5F5'
+                    },
+                    series: [{
+                        type: 'line',
+                        name: 'y=' +data.a1.toFixed(4) + 'x+' + data.b1.toFixed(2) + ', r2=' + data.rCarre1.toFixed(2),
+                        data: data.line1,
+                        color: 'rgb(255, 102, 102)',
+                        marker: {
+                            enabled: false
+                        },
+                        states: {
+                            hover: {
+                                lineWidth: 0
+                            }
+                        },
+                        enableMouseTracking: false
+                    }, {
+                        type: 'scatter',
+                        name: 'Observations',
+                        data: data.scatterValues1,
+                        color: 'rgb(80,80,80)',
+                        marker: {
+                            radius: 2,
+                        }
+                    }]
+                });
+
+
+                $('#plot2').highcharts({
                     xAxis: {
                         title: {
                             enabled: true,
-                            text: data.prd1 + ' (' + data.prd1Var + ')'
+                            text: data.prd2 + ' (' + data.prd2Var + ')'
                         },
-                        startOnTick: true,
-                        endOnTick: true,
-                        showLastLabel: true
                     },
                     yAxis: {
                         title: {
                             text: data.sat + ' (' + data.satVar + ')'
                         }
-                    },
-                    legend: {
-                        layout: 'vertical',
-                        align: 'left',
-                        verticalAlign: 'top',
-                        x: 100,
-                        y: 70,
-                        floating: true,
-                        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
-                        borderWidth: 1
-                    },
-                    plotOptions: {
-                        scatter: {
-                            marker: {
-                                radius: 5,
-                                states: {
-                                    hover: {
-                                        enabled: true,
-                                        lineColor: 'rgb(100,100,100)'
-                                    }
-                                }
-                            },
-                            states: {
-                                hover: {
-                                    marker: {
-                                        enabled: false
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                headerFormat: '<b>{series.name}</b><br>',
-                                pointFormat: '{point.x} data.prd1Var_units, {point.y} data.satVar_units'
-                            }
-                        }
-                    },
-                    series: [{
-                        name: data.prd1 + ' vs ' + data.sat,
-                        color: 'rgba(75, 75, 75, .5)',
-                        data:data.scatterValues1
-                        }]
-                });
-
-
-                $('#plot2').highcharts({
-                    chart: {
-                        type: 'scatter',
-                        zoomType: 'xy'
                     },
                     title: {
                         text: data.prd2 + ' ' + data.station2 + '/' + data.sat + ' ' + data.zone
@@ -90,61 +84,39 @@
                     subtitle: {
                         text: 'Source: CRCT'
                     },
-                    xAxis: {
-                        title: {
-                            enabled: true,
-                            text: data.prd2 + ' (' + data.prd2Var + ')'
-                        },
-                        startOnTick: true,
-                        endOnTick: true,
-                        showLastLabel: true
-                    },
-                    yAxis: {
-                        title: {
-                            text: data.sat + ' (' + data.satVar + ')'
-                        }
-                    },
                     legend: {
                         layout: 'vertical',
                         align: 'left',
+                        x: 80,
                         verticalAlign: 'top',
-                        x: 100,
-                        y: 70,
+                        y: 55,
                         floating: true,
-                        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
-                        borderWidth: 1
-                    },
-                    plotOptions: {
-                        scatter: {
-                            marker: {
-                                radius: 5,
-                                states: {
-                                    hover: {
-                                        enabled: true,
-                                        lineColor: 'rgb(100,100,100)'
-                                    }
-                                }
-                            },
-                            states: {
-                                hover: {
-                                    marker: {
-                                        enabled: false
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                headerFormat: '<b>{series.name}</b><br>',
-                                pointFormat: '{point.x} {data.prd1Var_units}, {point.y} {data.satVar_units}'
-                            }
-                        }
+                        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#F5F5F5'
                     },
                     series: [{
-                        name: data.prd2 + ' vs ' + data.sat,
-                        color: 'rgba(75, 75, 75, .5)',
-                        data:data.scatterValues2
-                        }]
+                        type: 'line',
+                        name: 'y=' +data.a2.toFixed(4) + 'x+' + data.b2.toFixed(2) + ', r2=' + data.rCarre2.toFixed(2),
+                        data: data.line2,
+                        color: 'rgb(255, 102, 102)',
+                        marker: {
+                            enabled: false
+                        },
+                        states: {
+                            hover: {
+                                lineWidth: 0
+                            }
+                        },
+                        enableMouseTracking: false
+                    }, {
+                        type: 'scatter',
+                        name: 'Observations',
+                        data: data.scatterValues2,
+                        color: 'rgb(80,80,80)',
+                        marker: {
+                            radius: 2,
+                        }
+                    }]
                 });
-
 
                 $('#plot3').highcharts({
                     chart: {
@@ -275,6 +247,7 @@
         </script>
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script src="//rawgithub.com/phpepe/highcharts-regression/master/highcharts-regression.js"> </script>
     </body>
 </html>
 {% endblock content %}

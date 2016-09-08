@@ -122,15 +122,16 @@ def count(x):
     return v
 
 def scatter_stats(df,prd1,prd2):
-    #fonction qui extrait la pente(slope),origine(intercept),coeff corr(r_value), ... de la dataframe(df) pour les valeurs des produits prd1 et prd2
+    #fonction qui extrait la pente(slope),origine(intercept),coeff corr(r_value), ... de la dataframe(df) pour les valeurs des produits prd1(sat1) et prd2(sat2 ou aeronet ou teom)
     # retourne droite de régression(line), 
     if 'moy_'+prd2 in df.columns:
         mask = ~pd.isnull(df['moy_'+prd1]) & ~pd.isnull(df['moy_'+prd2])# masque excluant les lignes n'ayant qu'une valeur sur les 2
         slope, intercept, r_value, p_value, std_err = linregress(df[['moy_'+prd2,'moy_'+prd1]][mask])
         r2 = round(r_value**2, 5)
-        line = slope*df['moy_'+prd2].values+intercept
+        line = slope*df['moy_'+prd2][mask].values+intercept
+        lregr = [list(a) for a in zip(df['moy_'+prd2][mask].values.tolist(), line)]
         scatValues = [list(a) for a in zip(df['moy_'+prd2][mask].values.tolist(), df['moy_'+prd1][mask].values.tolist())]
-        return line.tolist(), r2, slope, intercept, scatValues
+        return lregr, r2, slope, intercept, scatValues
     else:
         return 0,0,0,0,0
     
