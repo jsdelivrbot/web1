@@ -63,6 +63,8 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
     idj2 = np.abs(temps[:]-date2num(date2,temps.units)).argmin()#indice de la date de fin
     lat = nc.variables['latitude'][:]
     lon = nc.variables['longitude'][:]
+    mat_var = nc.variables[variable]
+    var_units = mat_var.units
     #### extraction en fonction du buffer ou des lat/lon
     if not buff:
         lons_idx = np.where((lon > xhg)&(lon < xbd))[0]
@@ -72,18 +74,18 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
         y_min = lats_idx.min()
         y_max = lats_idx.max()
         if lev in range(1,6):
-            vals = nc.variables[variable][idj1:idj2+1 , lev-1, y_min:y_max + 1, x_min:x_max + 1]
+            vals = mat_var[idj1:idj2+1 , lev-1, y_min:y_max + 1, x_min:x_max + 1]
         else :
-            vals = nc.variables[variable][idj1:idj2+1 , y_min:y_max + 1, x_min:x_max + 1]
+            vals = mat_var[idj1:idj2+1 , y_min:y_max + 1, x_min:x_max + 1]
         colpx = vals.shape[1]*vals.shape[2]
     else:
         z = int(np.sqrt(buff))
         idlon = np.abs(lon-station_lon).argmin()
         idlat = np.abs(lat-station_lat).argmin()
         if lev in range(1,6):
-            vals = nc.variables[variable][idj1:idj2+1, lev-1, idlat-(z//2):idlat+(z//2)+1,idlon-(z//2):idlon+(z//2)+1]
+            vals = mat_var[idj1:idj2+1, lev-1, idlat-(z//2):idlat+(z//2)+1,idlon-(z//2):idlon+(z//2)+1]
         else:
-            vals = nc.variables[variable][idj1:idj2+1, idlat-(z//2):idlat+(z//2)+1,idlon-(z//2):idlon+(z//2)+1]
+            vals = mat_var[idj1:idj2+1, idlat-(z//2):idlat+(z//2)+1,idlon-(z//2):idlon+(z//2)+1]
 
         colpx = buff
     #######
@@ -101,7 +103,7 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
     mpx = df[df.columns[:colpx+3]].values
     lmpx = [np.squeeze(x,0) for x in np.split(mpx,mpx.shape[0], axis=0)]
     df[['nbpxvalide_'+prd_sat, 'moy_'+prd_sat, 'px_flag_'+prd_sat]] = np.vstack([pxFlag(m) for m in lmpx])
-    return df, colpx
+    return df, colpx, var_units
     
 def count_nb_pixel(x):
     # fonction de comptage du nb de px
@@ -127,9 +129,10 @@ def scatter_stats(df,prd1,prd2):
         slope, intercept, r_value, p_value, std_err = linregress(df[['moy_'+prd2,'moy_'+prd1]][mask])
         r2 = round(r_value**2, 5)
         line = slope*df['moy_'+prd2].values+intercept
-        return line.tolist(), r2, slope, intercept, df['moy_'+prd1][mask].values.tolist(), df['moy_'+prd2][mask].values.tolist()
+        scatValues = [list(a) for a in zip(df['moy_'+prd2][mask].values.tolist(), df['moy_'+prd1][mask].values.tolist())]
+        return line.tolist(), r2, slope, intercept, scatValues
     else:
-        return 0,0,0,0,0,0
+        return 0,0,0,0,0
     
 def read_csv(csv_file,in_situ,variable_csv, debut, fin,per,df_in):
     # fonction intégrant les données issues du .csv(csv_file) dans le dataframe (df_in), dans l'intervalle de temps debut/fin
@@ -242,7 +245,7 @@ def scatter_plot(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
         
     if not sat2:
         hours1,long_st1, lat_st1 = heure_passage(nom_station)
-        df_sat1, npx = readNC_box(path_sat1,variable_sat1,ulx,uly,lrx,lry, start, end,prd_sat1, level_sat1,pas_de_temps, hours1, long_st1, lat_st1, z_buffer)
+        df_sat1, npx, sat1_units = readNC_box(path_sat1,variable_sat1,ulx,uly,lrx,lry, start, end,prd_sat1, level_sat1,pas_de_temps, hours1, long_st1, lat_st1, z_buffer)
         #chargement des donnees aeronet
         if nom_station1:
             df_sat1 = read_csv(path_station1,"aeronet", variable_station1,start, end,periode,df_sat1)
@@ -254,35 +257,49 @@ def scatter_plot(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
         else:
             dfout = tempo(path_meningite,district,pas_de_temps,start,end,df_sat1,prd_sat1)
         if nom_station1:
-            line_station1, rCarre_1, a1,b1, prd1_mask1, station1_mask1 = scatter_stats(dfout,prd_sat1, "aeronet")
+            line_station1, rCarre_1, a1,b1, scatterValues1 = scatter_stats(dfout,prd_sat1, "aeronet")
         else:
-            line_station1, rCarre_1, a1,b1, prd1_mask1, station1_mask1 = 0,0,0,0,0,0
+            line_station1, rCarre_1, a1,b1, scatterValues1 = 0,0,0,0,0
         if nom_station2:
-            line_station2, rCarre_2, a2,b2, prd1_mask2, station2_mask2 = scatter_stats(dfout,prd_sat1,"teom")
+            line_station2, rCarre_2, a2,b2, scatterValues2 = scatter_stats(dfout,prd_sat1,"teom")
         else:
-            line_station2, rCarre_2, a2,b2, prd1_mask2, station2_mask2 = 0,0,0,0,0,0
+            line_station2, rCarre_2, a2,b2, scatterValues2 = 0,0,0,0,0
         mat = {}
+        mat['sat'] = prd_sat1
+        mat['satVar'] = variable_sat1
+        mat['satVar_units'] = sat1_units
+        if z_buffer:
+            mat['zone'] = "buffer %d px" % z_buffer
+        else:
+            mat['zone'] = "zone %.2f, %.2f, %.2f, %.2f " % (ulx, uly, lrx, lry)
+        mat['prd1'] = "aeronet"
+        mat['station1'] = nom_station1
+        mat['prd1Var'] = variable_station1
+        mat['prd1Var_units'] = ""
+        mat['prd2'] = "teom"
+        mat['station2'] = nom_station2
+        mat['prd2Var'] = variable_station2
+        mat['prd2Var_units'] = ""
         mat['dates'] = [d.date() for d in dfout.index[:].to_datetime()]
+        mat['periode'] = pas_de_temps
         for c in dfout.columns:
             mat[c] = dfout[c].values.tolist()
-        mat['mask1_moy_'+prd_sat1] = prd1_mask1
-        mat['mask2_moy_'+prd_sat1] = prd1_mask2
-        mat['line_aeronet'] = line_station1
-        mat['rCarre_1'] = rCarre_1
-        mat['mask1_moy_aeronet'] = station1_mask1
-        mat['a1'] = a1
-        mat['b1'] = b1
-        mat['line_teom'] = line_station2
-        mat['rCarre_2'] = rCarre_2
-        mat['mask1_moy_teom'] = station2_mask2
-        mat['a2'] = a2
-        mat['b2'] = b2
+        mat['scatterValues1'] = scatterValues1      # liste des valeurs sat1/aeronet
+        mat['line1'] = line_station1                # droite de regression sat1/aeronet
+        mat['rCarre1'] = rCarre_1                   # rCarre scatterplot sat1/aeronet
+        mat['a1'] = a1                              # pente de la droite de regr
+        mat['b1'] = b1                              # intersection
+        mat['scatterValues2'] = scatterValues2      # liste des valeurs sat1 (nan enleves) / teom
+        mat['line2'] = line_station2                # droite de regression sat1/teom
+        mat['rCarre2'] = rCarre_2                   # rCarre scatterplot sat1/teom
+        mat['a2'] = a2                              # pente de la droite de regr
+        mat['b2'] = b2                              # intersection
         return mat
 
     
     else:
-        df_sat1, npx1 = readNC_box(path_sat1,variable_sat1,ulx,uly,lrx,lry, start,end, prd_sat1, level_sat1, pas_de_temps)
-        df_sat2, npx2 = readNC_box(path_sat2,variable_sat2,ulx,uly,lrx,lry, start,end, prd_sat2, level_sat2, pas_de_temps)
+        df_sat1, npx1, sat1_units = readNC_box(path_sat1,variable_sat1,ulx,uly,lrx,lry, start,end, prd_sat1, level_sat1, pas_de_temps)
+        df_sat2, npx2, sat2_units = readNC_box(path_sat2,variable_sat2,ulx,uly,lrx,lry, start,end, prd_sat2, level_sat2, pas_de_temps)
         #df_sat1_2 = df_sat1[df_sat1.columns[-6:]].join(df_sat2[df_sat2.columns[-6:]], how='outer')
         df_sat1_2 = df_sat1.join(df_sat2, how='outer')
         #chargement des donnees aeronet
@@ -297,29 +314,47 @@ def scatter_plot(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
             dfout = tempo(path_meningite,district,pas_de_temps,start,end,df_sat1_2,prd_sat1,prd_sat2)
         line_sat, rCarre_sat,a1,b1, prd_sat1_mask1, prd_sat2_mask1 = scatter_stats(dfout,prd_sat1, prd_sat2)
         if nom_station1:
-            line_station1, rCarre_2, a2,b2, prd1_mask2, station1_mask2 = scatter_stats(dfout,prd_sat1, "aeronet")
+            line_station, rCarre_2, a2,b2, scatterValues1 = scatter_stats(dfout,prd_sat1, "aeronet")
         elif nom_station2:
-            line_station2, rCarre_2, a2,b2, prd1_mask2, station2_mask2 = scatter_stats(dfout,prd_sat1,"teom")
+            line_station, rCarre_2, a2,b2, scatterValues2 = scatter_stats(dfout,prd_sat1,"teom")
         else:
-            line_station2, rCarre_2, a2,b2, prd1_mask2, station2_mask2 = 0,0,0,0,0,0
+            line_station, rCarre_2, a2,b2, scatterValues2 = 0,0,0,0,0
         mat = {}
+        mat['sat'] = prd_sat1
+        mat['satVar'] = variable_sat1
+        mat['satVar_units'] = sat1_units
+        mat['zone'] = "zone %.2f, %.2f, %.2f, %.2f " % (ulx, uly, lrx, lry)
+        mat['prd1'] = prd_sat2
+        mat['station1'] = ""
+        mat['prd1Var'] = variable_sat2
+        mat['prd1Var_units'] = sat2_units
+        if nom_station1:
+            mat['prd2'] = "Aeronet"
+            mat['station2'] = nom_station1
+            mat['prd2Var'] = variable_station1
+            mat['prd2Var_units'] = ""
+        elif nom_station2:
+            mat['prd2'] = "Teom"
+            mat['station2'] = nom_station2
+            mat['prd2Var'] = variable_station2
+            mat['prd2Var_units'] = ""
+        else:
+            mat['prd2'] = ""
+            mat['prd2Var'] = ""
+            mat['prd2Var_units'] = ""
         mat['dates'] = [d.date() for d in dfout.index[:].to_datetime()]
         for c in dfout.columns:
             mat[c] = dfout[c].values.tolist()
-        mat['mask1_moy_'+prd_sat1] = prd_sat1_mask1.tolist()
-        mat['mask1_moy_'+prd_sat2] = prd_sat2_mask1.tolist()
-        mat['line_sat'] = line_sat.tolist()
-        mat['rCarre_sat'] = rCarre_sat
-        mat['a1'] = a1
-        mat['b1'] = b1
-        mat['line_aeronet'] = line_station1.tolist()
-        mat['rCarre_1'] = rCarre_1
-        mat['mask1_moy_aeronet'] = station1_mask1.tolist()
-        mat['line_teom'] = line_station2.tolist()
-        mat['rCarre_2'] = rCarre_2
-        mat['mask1_moy_teom'] = station2_mask2.tolist()
-        mat['a2'] = a2
-        mat['b2'] = b2
+        mat['scatterValues1'] = scatterValues1         # liste des valeurs sat1 (nan enleves) / sat2
+        mat['line1'] = line_sat.tolist()               # droite de regression sat1/sat2
+        mat['rCarre1'] = rCarre_sat                    # rCarre scatterplot sat1/sat2
+        mat['a1'] = a1                                 # pente de la droite de regr
+        mat['b1'] = b1                                 # intersection
+        mat['scatterValues2'] = scatterValues2         # liste des valeurs sat1 (nan enleves) / station
+        mat['line2'] = line_station                    # droite de regression sat1/station
+        mat['rCarre2'] = rCarre_2                      # rCarre scatterplot sat1/station
+        mat['a2'] = a2                                 # pente de la droite de regr
+        mat['b2'] = b2                                 # intersection
         return mat
 
 if __name__ == '__main__':
@@ -369,7 +404,7 @@ if __name__ == '__main__':
     variable_meningite = "incidence"
     ######################################################################################
     ######################################################################################
-    resultats = scatter_plot(ulx,uly,lrx,lry,z_buffer,
+    data = scatter_plot(ulx,uly,lrx,lry,z_buffer,
                              pas_de_temps,periode,datedebut, datefin,
                              type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
                              type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,

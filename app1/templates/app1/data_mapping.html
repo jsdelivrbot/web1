@@ -1,6 +1,4 @@
-{% extends 'app1/base.html' %}
 {% load staticfiles %}
-{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,6 +32,10 @@
 	<!-- SelectPicker Bootstrap CSS -->
 	<link rel="stylesheet" href="{% static 'app1/script_appli_Guillaume/bower_components/bootstrap/plugins/selectpicker/dist/css/bootstrap-select.css' %}" />
 
+     <script src="{% static 'app1/jquery/jquery-2.2.0.min.js' %}"></script>
+     <link rel="stylesheet" href="{% static 'app1/bootstrap3.3/css/bootstrap.min.css' %}" >
+     <link rel="stylesheet" type="text/css" href="{% static 'app1/css/base.css' %}" />
+     <script src="{% static 'app1/bootstrap3.3/js/bootstrap.min.js' %}"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -44,7 +46,31 @@
 </head>
 
 <body>
-
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <ul class="nav navbar-nav">
+            <li><a href={% url 'data_mapping' %}><b>Viewer</b></a></li>
+            <li><a href={% url 'point_viewer' %}><b>Point Viewer</b></a></li>
+            <li><a href={% url 'thredds' %}><b>Thredds</b></a></li>
+            <li><a href={% url 'earthquakes' %}><b>Earthquakes</b></a></li>
+            <li><a href={% url 'stations' %}><b>Stations</b></a></li>
+            <li><a href={% url 'meteo' %}><b>Meteo</b></a></li>
+            <li><a href={% url 'map' %}><b>Map</b></a></li>
+            <li><a href={% url 'calval' %}><b>CalVal</b></a></li>
+            <li><a href="/accounts/logout/"><b>Logout</b></a></li>
+        </ul>
+    </nav>
+    <header class="row">
+        <div class="col-lg-4">
+            <br/>
+            <br/>
+            <h4><b>Teledetection</b></h4>
+            <h4><b>Poussieres</b></h4>
+            <h4><b>Meningite</b></h4>
+        </div>
+        <div class="col-lg-8">
+            <img src="{% static 'app1/css/image_en_tete1.jpeg' %}"/>
+        </div>
+    </header>
     <div id="wrapper">
 
         <div id="page-wrapper">
@@ -212,10 +238,10 @@
         </div>
         <!-- /#page-wrapper -->
         <footer class="footer">
-			<div class="container">
-				<div class="text-muted">@Centre de Recherche Climatologique - 2016</p>
-			</div>
-		</footer>
+    			<div class="container">
+    				<div class="text-muted">@Centre de Recherche Climatologique - 2016</p>
+    			</div>
+        </footer>
     </div>
     <!-- /#wrapper -->
     
@@ -254,4 +280,3 @@
 </body>
 
 </html>
-{% endblock content %}

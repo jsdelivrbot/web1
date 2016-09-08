@@ -12,22 +12,21 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 var data = {{ jsdatas | safe }};
-                alert(data.moy_aeronet);
                 $('#plot1').highcharts({
                     chart: {
                         type: 'scatter',
                         zoomType: 'xy'
                     },
                     title: {
-                        text: 'Height Versus Weight of 507 Individuals by Gender'
+                        text: data.prd1 + ' ' + data.station1 + '/' + data.sat + ' ' + data.zone
                     },
                     subtitle: {
-                        text: 'Source: Heinz  2003'
+                        text: 'Source: CRCT'
                     },
                     xAxis: {
                         title: {
                             enabled: true,
-                            text: 'Height (cm)'
+                            text: data.prd1 + ' (' + data.prd1Var + ')'
                         },
                         startOnTick: true,
                         endOnTick: true,
@@ -35,7 +34,7 @@
                     },
                     yAxis: {
                         title: {
-                            text: 'Weight (kg)'
+                            text: data.sat + ' (' + data.satVar + ')'
                         }
                     },
                     legend: {
@@ -68,27 +67,91 @@
                             },
                             tooltip: {
                                 headerFormat: '<b>{series.name}</b><br>',
-                                pointFormat: '{point.x} cm, {point.y} kg'
+                                pointFormat: '{point.x} data.prd1Var_units, {point.y} data.satVar_units'
                             }
                         }
                     },
                     series: [{
-                        name: 'Female',
-                        color: 'rgba(223, 83, 83, .5)',
-                        data:data.mask1_moy_aeronet
-                        },{
-                        name: 'Male',
-                        color: 'rgba(119, 152, 191, .5)',
-                        data:data.mask1_moy_MYD04
+                        name: data.prd1 + ' vs ' + data.sat,
+                        color: 'rgba(75, 75, 75, .5)',
+                        data:data.scatterValues1
                         }]
                 });
 
+
                 $('#plot2').highcharts({
+                    chart: {
+                        type: 'scatter',
+                        zoomType: 'xy'
+                    },
+                    title: {
+                        text: data.prd2 + ' ' + data.station2 + '/' + data.sat + ' ' + data.zone
+                    },
+                    subtitle: {
+                        text: 'Source: CRCT'
+                    },
+                    xAxis: {
+                        title: {
+                            enabled: true,
+                            text: data.prd2 + ' (' + data.prd2Var + ')'
+                        },
+                        startOnTick: true,
+                        endOnTick: true,
+                        showLastLabel: true
+                    },
+                    yAxis: {
+                        title: {
+                            text: data.sat + ' (' + data.satVar + ')'
+                        }
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'left',
+                        verticalAlign: 'top',
+                        x: 100,
+                        y: 70,
+                        floating: true,
+                        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
+                        borderWidth: 1
+                    },
+                    plotOptions: {
+                        scatter: {
+                            marker: {
+                                radius: 5,
+                                states: {
+                                    hover: {
+                                        enabled: true,
+                                        lineColor: 'rgb(100,100,100)'
+                                    }
+                                }
+                            },
+                            states: {
+                                hover: {
+                                    marker: {
+                                        enabled: false
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                headerFormat: '<b>{series.name}</b><br>',
+                                pointFormat: '{point.x} {data.prd1Var_units}, {point.y} {data.satVar_units}'
+                            }
+                        }
+                    },
+                    series: [{
+                        name: data.prd2 + ' vs ' + data.sat,
+                        color: 'rgba(75, 75, 75, .5)',
+                        data:data.scatterValues2
+                        }]
+                });
+
+
+                $('#plot3').highcharts({
                     chart: {
                         zoomType: 'xy'
                     },
                     title: {
-                        text: 'Average Weekly'
+                        text: data.periode + ' Average'
                     },
                     subtitle: {
                         text: 'Source: CRCT'
@@ -101,44 +164,43 @@
                         labels: {
                             format: '{value}',
                             style: {
-                                color: Highcharts.getOptions().colors[2]
+                                color: Highcharts.getOptions().colors[0]
                             }
                         },
                         title: {
-                            text: 'MYD04 AOT',
+                            text: data.sat,
                             style: {
-                                color: Highcharts.getOptions().colors[2]
+                                color: Highcharts.getOptions().colors[0]
                             }
                         },
                         opposite: true
-            
                     }, { // Secondary yAxis
                         gridLineWidth: 0,
                         title: {
-                            text: 'Aeronet',
+                            text: data.prd1,
                             style: {
-                                color: Highcharts.getOptions().colors[0]
+                                color: Highcharts.getOptions().colors[1]
                             }
                         },
                         labels: {
                             format: '{value}',
                             style: {
-                                color: Highcharts.getOptions().colors[0]
+                                color: Highcharts.getOptions().colors[1]
                             }
                         }
             
                     }, { // Tertiary yAxis
                         gridLineWidth: 0,
                         title: {
-                            text: 'Teom',
+                            text: data.prd2,
                             style: {
-                                color: Highcharts.getOptions().colors[1]
+                                color: Highcharts.getOptions().colors[2]
                             }
                         },
                         labels: {
                             format: '{value}',
                             style: {
-                                color: Highcharts.getOptions().colors[1]
+                                color: Highcharts.getOptions().colors[2]
                             }
                         },
                         opposite: true
@@ -156,7 +218,6 @@
                                 color: Highcharts.getOptions().colors[3]
                             }
                         },
-                        opposite: true
                     }],
                     tooltip: {
                         shared: true
@@ -171,19 +232,19 @@
                         backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
                     },
                     series: [{
-                        name: 'MYD04',
+                        name: data.sat + '( ' + data.satVar + ')',
                         type: 'spline',
-                        yAxis: 1,
-                        data: data.moy_MYD04,
+                        yAxis: 2,
+                        data: data['moy_'+data.sat],
                         tooltip: {
                             valueSuffix: ''
                         }
             
                     }, {
-                        name: 'Aeronet',
+                        name: data.prd1 + '( ' + data.prd1Var + ')',
                         type: 'spline',
-                        yAxis: 2,
-                        data: data.moy_Aeronet,
+                        yAxis: 1,
+                        data: data['moy_'+data.prd1],
                         marker: {
                             enabled: false
                         },
@@ -193,56 +254,21 @@
                         }
             
                     }, {
-                        name: 'Teom',
+                        name: data.prd2 + '( ' + data.prd2Var + ')',
                         type: 'spline',
-                        data: data.moy_teom,
+                        yAxis: 2,
+                        data: data['moy_'+data.prd2],
                         tooltip: {
                             valueSuffix: ''
                         }
                     }, {
                         name: 'Incidence',
                         type: 'spline',
+                        yAxis: 1,
                         data: data.incidence,
                         tooltip: {
                             valueSuffix: ''
                         }
-                    }]
-                });
-                
-                $('#plot3').highcharts({
-                    title: {
-                        text: 'Monthly Average Temperature',
-                        x: -20 //center
-                    },
-                    subtitle: {
-                        text: 'Source: WorldClimate.com',
-                        x: -20
-                    },
-                    xAxis: {
-                        categories: data.dates
-                    },
-                    yAxis: {
-                        title: {
-                            text: 'Temperature (°C)'
-                        },
-                        plotLines: [{
-                            value: 0,
-                            width: 1,
-                            color: '#808080'
-                        }]
-                    },
-                    tooltip: {
-                        valueSuffix: '°C'
-                    },
-                    legend: {
-                        layout: 'vertical',
-                        align: 'right',
-                        verticalAlign: 'middle',
-                        borderWidth: 0
-                    },
-                    series: [{
-                        name: 'MYD04',
-                        data: data.moy_MYD04
                     }]
                 });
             });

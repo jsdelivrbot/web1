@@ -140,7 +140,7 @@ def calval(request):
                      nom_station1,variable_station1,niveau,
                      nom_station2,variable_station2,
                      pays,district,variable_meningite)
-        print df
+        print df.keys()
         jsdatas = json.dumps(df, cls=DjangoJSONEncoder)
         
         return render_to_response('app1/calval_plot.html', {'jsdatas': jsdatas}, context_instance=RequestContext(request))
