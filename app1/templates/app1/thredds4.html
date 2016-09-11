@@ -1,0 +1,83 @@
+{% extends "app1/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WMS Time</title>
+    <link rel="stylesheet" href="http://openlayers.org/en/v3.18.2/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="http://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="http://openlayers.org/en/v3.18.2/build/ol.js"></script>
+  </head>
+  <body>
+    <div id="map" class="map"></div>
+    <div role="group" aria-label="Animation controls">
+      <button id="play" type="button">Play</button>
+      <button id="pause" type="button">Pause</button>
+      <span id="info"></span>
+    </div>
+    <script>
+      var deb = {{ deb | safe }};
+      var startDate = new Date(Date.parse('2007-01-01'));
+      var frameRate = 0.5; // frames per second
+      var animationId = null;
+	  alert(deb.date);
+      var layers = [
+        new ol.layer.Tile({
+          source: new ol.source.OSM()
+        }),
+        new ol.layer.Tile({
+          source: new ol.source.TileWMS(/** @type {olx.source.TileWMSOptions} */ ({
+            url: "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=ncWMS",
+            params: {'LAYERS': 'Surface_Temperature', 'TIME': startDate.toISOString(), 'styles': "boxfill/rainbow",
+                        'colorscalerange': "250,350",}
+          }))
+        })
+      ];
+      var map = new ol.Map({
+        layers: layers,
+        target: 'map',
+        view: new ol.View({
+          center: [0, 10],
+          zoom: 4
+        })
+      });
+
+      var updateInfo = function() {
+        var el = document.getElementById('info');
+        el.innerHTML = startDate.toISOString();
+      };
+
+      var setTime = function() {
+        startDate.setHours(startDate.getHours() + 24);
+        layers[1].getSource().updateParams({'TIME': startDate.toISOString()});
+        updateInfo();
+      };
+
+      var stop = function() {
+        if (animationId !== null) {
+          window.clearInterval(animationId);
+          animationId = null;
+        }
+      };
+
+      var play = function() {
+        stop();
+        animationId = window.setInterval(setTime, 500 / frameRate);
+      };
+
+      var startButton = document.getElementById('play');
+      startButton.addEventListener('click', play, false);
+
+      var stopButton = document.getElementById('pause');
+      stopButton.addEventListener('click', stop, false);
+
+      updateInfo();
+    </script>
+  </body>
+</html>
+{% endblock content %}
+{% block form %}
+    {% include "app1/form.html" %}
+{% endblock form %}

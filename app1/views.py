@@ -16,7 +16,23 @@ from scatter_plot import scatter_plot
 
 def thredds(request):
     print request.POST
-    return render_to_response('app1/thredds.html')
+    if request.method == "POST":
+        deb = request.POST['datedebut'] #"2007-01-01"
+        fin = request.POST['datefin'] #"2007-06-30"
+        types = request.POST['type'] 
+        sat = request.POST['capteur']  
+        prod = request.POST['produit']
+        res_temp = request.POST['pasdetemps']
+        res = request.POST['resospatiale']
+        varname = request.POST['variable']
+        ncfile = prod + '_r' + res + '_' + res_temp + '.nc'
+        URL = "http://localhost:8080/thredds/wms/" + types + "/" + sat + "/" + prod + "/res" + res + "/"+ ncfile + "?service=ncWMS"
+        dictdatas = {'URL': URL,'ncfile': ncfile, 'variable': varname, 'date': deb}
+        info = json.dumps(dictdatas, cls=DjangoJSONEncoder)
+        return render_to_response('app1/thredds3.html',{'Info': info},context_instance=RequestContext(request))
+    else:
+    	info = json.dumps({"date": "2007-01-01"}, cls=DjangoJSONEncoder)
+        return render_to_response('app1/thredds4.html',{'deb': info},context_instance=RequestContext(request))
 
 def viewer(request):
     return render_to_response('app1/data_mapping.html')
