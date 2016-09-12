@@ -1,0 +1,131 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/select2/dist/css/select2.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'app1/css/form.css' %}" >
+        <script type="text/javascript" src="{% static 'bootstrap/select2/dist/js/select2.js' %}"></script>
+        <!--
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+        -->
+        
+
+    </head>
+    <body>
+        </br>
+        <div class="row">
+            <form id="moyenne" action="" method="post" class="form-horizontal">{% csrf_token %}      
+                <div class="row" id="Sat">
+                    <div class="row">
+                        <label>Sélection de la donnée</label>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <select class="form-control" name="type" id="typeS1" >
+                                <option selected hidden>Type de données</option>
+                            </select>
+                            <select class="form-control" name="capteur" id="capteurS1" >
+                                <option selected hidden>Capteur/Source</option>
+                            </select>
+                            <select class="form-control" name="produit" id="produitS1" >
+                                <option selected hidden>Produit</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6">
+                            <select class="form-control" name="variable" id="variableS1" >
+                                <option selected hidden>Variable</option>
+                            </select>
+                            <select class="form-control" name="resospatiale" id="resospatialeS1" >
+                                <option selected hidden>Résolution spatiale</option>
+                            </select>
+                            <select class="form-control" name="pasdetemps" id="pasdetempsSel1" >
+                                <option selected hidden>Résolution temporelle</option>
+                                <option value="d">Quotidien</option>
+                                <option value="w">Hebdomadaire</option>
+                                <option value="m">Mensuel</option>
+                                <option value="t">Trimestriel</option>
+                            </select>
+                            <select class="form-control" name="level1" id="levelS1" >
+                                <option data-hidden="true">Layer</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="Periode">
+                    <div class="row">
+                        <label>Période de traitement : </label>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="input-group">
+                                <label for="date1" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
+                                <input id="date1" name="datedebut" type="text" class="date-picker form-control"/>
+                            </div>
+                            <div class="input-group">
+                                <label for="date2" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
+                                <input id="date2" name="datefin" type="text" class="date-picker form-control"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div role="group" aria-label="Animation controls">
+                              <button id="play" type="button">Play</button>
+                              <button id="pause" type="button">Pause</button>
+                              <span id="info"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </br>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <select class="form-control" name="date" id="date">
+                            <option selected hidden>date</option>
+                            <option value="2007-01-01">2007-01-01</option>
+                            <option value="2007-02-01">2007-02-01</option>
+                        </select>
+                        <div class="form-group">
+                            <label>Thème de la colorbar:</label>			 
+                            <select class="form-control" id="Colorbar">
+                                <option>rainbow</option>
+                                <option>occam</option>
+                                <option>redblue</option>
+                                <option>ncview</option>
+                                <option>sst_36</option>
+                                <option>greyscale</option>
+                                <option>alg2</option>
+                                <option>occam_pastel</option>
+                                <option>ferret</option>
+                                <option>alg</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Taux de dégradé de la colorbar</label>			 
+                            <select class="form-control" name="colorbandNum" onChange="setColorband()">
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="185">185</option>
+                                    <option value="254">254</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div id="colorbar"></div>
+                    </div>
+                </div>
+                </br>
+                <div>
+                    <input type="submit" value="SUBMIT">
+                </div>
+            </form>
+        </div>
+        <br/>
+          
+        <script type="text/javascript" src="{% static 'app1/jquery/jquery-ui-1.11.4/jquery-ui.min.js' %}"></script>
+        <script src="{% static 'app1/jsPerso/map.js' %}"></script>            
+        <script>
+            var a = {{ deb | safe }};
+            affiche(a.date);
+        </script>
+    </body>
+</html>

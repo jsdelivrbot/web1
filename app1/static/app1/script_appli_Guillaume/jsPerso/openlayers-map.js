@@ -54,7 +54,7 @@ function initMap()
 			layers: variable,
 			transparent: "true",
 			format: "image/png",
-			styles: "rainbow",
+			styles: "boxfill/rainbow",
 			colorscalerange: '265,340',
 			time:"2007-01-15T00:00:00",
 			numcolorbands : 10,
