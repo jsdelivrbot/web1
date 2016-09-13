@@ -305,9 +305,14 @@ function getInfos()
     }
         //ScaleMin/ScaleMax :
     var scaleMinForm= $("input[name='scaleMin']").val();
+    
+        lstInfos.scaleMin=scaleMinForm;
+    
     var scaleMaxForm= $("input[name='scaleMax']").val();
-    lstInfos.scaleMin=scaleMinForm;
-    lstInfos.scaleMax=scaleMaxForm;
+    
+        lstInfos.scaleMax=scaleMaxForm;
+    
+    
     
         //Date
     var dateForm= $("input[id='date1']").val();
@@ -400,7 +405,29 @@ function setColorband()
     }	
 }
 
-
+function setMinMax()
+{
+	if(lstInfos.unit=='K')
+	{
+        	lstInfos.scaleMin -=272,15;
+		lstInfos.scaleMax -=272,15;
+	}
+	var min = parseFloat(lstInfos.scaleMin);
+	var max = parseFloat(lstInfos.scaleMax);
+	var smid = (min + max) /2;
+	var smidmax = (max+smid)/2;
+	var smidmin = (min+smid)/2;
+	
+		//Extremes
+		$("#smin").html(parseFloat(lstInfos.scaleMin).toPrecision(3));	
+		$("#smax").html(parseFloat(lstInfos.scaleMax).toPrecision(3));	
+		//Tiers
+		$("#smidmax").html(smidmax.toPrecision(3));	
+		$("#smidmin").html(smidmin.toPrecision(3));	
+		//Milieu
+		$("#smid").html(smid.toPrecision(3));
+	
+}
 //******************************TRAITEMENT****************************************//
 
 
@@ -432,8 +459,6 @@ function majLayer()
        
         csr = lstInfos.scaleMin+","+lstInfos.scaleMax;
         style = "boxfill/"+lstInfos.colorbar;
-    var url = ROOT + "/wms/satellite/modis/MYD04/res009/MYD04_r009_d.nc?service=ncWMS";
-    alert(URL);
     if(typeof map.layers[1] !=='undefined')    //si il existe déja un layer
     {   
         map.removeLayer(map.layers[1]);         //supprimer ce layer
@@ -457,8 +482,11 @@ function majLayer()
     );    
     map.addLayer(layer);
 
-    //setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
+    setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
 }
+
+
+
 
 function updateMap()
 {
