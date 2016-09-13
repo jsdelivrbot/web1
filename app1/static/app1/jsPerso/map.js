@@ -66,14 +66,43 @@ var level2 = [];
 var level3 = [];
 var level30 = ['AerosolAbsOpticalDepthVsHeight_354_nm', 'FinalAerosolOpticalDepth_358_nm'];
 
+//Variables globales composant la carte
+var map;
+var fond;
+var mapPanel;
 
-function affiche(a){
-    alert(a);
-}
+//Racine de l'URL de la requete (nom du serveur TDS)
+const ROOT = "http://localhost:8080/thredds/";
+
+//Objet contenant les informations choisies par l'utilisateur
+var lstInfos = {
+    date:"",
+    param:"",
+    unite:"",
+    nomDataset:"",
+    capteur:"",
+    produit:"",
+    resspatiale:"",
+    restempo:"",
+    layer:"",
+    nomFichier:"",
+    colorbar:"",
+    scaleMin:"",
+    scaleMax:"",
+    bbox:'',
+    colorbarBand:'',
+    opacity:''
+    };
+    
+//Tableau des catalogues disponibles
+var tabCatalog=[];
+
+
+//*********************************FORMULAIRE***************************************//
 
 function setSelect(array, bx){
     for (var tp in array) {
-    		bx.options[bx.options.length] = new Option(tp, tp);
+            bx.options[bx.options.length] = new Option(tp, tp);
     }
 }
 
@@ -101,10 +130,10 @@ function setForm(){
         //charge les choix de capteur
         setSelect(listvar[this.value], selectSource1[1]);
         $("[id^='date']").datepicker("setDate", null);
-    	};
+        };
     
     //choix du capteur
-    selectSource1[1].onchange = function(){		 
+    selectSource1[1].onchange = function(){         
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 2);
         if (this.selectedIndex < 1)
@@ -113,7 +142,7 @@ function setForm(){
         setSelect(listvar[typeS1.value][this.value], selectSource1[2]);
         $("[id^='date']").datepicker("setDate", null);
     };
-    	
+        
     //choix du produit
     selectSource1[2].onchange = function(){
 
@@ -161,12 +190,12 @@ function setForm(){
                 $( "#date1" ).datepicker( "option", "maxDate", selectedDate );
                 }
         });
-    	};
+        };
     
     //variable Changed
-    selectSource1[3].onchange = function(){		 
+    selectSource1[3].onchange = function(){         
     
-        resetSelect(selectSource1, 5);            		 
+        resetSelect(selectSource1, 5);                     
         if (this.selectedIndex < 1)
             return; // done
         
@@ -182,7 +211,263 @@ function setForm(){
 }
 
 
+
+function getInfos()
+{
+        //vide objet info précédente
+    lstInfos.date="";
+    lstInfos.param="";
+    lstInfos.nomDataset="";
+    lstInfos.capteur="",
+    lstInfos.produit="",
+    lstInfos.resspatiale="",
+    lstInfos.restempo="",
+    lstInfos.layer="",
+    lstInfos.nomFichier="",
+    lstInfos.colorbar="";
+    lstInfos.scaleMin="";
+    lstInfos.scaleMax="";
+    lstInfos.colorbarBand='';
+    lstInfos.opacity='';
+    lstInfos.unite='';
+    
+        //Datasets
+    var type = $('#typeS1').val();
+    if(type=='Type de données')
+    {
+        
+        alert("Erreur ! Aucun type de données sélectionné !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.nomDataset = type;
+    }
+    
+    var capteur = $('#capteurS1').val();
+    if(capteur=='Capteur/Source')
+    {
+        
+        alert("Erreur ! Aucune source de données sélectionnée !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.capteur = capteur;
+    }
+
+    var produit = $('#produitS1').val();
+    if(produit=='Produit')
+    {
+        
+        alert("Erreur ! Aucun produit sélectionné !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.produit = produit;
+    }
+
+    var resospatiale = $('#resospatialeS1').val();
+    if(resospatiale=='Résolution spatiale')
+    {
+        
+        alert("Erreur ! Aucune résolution spatiale sélectionnée !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.resspatiale = resospatiale;
+    }
+
+    var restempo = $('#pasdetempsSel1').val();
+    if(restempo=='Résolution temoprelle')
+    {
+        
+        alert("Erreur ! Aucun type de données sélectionné !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.restempo = restempo;
+    }
+
+    var level = $('#levelS1').val();
+    if(level=='layer')
+    {
+        
+        alert("Erreur ! Aucun niveau de couche sélectionné !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.level = level;
+    }
+        //ScaleMin/ScaleMax :
+    var scaleMinForm= $("input[name='scaleMin']").val();
+    var scaleMaxForm= $("input[name='scaleMax']").val();
+    lstInfos.scaleMin=scaleMinForm;
+    lstInfos.scaleMax=scaleMaxForm;
+    
+        //Date
+    var dateForm= $("input[id='date1']").val();
+    if(dateForm=='')
+    {
+        alert("Erreur ! Aucune date saisie !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.date=dateForm;
+    }
+
+    var nomFichier = produit + "_r" + resospatiale + "_" + restempo + ".nc";
+    lstInfos.nomFichier = nomFichier;
+    
+        //ColorBar
+    var colorbarForm = $("#Colorbar option:selected").text();
+    lstInfos.colorbar = colorbarForm;
+        //Colorband
+    var colorbarBand = $("select[name='colorbandNum']").val();
+    lstInfos.colorbarBand = colorbarBand;
+    
+        //Opacité
+    var opacite = $("select[name='opacity']").val();
+    lstInfos.opacity = opacite;
+    
+        //Paramètres
+    var paramForm = $("#variableS1 option:selected").text();
+    if(lstInfos.paramForm==''){
+        alert("Erreur ! Aucun paramètre selectionné !");
+        throw new Exception();
+    };
+    lstInfos.param = paramForm;
+
+}
+
+
+function initMap()
+{
+    map = new OpenLayers.Map('map',
+        {
+            projection: new OpenLayers.Projection("EPSG:4326"),
+            resolutions: [0.03, 0.05,0.09, 0.15, 0.4]
+        }
+    );
+    fond = new OpenLayers.Layer.WMS(
+        "OpenLayers WMS",
+        "http://vmap0.tiles.osgeo.org/wms/vmap0",
+        {
+            layers: 'basic',
+        },
+        {isBaseLayer: true}
+    );
+    
+    map.addLayer(fond);
+    
+    map.zoomToMaxExtent();
+    map.events.register('click', map, getInfosMap);
+    
+    
+}
+
+function setColorbar()
+{
+    var nomColorbar = $("#Colorbar").val();
+    var nbColorband = $("select[name='colorbandNum']").val();
+    var src_img = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
+    var img = "<img height='200px' width='50px' src='http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
+    $("#colorbar").html(img);
+
+    if(typeof map.layers[1] !=='undefined')    //si il existe déja un layer
+    {   
+        map.layers[1].params.STYLES = "boxfill/"+nomColorbar;         //modifier la colorbar
+        map.layers[1].redraw(true);
+    }
+}
+
+function setColorband()
+{
+    var nomColorbar = $("#Colorbar").val();
+    var nbColorband = $("select[name='colorbandNum']").val();
+    var src_img = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
+    var img = "<img height='200px' width='50px' src='http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
+    $("#colorbar").html(img);
+    if(typeof map.layers[1] !=='undefined')    //si il existe déja un layer
+    {   
+        map.layers[1].params.NUMCOLORBANDS = nbColorband;
+        map.layers[1].redraw(true);   //actualise la map
+    }	
+}
+
+
+//******************************TRAITEMENT****************************************//
+
+
+function majLayer()
+{
+    //Récupère les infos saisies par l'utilisateur
+    try
+    {
+    getInfos();
+    }
+    catch(e)
+    {
+        return null;
+    }
+    //setDescLayer();  //mise a jour description du layer
+    //pour tout les dataset selectionnés : générer l'URL à parser
+    var URL = ROOT+ "wms/" +
+        lstInfos.nomDataset +
+        "/" + lstInfos.capteur +
+        "/" + lstInfos.produit +
+        "/res" + lstInfos.resspatiale +
+        "/" + lstInfos.nomFichier +
+        "?service=WMS&" +
+        "version=1.3.0" +
+        "&request=GetMap&CRS="+encodeURIComponent("CRS:84") +
+        "&LAYERS=" + lstInfos.param +
+        "&TRANSPARENT=true&FORMAT=image%2Fpng" +
+        "&SRS=EPSG";
+       
+        csr = lstInfos.scaleMin+","+lstInfos.scaleMax;
+        style = "boxfill/"+lstInfos.colorbar;
+    var url = ROOT + "/wms/satellite/modis/MYD04/res009/MYD04_r009_d.nc?service=ncWMS";
+    alert(URL);
+    if(typeof map.layers[1] !=='undefined')    //si il existe déja un layer
+    {   
+        map.removeLayer(map.layers[1]);         //supprimer ce layer
+    }
+
+
+    var layer = new OpenLayers.Layer.WMS(
+        "Layer Test",
+        URL,
+        {
+            layers: "Deep_Blue_Aerosol_Optical_Depth_550_Land",
+            transparent: "true",
+            format: "image/png",
+            styles: "boxfill/rainbow",
+            colorscalerange: csr,
+            time:lstInfos.date,
+            numcolorbands : "100", //100//$("select[name='colorbandNum']").val(),
+            opacity : "100" //lstInfos.opacity
+            },
+        {isBaseLayer: false}
+    );    
+    map.addLayer(layer);
+
+    //setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
+}
+
+function updateMap()
+{
+    majLayer();
+}
+
+
 window.onload = function(){
     $('select').select2();
     setForm();
+    initMap();
 }

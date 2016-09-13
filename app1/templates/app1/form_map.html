@@ -3,7 +3,6 @@
     <head>
         <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/select2/dist/css/select2.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'app1/css/form.css' %}" >
-        <script type="text/javascript" src="{% static 'bootstrap/select2/dist/js/select2.js' %}"></script>
         <!--
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
         -->
@@ -77,14 +76,9 @@
                 </br>
                 <div class="row">
                     <div class="col-lg-6">
-                        <select class="form-control" name="date" id="date">
-                            <option selected hidden>date</option>
-                            <option value="2007-01-01">2007-01-01</option>
-                            <option value="2007-02-01">2007-02-01</option>
-                        </select>
                         <div class="form-group">
                             <label>Thème de la colorbar:</label>			 
-                            <select class="form-control" id="Colorbar">
+                            <select class="form-control" id="Colorbar" onChange="setColorbar()">
                                 <option>rainbow</option>
                                 <option>occam</option>
                                 <option>redblue</option>
@@ -108,6 +102,15 @@
                                     <option value="254">254</option>
                             </select>
                         </div>
+                        <label>Colorscale min/max : </label>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <input type="number" name="scaleMin" min="0" max="100" class="form-control">
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <input type="number" name="scaleMax" min="0" max="100" class="form-control">
+                            </div>
+                        </div>
                     </div>
                     <div class="col-lg-6">
                         <div id="colorbar"></div>
@@ -115,17 +118,17 @@
                 </div>
                 </br>
                 <div>
-                    <input type="submit" value="SUBMIT">
+                    <input type="button" value="Mise à jour de la carte" onclick="updateMap()">
                 </div>
             </form>
         </div>
         <br/>
           
         <script type="text/javascript" src="{% static 'app1/jquery/jquery-ui-1.11.4/jquery-ui.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap/select2/dist/js/select2.js' %}"></script>
         <script src="{% static 'app1/jsPerso/map.js' %}"></script>            
         <script>
-            var a = {{ deb | safe }};
-            affiche(a.date);
+            
         </script>
     </body>
 </html>

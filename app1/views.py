@@ -29,10 +29,10 @@ def thredds(request):
         URL = "http://localhost:8080/thredds/wms/" + types + "/" + sat + "/" + prod + "/res" + res + "/"+ ncfile + "?service=ncWMS"
         dictdatas = {'URL': URL,'ncfile': ncfile, 'variable': varname, 'date': deb}
         info = json.dumps(dictdatas, cls=DjangoJSONEncoder)
-        return render_to_response('app1/thredds3.html',{'Info': info},context_instance=RequestContext(request))
+        return render_to_response('app1/thredds5.html',{'Info': info},context_instance=RequestContext(request))
     else:
     	info = json.dumps({"date": "2007-01-01"}, cls=DjangoJSONEncoder)
-        return render_to_response('app1/thredds4.html',{'deb': info},context_instance=RequestContext(request))
+        return render_to_response('app1/thredds5.html',{'deb': info},context_instance=RequestContext(request))
 
 def viewer(request):
     return render_to_response('app1/data_mapping.html')
