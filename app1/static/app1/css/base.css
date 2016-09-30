@@ -8,21 +8,33 @@
   margin-left: 0px;
 }
 
-header {
-	background-color:#000080;
+header,footer {
+    background-color:#000066;
 	}
+
+h4,h2 {
+    color: #DCDCDC;
+}
+
+h4 {
+    font-style: italic;
+}
+
 main {
 	background-color:#FFFFFF;
 	}
 .leaflet-container{
     margin: 10px 10px; 
     }
+
 footer {
-	background-color:#000080;
-	}
+    height: 65px;
+}
+
 .aside_left {
 	background-color:Silver;
 	}
+
 li a {
     color: white;
 }
@@ -52,8 +64,29 @@ li a {
   }
 }
 
+
+#themes {
+    padding-left: 40px;
 }
-.navbar-inverse {
-  background-color: #00003F;
-  border-color: #f0f0f0;
+
+#missions {
+    padding-right: 50px;
+}
+
+#logos {
+    padding-top: 10px;
+    padding-left: 300px;
+}
+
+.navbar-custom {
+    background-color:#002233;
+}
+
+#left {
+    padding-right: 250px;
+}
+
+#fr,#eng {
+    padding-top: 15px;
+    padding-left: 15px;
 }

@@ -5,9 +5,12 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'app1/css/base.css' %}" />
         <script src="{% static 'app1/jquery/jquery-2.2.0.min.js' %}"></script>
-        <link rel="stylesheet" href="{% static 'app1/bootstrap3.3/css/bootstrap.min.css' %}" >
-        <script src="{% static 'app1/bootstrap3.3/js/bootstrap.min.js' %}"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!--<script src="{% static 'app1/jsPerso/base.js' %}"></script>-->
         <!--
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
@@ -19,35 +22,50 @@
         <![endif]-->
         -->
 
-        <link rel="stylesheet" type="text/css" href="{% static 'app1/css/base.css' %}" />
+        
         <title>TELEDM/TELEPAF</title>
     </head>
     <body>
         <div class="container-fluid">
             <div class="row">
-                <nav class="navbar navbar-inverse navbar-fixed-top">
-                    <ul class="nav navbar-nav">
-                        <li><a href={% url 'data_mapping' %}><b>Viewer</b></a></li>
-                        <li><a href={% url 'point_viewer' %}><b>Point Viewer</b></a></li>
-                        <li><a href={% url 'thredds' %}><b>Thredds</b></a></li>
-                        <li><a href={% url 'earthquakes' %}><b>Earthquakes</b></a></li>
-                        <li><a href={% url 'stations' %}><b>Stations</b></a></li>
-                        <li><a href={% url 'meteo' %}><b>Meteo</b></a></li>
-                        <li><a href={% url 'map' %}><b>Map</b></a></li>
-                        <li><a href={% url 'calval' %}><b>CalVal</b></a></li>
-                        <li><a href="/accounts/logout/"><b>Logout</b></a></li>
-                    </ul>
+                <nav class="navbar navbar-default navbar-custom navbar-inverse navbar-fixed-top">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <ul class="nav navbar-nav" id="left">
+                                <li><a href={% url 'data_mapping' %}><b>Accueil</b></a></li>
+<!--
+                                <li><a href={% url 'point_viewer' %}><b>Point Viewer</b></a></li>
+-->
+                                <li><a href={% url 'thredds' %}><b>Cartographie</b></a></li>
+                                <li><a href={% url 'map' %}><b>Extraction Géographique</b></a></li>
+                                <li><a href={% url 'calval' %}><b>Calibration/Validation</b></a></li>
+                            </ul>
+                            <ul class="nav navbar-nav" id="right">
+                                <li><a href="accounts/profile/"><b>Enregistrement</b></a></li>
+                                <li><a href="/accounts/logout/"><b>Connexion</b></a></li>
+                                <li><img name="langpair" src="{% static 'app1/images/fr.jpeg' %}" id="fr"/></li>
+                                <li><img name="langpair" src="{% static 'app1/images/eng.jpeg' %}" id="eng"/></li>
+                            </ul>
+                        </div>
+                    </div>
                 </nav>
                 <header class="row">
-                    <div class="col-lg-4">
-                        <br/>
-                        <br/>
+                    <div class="col-lg-2" id="themes">
+                        </br>
+                        </br>
                         <h4><b>Teledetection</b></h4>
                         <h4><b>Poussieres</b></h4>
                         <h4><b>Meningite</b></h4>
+                        <h4><b>IRA</b></h4>
                     </div>
                     <div class="col-lg-8">
-                        <img src="{% static 'app1/css/image_en_tete1.jpeg' %}"/>
+                        <img src="{% static 'app1/images/image_en_tete.jpeg' %}"/>
+                    </div>
+                    <div class="col-lg-2" id="missions">
+                        </br>
+                        </br>
+                        <h2><b>TeleDM</b></h2>
+                        <h2><b>TelePaF</b></h2>
                     </div>
                 </header>
                 <div class="row">
@@ -58,11 +76,19 @@
                         {% block content %}{% endblock content %}
                     </main>
                 </div>
-                <div class="row">
-                    <footer class="col-lg-12">
-                        CRCT
-                    </footer>
-                </div>
+                <footer>
+                    <div class="row" id="logos">
+                        <img src="{% static 'app1/images/ub.jpeg' %}"/>
+                        <img src="{% static 'app1/images/cnrs.jpeg' %}"/>
+                        <img src="{% static 'app1/images/ird.jpeg' %}"/>
+                        <img src="{% static 'app1/images/uLille1.jpeg' %}"/>
+                        <img src="{% static 'app1/images/cnrm.jpeg' %}"/>
+                        <img src="{% static 'app1/images/ehesp.jpeg' %}"/>
+                        <img src="{% static 'app1/images/ulg.jpeg' %}"/>
+                        <img src="{% static 'app1/images/institutPasteur.jpeg' %}"/>
+                        <img src="{% static 'app1/images/crc.jpeg' %}"/>
+                    </div>
+               </footer>
             </div>
         </div>
     </body>

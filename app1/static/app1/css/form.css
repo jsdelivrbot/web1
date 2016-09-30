@@ -22,6 +22,10 @@
     font: 9pt Arial, sans-serif;
 }
 
+#date {
+    height: 30px;
+    width: 100px;
+}
 
 .select2-results {
     color: #000000;
@@ -43,10 +47,46 @@ input.input-small{
     width: 150px;
 }
 
-#Sat,#Periode,#Zone,#InSitu,#Epidemio {
-    background:  #F5F5F5;
-    border: #DCDCDC solid 1px;
+#Sat,#Periode,#Zone,#InSitu,#Epidemio,#theme {
+    background:  #F8F8FF;
+    border: #006699 solid 1px;
     border-radius:10px;
     padding: 15px;
-    box-shadow: 0px 0px 0px 1px #00BFFF inset;
+    margin: 15px;
+    -moz-box-shadow: 10px 10px 5px #656565;
+    -webkit-box-shadow: 10px 10px 5px #656565;
+    -o-box-shadow: 10px 10px 5px #656565;
+    box-shadow: 10px 10px 5px #656565;
+    filter:progid:DXImageTransform.Microsoft.Shadow(color='#6565', Direction=135, Strength=5); 
+}
+
+#map {
+    width: 800px;
+    height: 580px;
+}
+
+#colors {
+    padding: 0px;
+    margin: 0px;
+}
+
+#scale {
+    border: none;
+    display: block;
+}
+
+#smax {
+    margin-bottom: 25px;
+}
+
+#smidmax {
+    margin-bottom: 25px;
+}
+
+#smid {
+    margin-bottom: 25px;
+}
+
+#smidmin {
+    margin-bottom: 25px;
 }

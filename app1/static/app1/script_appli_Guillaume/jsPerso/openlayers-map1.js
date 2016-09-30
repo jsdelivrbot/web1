@@ -540,7 +540,7 @@ function getInfosMap(e)
 			//mise a jour date
 			var dateForm= $("input[name='date']").val();
 			lstInfos.date=dateForm;	
-
+                
 			var URLRequest = 
 			ROOT+"wms/"
 			+lstInfos.nomDataset+".nc?"
