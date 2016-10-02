@@ -5,6 +5,7 @@ from djgeojson.views import GeoJSONLayerView
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
+from sendfile import sendfile
 import json
 
 from app1.models import Station, Country, MeteoData
@@ -163,3 +164,6 @@ def calval(request):
         #return render_to_response('app1/test.html',{"test": jsdatas},context_instance=RequestContext(request))
     else:
         return render_to_response('app1/calval.html',{},context_instance=RequestContext(request))
+
+def download(request):
+    return sendfile(request, '/home/sebastien/dev/web1/app1/protected/test2.nc')

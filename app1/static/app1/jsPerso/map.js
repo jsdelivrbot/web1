@@ -429,7 +429,6 @@ function initMap()
 
 function autoScale()
 {
-    alert('autoScale');
     getInfos();
     var URLRequest = 
         ROOT+"wms/"
@@ -457,6 +456,7 @@ function autoScale()
         async: false,
         success: function(json) 
         {
+            alert('ok');
             $("input[name='scaleMin']").val(json.min);
             $("input[name='scaleMax']").val(json.max);
                 if(((lstInfos.param=='tasmin')||(lstInfos.param=='tasmax'))&&(json.min>200))
@@ -465,8 +465,6 @@ function autoScale()
                 };
         },
         error: function(request, status, error){
-            alert(reuqest.responseText);
-            alert(status);
             alert(error);
         }
     });
@@ -612,7 +610,7 @@ function majLayer()
         {isBaseLayer: false}
     );
     map.addLayer(layer);
-    autoScale();
+    //autoScale();
     setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
 }
 
@@ -640,6 +638,19 @@ function handler(request) {
     else {
         alert('Echec de la connexion');
     }
+}
+
+window.onload = function(){
+    $('select').select2();
+    setForm();
+    initMap();
+    setColorbar();
+}
+
+
+function updateMap()
+{
+    majLayer();
 }
 
 
@@ -710,20 +721,6 @@ function getInfosMap(e)
 }
 
 
-window.onload = function(){
-    $('select').select2();
-    setForm();
-    initMap();
-    setColorbar();
-}
-
-
-function updateMap()
-{
-    majLayer();
-}
-
-
 function getCapCat(catalog)
 {
 	//vider la date du formulaire
@@ -774,7 +771,7 @@ function getCapCat(catalog)
 					.append('<option value="null">Aucun Layer dispo</option>')
 				;
 			}
-			});	
+		});	
 	});
 
 }

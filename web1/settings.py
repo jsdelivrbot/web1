@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'bootstrap3_datetime',
     'djangojs',
     'wms',
+    'sendfile',
 #    'djng',
 #    'highcharts',
 #    'chartit',
@@ -66,6 +67,14 @@ LEAFLET_CONFIG = {
 }
 #RASTER_USE_CELERY = False
 #RASTER_TILESIZE = 100
+
+# SENDFILE settings
+SENDFILE_BACKEND = 'sendfile.backends.development'
+#SENDFILE_BACKEND = 'sendfile.backends.xsendfile'
+#SENDFILE_BACKEND = 'sendfile.backends.nginx'
+SENDFILE_ROOT = os.path.join(BASE_DIR, 'app1/protected')
+SENDFILE_URL = '/app1/protected'
+
 NC_SERVICE_DATA_ROOT = BASE_DIR+'/datas'
 NC_TEMPORARY_FILE_LOCATION = BASE_DIR+'/tmp'
 
