@@ -72,8 +72,8 @@ var fond;
 var mapPanel;
 
 //Racine de l'URL de la requete (nom du serveur TDS)
-//const ROOT = "http://localhost:8080/thredds/";
-const ROOT = "http://195.83.22.81:8080/thredds/";
+const ROOT = "http://localhost:8080/thredds/";
+//const ROOT = "http://195.83.22.81:8080/thredds/";
 //Objet contenant les informations choisies par l'utilisateur
 var lstInfos = {
     date:"",
@@ -352,80 +352,6 @@ function getInfos()
 
 }
 
-function setDateInfos()
-{
-	//Dataset
-    getInfos();
-    wms = new OpenLayers.Format.WMSCapabilities();
-    var URLREQUEST = ROOT+ "wms/" +
-        lstInfos.nomDataset +
-        "/" + lstInfos.capteur +
-        "/" + lstInfos.produit +
-        "/res" + lstInfos.resspatiale +
-        "/" + lstInfos.nomFichier +
-        "?service=WMS&version=1.3.0&request=GetCapabilities";
-    alert(URLRequest);
-	//urlRequest = ".nc?service=WMS&version=1.3.0&request=GetCapabilities";
-	//urlRequest = "https://192.168.119.113:8443/thredds/wms/CMIP5_IPSL-CM5A-LR_PR_RCP26.nc?service=WMS&version=1.3.0&request=GetCapabilities";
-     lstInfos.date
-	OpenLayers.Request.GET({
-		url:URLRequest,
-		async:false,
-		success: function(xml){
-			var xmlData = xml.responseText;
-			var dimension = $(xmlData).find("Dimension").text().trim();
-			var res = dimension.split("/");
-			if($("input[name='date']").val()=="")
-			{
-				$("input[name='date']").val(res[0]);
-			}
-			$("#dateD").html(res[0]);
-			$("#dateF").html(res[1]);
-			alert(res[0]);
-			var period = res[2];
-			switch(period)
-			{
-				case "P1D":
-					;
-					break;
-					
-				default:
-					text="Periodicité inconnu:" + res[2];
-			}
-			$("#period").html(res[2]);
-		},
-		error : function(e)
-		{
-			console.log("ERREUR DANS LA REQUETE");
-		}
-		});	
-}
-
-
-function initMap()
-{
-    map = new OpenLayers.Map('map',
-        {
-            projection: new OpenLayers.Projection("EPSG:4326"),
-            resolutions: [0.03, 0.05,0.09, 0.15, 0.4]
-        }
-    );
-    fond = new OpenLayers.Layer.WMS(
-        "OpenLayers WMS",
-        "http://vmap0.tiles.osgeo.org/wms/vmap0",
-        {
-            layers: 'basic',
-        },
-        {isBaseLayer: true}
-    );
-    
-    map.addLayer(fond);
-    
-    map.zoomToMaxExtent();
-    map.events.register('click', map, getInfosMap);
-    
-    
-}
 
 function autoScale()
 {
@@ -456,19 +382,207 @@ function autoScale()
         async: false,
         success: function(json) 
         {
-            alert('ok');
             $("input[name='scaleMin']").val(json.min);
             $("input[name='scaleMax']").val(json.max);
+            //lstInfos.scaleMin = json.min;
+            //lstInfos.scaleMax = json.max;
                 if(((lstInfos.param=='tasmin')||(lstInfos.param=='tasmax'))&&(json.min>200))
                 {
                     lstInfos.unit="K";
                 };
         },
         error: function(request, status, error){
-            alert(error);
+            console.log(error);
         }
     });
 }
+
+
+//function animation(){
+    //var updateInfo = function() {
+    //var el = document.getElementById('info');
+    //el.innerHTML = startDate.toISOString().slice(0,10);
+    //};
+function setTime() {
+    var startDate = $("#date").val();
+    console.log(startDate);
+    startDate.setHours(startDate.getHours() + 24);
+    layers[1].getSource().updateParams({'TIME': startDate.toISOString()});
+    updateInfo();
+}
+
+function stop() {
+    if (animationId !== null) {
+        window.clearInterval(animationId);
+        animationId = null;
+    }
+}
+
+function play() {
+    stop();
+    animationId = window.setInterval(setTime, 1000 / frameRate);
+}
+
+var startButton = document.getElementById('play');
+startButton.addEventListener('click', play, false);
+
+var stopButton = document.getElementById('pause');
+stopButton.addEventListener('click', stop, false);
+//}
+
+
+function handler(request) {
+    // if the response was XML, try the parsed doc
+    //alert(request.responseXML);
+    // otherwise, you've got the response text
+    if (request.status == 200){
+        alert(request.responseXML);
+        alert(request.getAllResponseHeaders());
+    }
+    else {
+        alert('Echec de la connexion');
+    }
+}
+
+
+
+function getInfosMap(e)
+{
+    var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
+    if(typeof map.layers[1] =='undefined')  //si pas de layers
+    {
+        var errorPopup = new OpenLayers.Popup (
+            "error",
+            lonLat,
+            new OpenLayers.Size(100, 50),
+            "Pas de layers sélectionné",
+            true, //ajout un bouton "fermer la fenetre"
+            null  //action apres close
+            );
+        errorPopup.autoSize = true;
+        map.addPopup(errorPopup);
+    }
+    else
+    {
+        if(map.maxExtent.containsLonLat(lonLat))
+        {
+            var tempPopup = new OpenLayers.Popup (
+                "temp",
+                lonLat,
+                new OpenLayers.Size(100, 50),
+                "Loading...",
+                true, //ajout un bouton "fermer la fenetre"
+                null  //action apres close
+			);
+			//tempPopup.autoSize = true;
+			//map.addPopup(tempPopup);
+            var lonlat = map.getLonLatFromViewPortPx(e.xy);
+            //mise a jour date
+            var dateForm= $("input[id='date']").val();
+            lstInfos.date=dateForm;	
+            var URLRequest = 
+                ROOT+"wms/"
+                + lstInfos.nomDataset
+                + "/" + lstInfos.capteur
+                + "/" + lstInfos.produit
+                + "/res" + lstInfos.resspatiale
+                + "/" + lstInfos.nomFichier
+                + "?LAYERS="+ lstInfos.param
+                + "&TIME=" + encodeURIComponent(lstInfos.date)
+                + "&SRS=EPSG%3A4326"
+                + "&CRS=EPSG%3A4326"
+                + "&REQUEST=GetFeatureInfo"
+                + "&service=WMS"
+                + "&version=1.3.0"
+                + "&BBOX=" + map.getExtent().toBBOX()
+                + "&I=" + e.xy.x
+                + "&J=" + e.xy.y
+                + "&INFO_FORMAT=text%2Fxml"
+                + "&QUERY_LAYERS="+ lstInfos.param
+                + "&STYLES="
+                + "&WIDTH=" + map.size.w
+                + "&HEIGHT=" + map.size.h
+                ;
+            alert(URLRequest);
+            $.ajax({
+                type: "GET",
+                url: URLRequest,
+                dataType: "xml",
+                async: false,
+                success: function(xmldoc) 
+                {
+                    var lon = parseFloat($(xmldoc).find('longitude').text());
+                    var lat = parseFloat($(xmldoc).find('latitude').text());
+                    var iIndex = parseInt($(xmldoc).find('iIndex').text());
+                    var jIndex = parseInt($(xmldoc).find('jIndex').text());
+                    var gridCentreLon = parseFloat($(xmldoc).find('gridCentreLon').text());
+                    var gridCentreLat = parseFloat($(xmldoc).find('gridCentreLat').text());
+                    var val = parseFloat($(xmldoc).find('value').text());
+                    var res = "";
+                    if (lon) 
+                    {
+                        // We have a successful result
+                        var truncVal = val.toPrecision(3);
+                        if(truncVal > 200)  //Kelvin -> Celsius
+                        {
+                            truncVal-=273,15
+                        }
+                        res = "Lon: "+ lon.toFixed(6) + 
+                              " </br>Lat: " + lat.toFixed(6) +
+        				   " </br>Value: " + truncVal;
+                        console.log(e.xy);
+                    } 
+                    else 
+                    {
+                        res = "Impossible d'obtenir les informations demandées";
+                    }
+                    //map.removePopup(tempPopup);   //supprime le popup temporaire
+                    var popup = new OpenLayers.Popup (
+                        "id", // TODO: does this need to be unique?
+                        lonLat,
+                        new OpenLayers.Size(100, 50),
+                        res,
+                        true, //bouton fermer
+                        null  //action additionnel du bouton fermer
+                    );
+                    popup.autoSize = true;
+                    map.addPopup(popup);
+                },
+                error: function(request, status, error){
+                    console.log(error);
+                }
+            });
+        }
+    }//fin else
+}
+
+
+function initMap()
+{
+    map = new OpenLayers.Map('map',
+    {
+        projection: new OpenLayers.Projection("EPSG:4326"),
+        resolutions: [0.03, 0.05, 0.09, 0.15, 0.4]
+    }
+    );
+    fond = new OpenLayers.Layer.WMS(
+        "OpenLayers WMS",
+        "http://vmap0.tiles.osgeo.org/wms/vmap0",
+        {
+            layers: 'basic',
+        },
+        {isBaseLayer: true}
+    );
+    
+    map.addLayer(fond);
+    
+    map.zoomToMaxExtent();
+    map.events.register('click', map, getInfosMap);
+    
+    
+}
+
+
 
 
 function setColorbar()
@@ -513,48 +627,17 @@ function setMinMax()
 	var smidmax = (max+smid)/2;
 	var smidmin = (min+smid)/2;
 	
-		//Extremes
-		$("#smin").html(parseFloat(lstInfos.scaleMin).toPrecision(3));	
-		$("#smax").html(parseFloat(lstInfos.scaleMax).toPrecision(3));	
-		//Tiers
-		$("#smidmax").html(smidmax.toPrecision(3));	
-		$("#smidmin").html(smidmin.toPrecision(3));	
-		//Milieu
-		$("#smid").html(smid.toPrecision(3));
+	//Extremes
+	$("#smin").html(parseFloat(lstInfos.scaleMin).toPrecision(3));	
+	$("#smax").html(parseFloat(lstInfos.scaleMax).toPrecision(3));	
+	//Tiers
+	$("#smidmax").html(smidmax.toPrecision(3));	
+	$("#smidmin").html(smidmin.toPrecision(3));	
+	//Milieu
+	$("#smid").html(smid.toPrecision(3));
 	
 }
 
-function animation(){
-    //var updateInfo = function() {
-    //var el = document.getElementById('info');
-    //el.innerHTML = startDate.toISOString().slice(0,10);
-    //};
-    var setTime = function() {
-        var starDate = $("#date").val();
-        alert(startDate);
-        startDate.setHours(startDate.getHours() + 24);
-        layers[1].getSource().updateParams({'TIME': startDate.toISOString()});
-        updateInfo();
-    };
-    
-    var stop = function() {
-        if (animationId !== null) {
-            window.clearInterval(animationId);
-            animationId = null;
-        }
-    };
-
-    var play = function() {
-        stop();
-        animationId = window.setInterval(setTime, 1000 / frameRate);
-    };
-
-    var startButton = document.getElementById('play');
-    startButton.addEventListener('click', play, false);
-
-    var stopButton = document.getElementById('pause');
-    stopButton.addEventListener('click', stop, false);
-}
 
 
 //******************************TRAITEMENT****************************************//
@@ -609,40 +692,69 @@ function majLayer()
             },
         {isBaseLayer: false}
     );
-    map.addLayer(layer);
-    //autoScale();
+    autoScale();
     setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
+    map.addLayer(layer);
+    
 }
 
 
-
-
-
-//Fonction de parsage
-//Renvoie le 1er element du noeud donné
-function getElementValue(xml, elName)
+function setDateInfos()
 {
-    var el = xml.getElementsByTagName(elName);
-    if (!el || !el[0] || !el[0].firstChild) return null;
-    return el[0].firstChild.nodeValue;
+	//Dataset
+    getInfos();
+    wms = new OpenLayers.Format.WMSCapabilities();
+    var URLREQUEST = ROOT+ "wms/" +
+        lstInfos.nomDataset +
+        "/" + lstInfos.capteur +
+        "/" + lstInfos.produit +
+        "/res" + lstInfos.resspatiale +
+        "/" + lstInfos.nomFichier +
+        "?service=WMS&version=1.3.0&request=GetCapabilities";
+    alert(URLRequest);
+	//urlRequest = ".nc?service=WMS&version=1.3.0&request=GetCapabilities";
+	//urlRequest = "https://192.168.119.113:8443/thredds/wms/CMIP5_IPSL-CM5A-LR_PR_RCP26.nc?service=WMS&version=1.3.0&request=GetCapabilities";
+     lstInfos.date
+	OpenLayers.Request.GET({
+		url:URLRequest,
+		async:false,
+		success: function(xml){
+			var xmlData = xml.responseText;
+			var dimension = $(xmlData).find("Dimension").text().trim();
+			var res = dimension.split("/");
+			if($("input[name='date']").val()=="")
+			{
+				$("input[name='date']").val(res[0]);
+			}
+			$("#dateD").html(res[0]);
+			$("#dateF").html(res[1]);
+			alert(res[0]);
+			var period = res[2];
+			switch(period)
+			{
+				case "P1D":
+					;
+					break;
+					
+				default:
+					text="Periodicité inconnu:" + res[2];
+			}
+			$("#period").html(res[2]);
+		},
+		error : function(e)
+		{
+			console.log("ERREUR DANS LA REQUETE");
+		}
+		});	
 }
 
-function handler(request) {
-    // if the response was XML, try the parsed doc
-    //alert(request.responseXML);
-    // otherwise, you've got the response text
-    if (request.status == 200){
-        alert(request.responseXML);
-        alert(request.getAllResponseHeaders());
-    }
-    else {
-        alert('Echec de la connexion');
-    }
-}
+
+
 
 window.onload = function(){
     $('select').select2();
     setForm();
+    //setTime();
     initMap();
     setColorbar();
 }
@@ -654,71 +766,7 @@ function updateMap()
 }
 
 
-function getInfosMap(e)
-{
-	var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
-	if(typeof map.layers[1] =='undefined')  //si pas de layers
-	{
-		var errorPopup = new OpenLayers.Popup (
-						"error",
-						lonLat,
-						new OpenLayers.Size(100, 50),
-						"Pas de layers séléctionné",
-						true, //ajout un bouton "fermer la fenetre"
-						null  //action apres close
-						);
-		errorPopup.autoSize = true;
-		map.addPopup(errorPopup);
-	}
-	else
-	{
-		if(map.maxExtent.containsLonLat(lonLat))
-		{
-			var tempPopup = new OpenLayers.Popup (
-				"temp",
-				lonLat,
-				new OpenLayers.Size(100, 50),
-				"Loading...",
-				true, //ajout un bouton "fermer la fenetre"
-				null  //action apres close
-			);
-			//tempPopup.autoSize = true;
-			//map.addPopup(tempPopup);
-			var lonlat = map.getLonLatFromViewPortPx(e.xy);
-			//mise a jour date
-			var dateForm= $("input[id='date']").val();
-			lstInfos.date=dateForm;	
-			var URLRequest = 
-			ROOT+"wms/"
-			+ lstInfos.nomDataset
-			+ "/" + lstInfos.capteur
-                + "/" + lstInfos.produit
-                + "/res" + lstInfos.resspatiale
-                + "/" + lstInfos.nomFichier
-                + "?LAYERS="+ lstInfos.param
-			+ "&TIME=" + encodeURIComponent(lstInfos.date)
-                + "&SRS=EPSG%3A4326"
-			+ "&CRS=EPSG%3A4326"
-			+ "&REQUEST=GetFeatureInfo"
-                + "&service=WMS"
-                + "&version=1.3.0"
-			+ "&BBOX=" + map.getExtent().toBBOX()
-			+ "&I=" + e.xy.x
-			+ "&J=" + e.xy.y
-			+ "&INFO_FORMAT=text%2Fxml"
-			+ "&QUERY_LAYERS="+ lstInfos.param
-			+ "&STYLES="
-			+ "&WIDTH=" + map.size.w
-			+ "&HEIGHT=" + map.size.h
-			;
-                var url = "http://oos.soest.hawaii.edu/thredds/wms/dist2coast_1deg_ocean?service=WMS&version=1.3.0&REQUEST=GetFeatureInfo&QUERY_LAYERS=dist&CRS=EPSG:4326&BBOX=160,-1,161,1&WIDTH=100&HEIGHT=100&I=10&J=10&INFO_FORMAT=text/xml";
-                var xml = OpenLayers.Request.GET({
-				url:url,
-				callback: handler
-                });
-		}
-	}//fin else
-}
+
 
 
 function getCapCat(catalog)
@@ -775,3 +823,4 @@ function getCapCat(catalog)
 	});
 
 }
+

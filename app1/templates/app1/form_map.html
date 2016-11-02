@@ -1,7 +1,8 @@
 {% load staticfiles %}
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/select2/dist/css/select2.css' %}">
+        <!--<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/select2/dist/css/select2.css' %}">-->
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css">
         <link rel="stylesheet" type="text/css" href="{% static 'app1/css/form.css' %}" >
         <!--
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
@@ -79,7 +80,7 @@
                             <span class="glyphicon glyphicon-pause" id="pause"></span>
                             </button>
                             <button type="button" class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-play" id="play" onclick="animation()"></span>
+                            <span class="glyphicon glyphicon-play" id="play" onclick="setTime()"></span>
                             </button>
                             <span id="info"></span>
                         </div>
@@ -121,10 +122,10 @@
                             <label>Colorscale min/max : </label>
                             <div class="row">
                                 <div class="col-md-6 col-sm-6 col-xs-6">
-                                    <input type="number" id="ScaleMin" name="scaleMin" min="0" max="400" value="0" class="form-control">
+                                    <input type="number" id="ScaleMin" name="scaleMin" min="0" max="400" class="form-control">
                                 </div>
                                 <div class="col-md-6 col-sm-6 col-xs-6">
-                                    <input type="number" id="ScaleMax" name="scaleMax" min="0" max="400" value="50" class="form-control">
+                                    <input type="number" id="ScaleMax" name="scaleMax" min="0" max="400" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -149,7 +150,8 @@
         </div>
         <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
         <script type="text/javascript" src="{% static 'app1/jquery/jquery-ui-1.11.4/jquery-ui.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'bootstrap/select2/dist/js/select2.js' %}"></script>
+        <!--<script type="text/javascript" src="{% static 'bootstrap/select2/dist/js/select2.js' %}"></script>-->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.0/locale/fr.js"></script>
