@@ -80,7 +80,7 @@
                             <span class="glyphicon glyphicon-pause" id="pause"></span>
                             </button>
                             <button type="button" class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-play" id="play" onclick="setTime()"></span>
+                            <span class="glyphicon glyphicon-play" id="play" onclick="nextDate()"></span>
                             </button>
                             <span id="info"></span>
                         </div>
@@ -119,13 +119,15 @@
                             </div>
                         </div>
                         <div class="row">
-                            <label>Colorscale min/max : </label>
-                            <div class="row">
-                                <div class="col-md-6 col-sm-6 col-xs-6">
-                                    <input type="number" id="ScaleMin" name="scaleMin" min="0" max="400" class="form-control">
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-6">
-                                    <input type="number" id="ScaleMax" name="scaleMax" min="0" max="400" class="form-control">
+                            <div class="form-group">
+                                <label>Colorscale min/max : </label>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6 col-xs-6">
+                                        <input type="number" step="any" id="ScaleMin" name="scaleMin" min="-100" max="400" value="-50" class="form-control">
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6">
+                                        <input type="number" step="any" id="ScaleMax" name="scaleMax" min="0" max="400" value="50" class="form-control">
+                                    </div>
                                 </div>
                             </div>
                         </div>
