@@ -1,0 +1,25 @@
+{% extends 'app1/base.html' %}
+{% load staticfiles %}
+{% block content %}
+<html lan=fr>
+    <head>
+        <meta charset="utf-8" />
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="http://code.highcharts.com/maps/modules/map.js"></script> 
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script src="http://highcharts.github.io/export-csv/export-csv.js"></script>
+        <!--
+        <script src="{% static 'app1/highcharts/js/highcharts.js' %}"></script>
+        <script src="{% static 'app1/highcharts/js/modules/maps.js' %}"></script>
+        <script src="{% static 'app1/highcharts/js/modules/exporting.js' %}"></script>
+        <script src="{% static 'app1/highcharts/export-csv-master/export-csv.js' %}"></script>
+        -->
+    </head>
+    <body>
+        
+    </body>
+</html>
+{% endblock content %}
+{% block form %}
+    {% include 'app1/form.html' %}
+{% endblock form %}

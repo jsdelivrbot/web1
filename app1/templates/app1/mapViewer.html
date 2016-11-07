@@ -1,0 +1,23 @@
+{% extends "app1/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WMS Time</title>
+        <link rel="stylesheet" href="http://openlayers.org/en/v3.18.2/css/ol.css" type="text/css">
+        <link rel="stylesheet" type="text/css" href="{% static 'app1/css/form.css' %}" >
+        <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    </head>
+    <body>
+        </br>
+        <div id="map" class="map" ></div>
+        <script src="http://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.2/moment.min.js"></script>
+        <script src="http://openlayers.org/api/OpenLayers.js"></script>
+    </body>
+</html>
+{% endblock content %}
+{% block form %}
+    {% include "app1/mapViewerForm.html" %}
+{% endblock form %}

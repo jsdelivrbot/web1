@@ -1,26 +1,21 @@
+{% extends 'app1/base.html' %}
 {% load staticfiles %}
+{% block form %}
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
     <div id="t">
-        text
+        Welcome to TeleDM
     </div>
-    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    <script type="text/javascript">
-        var URLRequest = "http://localhost:8080/thredds/wms/satellite/modis/MYD04/res009/MYD04_r009_d.nc?item=minmax&LAYERS=Deep_Blue_Aerosol_Optical_Depth_550_Land&BBOX=-24,-0.3,57,51&TIME=2007-01-01&width=50&height=50&SRS=EPSG%3A4326&CRS=EPSG%3A4326&REQUEST=GetMetadata";
-        alert(URLRequest);
-        $.ajax({
-            type: "GET",
-            url: URLRequest,
-            dataType: "JSON",
-            async: true,
-            crossDomain: true,
-            success: function() 
-            {
-                alert('ok');
-            },
-            error: function(request, status, error){
-                console.log(error);
-            }
-        });
-        alert("fin");
-        $("#t").html("ok");
-    </script>
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
+    </br>
+{% endblock form %}
+    
     

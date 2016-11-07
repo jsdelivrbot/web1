@@ -1,0 +1,108 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'app1/css/form.css' %}" >
+    </head>
+    <body>
+        </br>
+        <div class="row">
+            <form id="moyenne" action="" method="post" class="form-horizontal">{% csrf_token %}      
+                <div class="row" id="Sat">
+                    <div class="row">
+                        <label>Sélection de la donnée</label>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <select class="form-control" name="type" id="typeSel" >
+                                <option selected hidden>Type de données</option>
+                            </select>
+                            <select class="form-control" name="capteur" id="capteurSel" >
+                                <option selected hidden>Capteur/Source</option>
+                            </select>
+                            <select class="form-control" name="produit" id="produitSel" >
+                                <option selected hidden>Produit</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6">
+                            <select class="form-control" name="variable" id="variableSel" >
+                                <option selected hidden>Variable</option>
+                            </select>
+                            <select class="form-control" name="resospatiale" id="resospatialeSel" >
+                                <option selected hidden>Résolution spatiale</option>
+                            </select>
+                            <select class="form-control" name="pasdetemps" id="pasdetempsSel" >
+                                <option selected hidden>Résolution temporelle</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="Periode">
+                    <div class="row">
+                        <label>Période de traitement : </label>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="input-group">
+                                <label for="date1" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
+                                <input id="date1" name="datedebut" type="text" class="date-picker form-control"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="input-group">
+                                <label for="date2" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
+                                <input id="date2" name="datefin" type="text" class="date-picker form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="Zone">
+                    <div class="row">
+                            <label>Zone et découpage géographique</label>
+                        </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <select class="form-control" name="pays" id="paysSel">
+                                <option selected hidden>Pays</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6">
+                            <select class="form-control" name="decoupage" id="decoupageSel" >
+                                <option selected hidden><b>Echelle de découpage</b></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                </br>
+                <div>
+                    <input type="submit" value="SUBMIT" name="submit">
+                </div>
+            </form>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>
+        <script src="{% static 'app1/jsPerso/mapDistForm.js' %}"></script>
+    </body>
+</html>
