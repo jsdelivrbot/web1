@@ -399,7 +399,6 @@ function nextDate()
 {
     //forumlaire
     //var period = $("select[name='usrPeriod']").val();
-    console.log('ok');
     var dateA = $("input[id='date']").val();
     //moment js
     var dateAM = moment.utc(dateA);
@@ -407,8 +406,32 @@ function nextDate()
     //affichage
     var res = moment(dateAM).add(periodM);
     res = res.toISOString();
-    alert(res);
-    //$("input[name='date']").val(res);
+    $("input[id='date']").val(res);
+    //$("#dateD").html(res);
+    if(typeof map.layers[1] =='undefined') //si pas de layer
+    {
+        majLayer();
+    }
+    else
+    {
+        map.layers[1].mergeNewParams({"TIME" : res})
+    }
+}
+
+
+function prevDate()
+{
+    //forumlaire
+    //var period = $("select[name='usrPeriod']").val();
+    var dateA = $("input[id='date']").val();
+    //moment js
+    var dateAM = moment.utc(dateA);
+    //var periodM = moment.duration('P1D');
+    //affichage
+    var res = moment(dateAM).add(-1, 'days');
+    res = res.toISOString();
+    $("input[id='date']").val(res);
+    //$("#dateD").html(res);
     if(typeof map.layers[1] =='undefined') //si pas de layer
     {
         majLayer();
@@ -445,11 +468,14 @@ function animation()
 }
 
 //Event listener
+//var bodyElement = document.querySelector("input[name='stop']");
+//bodyElement.addEventListener("click", stopAnim, false);
 
 
 function stopAnim(e)
 {
     cancelAnimationFrame(requestID);
+    $("#dateD").html("");
     running = false;
 }
 

@@ -67,20 +67,22 @@
                         </div>
                         </br>
                         <div role="group" aria-label="Animation controls">
-                            <button type="button" class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-backward" id="backward"></span>
+                            <button type="button" class="btn btn-default btn-sm" id="backward" onclick="prevDate()">
+                            <span class="glyphicon glyphicon-backward"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-forward" id="forward"></span>
+                            <button type="button" class="btn btn-default btn-sm" id="forward" onclick="nextDate()">
+                            <span class="glyphicon glyphicon-forward"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-stop" id="stop"></span>
+                            <button type="button" class="btn btn-default btn-sm" id="stop" onclick="stopAnim()">
+                            <span class="glyphicon glyphicon-stop"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-pause" id="pause"></span>
+<!--
+                            <button type="button" class="btn btn-default btn-sm" id="pause">
+                            <span class="glyphicon glyphicon-pause"></span>
                             </button>
-                            <button type="button" class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-play" id="play" onclick="nextDate()"></span>
+-->
+                            <button type="button" class="btn btn-default btn-sm" id="play" onclick="animation()">
+                            <span class="glyphicon glyphicon-play"></span>
                             </button>
                             <span id="info"></span>
                         </div>
