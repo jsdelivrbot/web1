@@ -1,0 +1,186 @@
+<html>
+<head>
+<title> A Basic GeoExt Page </title>
+	<script src="ext-3.4.1/adapter/ext/ext-base.js" type="text/javascript"></script>
+	<script src="ext-3.4.1/ext-all.js"  type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="ext-3.4.1/resources/css/ext-all.css"></link>
+	<script src="http://openlayers.org/api/OpenLayers.js"></script>
+	<script src="GeoExt/lib/GeoExt.js" type="text/javascript"></script>
+	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<!--TimeAgent-->
+	<script src="../JS/TimeManager/Control/TimeManager.js" type="text/javascript"></script>
+	<script src="../JS/TimeManager/TimeAgent.js" type="text/javascript"></script>
+	<script src="../JS/TimeManager/TimeAgent/WMS.js" type="text/javascript"></script>
+</head>
+<body>
+
+<!--TimeManager-->
+
+    <input size="4" type='text' id='year' value="" readonly="true" />-
+    <input size="2" type="text" id="month" value="" readonly="true" />-
+    <input size="2" type="text" id="day" value="" readonly="true" />T
+    <input type="text" size="2" id="hour" value="" readonly="true" />:
+    <input type="text" size="2" id="minute" value=""  readonly="true"/>:00
+    <div>
+        <button type="button" onclick="timeCtl.loop=false;timeCtl.stop()">Stop</button>
+        <button type="button" onclick="timeCtl.reset()">Reset</button>
+        <button type="button" onclick="timeCtl.loop=true;timeCtl.play()">Loop</button>
+        <button type="button" onclick="timeCtl.tick()">Step</button>
+        <button type="button" onclick="timeCtl.play()">Play</button>
+    </div>
+<div id="gxmap"></div>
+
+	<form action="">
+		Scale Range Color:<br>
+		<div id="slider"><br>
+		Opacity: <input type="text" name="opacity" value="0.25"><br>
+		Min range: <input type="text" name="minR" value="0"><br>	
+		Max range: <input type="text" name="maxR" value="0.0001"><br>	
+		<input type="button" onClick="setParams()" value="Valider parametres">
+	</form>
+	
+	<!--TP vers continent-->
+	<form>
+		<input type="button" onClick="goTo(48.6, 2.4)" value="France"><br>
+		<input type="button" onClick="goTo(33.8,-77)" value="Etats Unis"><br>
+		<input type="button" onClick="goTo(35.5,140)" value="Japon"><br>	
+	</form>
+	
+	<div id="legend"></div>
+		
+		
+<!--JAVASCRIPT-->
+<!--===========================================================================-->		
+			
+
+		<script type="text/javascript">
+//Gestion de l'animation du temps
+//Ne marche pas, erreur dans TimeManager
+
+/**
+		timeCtl = new OpenLayers.Control.TimeManager({
+			step: 5,
+			units: OpenLayers.TimeUnit.MINUTES,
+			frameRate: 1.5
+			});	
+
+**/
+        var map = new OpenLayers.Map();
+        
+//        map.addControl(timeCtl);
+        
+        var fond = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+        "http://vmap0.tiles.osgeo.org/wms/vmap0",
+        {layers: 'basic'} );
+        
+//Nom de variables correspondent a l'exemple fourni
+//par TimeManager
+//NE PAS CHANGER !!!
+
+        var last5min = new Date("2006-03-20T12:00:00");
+        var last65min = new Date("2006-01-01T12:00:00");
+        
+        
+        map.addLayer(fond);
+
+        new GeoExt.MapPanel({
+            renderTo: 'gxmap',
+            height: 400,
+            width: 600,
+            map: map,
+            title: 'Titre',
+            center:new OpenLayers.LonLat(5, 45),
+            zoom:4
+        });
+        
+        
+        
+        var layer = new OpenLayers.Layer.WMS(
+			"Test Layer",
+			"https://krenek2001.u-bourgogne.fr:8443/thredds/wms/CMIP5_BNU_PR_RCP85.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS:84",
+			{
+				layers: "pr",
+				transparent: "true",
+				format: "image/png",
+				style: "boxfill/redblue",
+				colorscalerange: "0,0.0001",
+				legends:[{
+                    href:'https://krenek2001.u-bourgogne.fr:8443/thredds/wms/CMIP5_BNU_PR_RCP85.nc?REQUEST=GetLegendGraphic&LAYER=pr&PALETTE=rainbow;',
+                    width:100,
+                    height:20
+                }],
+            time:OpenLayers.Date.toISOString(last65min)
+				},{
+					metadata:{timeInterval:[last65min, last5min]}
+				},
+			{isBaseLayer: false}
+		);
+		layer.setOpacity(0.25);
+		map.addLayer(layer);
+		map.addControl(new OpenLayers.Control.LayerSwitcher());
+		
+/**
+            update_date({
+                object: timeCtl,
+                currentTime: timeCtl.currentTime
+            });
+        
+        function update_date(evt) {
+            var time = this.currentTime||evt.currentTime;
+            OpenLayers.Util.getElement('year').value = time.getFullYear();
+            OpenLayers.Util.getElement('month').value = time.getMonth()+1;
+            OpenLayers.Util.getElement('day').value = time.getDate();
+            OpenLayers.Util.getElement('hour').value = time.getHours();
+            OpenLayers.Util.getElement('minute').value = time.getMinutes();
+        }
+        
+**/
+		
+//Legende
+
+var legend = "https://krenek2001.u-bourgogne.fr:8443/thredds/wms/CMIP5_BNU_PR_HISTO.nc?REQUEST=GetLegendGraphic&COLORBARONLY=true&WIDTH=1&HEIGHT=398&PALETTE=redblue&NUMCOLORBANDS=20&WIDTH=500";
+
+$('#legend').prepend($('<img>',{id:'Legende',src:legend}));
+
+
+//Téléportation vers un point défini par Latitude et Longitude
+//Fonctionne
+		
+		function goTo(lat, lon)
+		{
+			map.setCenter(new OpenLayers.LonLat(lon,lat),3);
+		}
+		
+//Panneau de modification des paramètres
+//Fonctionne
+		
+		function setParams(){
+
+//Opacité
+			var opacity= $("input[name='opacity']").val();
+			if((opacity>=0)||(opacity<=1))
+			{
+				layer.setOpacity(opacity);
+			}
+			else
+			{
+				alert("Valeur d'opacité comprise entre 0 et 1 !!");
+			};		
+		
+//MinMax Range
+			var minR= $("input[name='minR']").val();
+			var maxR= $("input[name='maxR']").val();
+			
+			if(minR<maxR)
+			{
+					if((typeof minR != 'undefined') && (typeof maxR != 'undefined'))
+					{
+						var newMinMax=minR+","+maxR;
+						layer.mergeNewParams({"colorscalerange" : (newMinMax)})
+					}
+			}
+		}
+	</script>
+
+</body>
+</html>

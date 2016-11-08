@@ -1,0 +1,52 @@
+[
+	{
+		"nomCat":"CMIP5_TASMAX_AGGREG",
+		"dicoParam":
+		[
+			{"T2MAX":"tasmax"}
+		]
+	},
+	{
+		"nomCat":"CMIP5_TASMIN_AGGREG",
+		"dicoParam":
+		[
+			{"T2MIN":"tasmin"}
+		]
+	},
+	{
+		"nomCat":"CMIP5_PR_AGGREG",
+		"dicoParam":
+		[
+			{"PR":"pr"}
+		]
+	},
+	{
+		"nomCat":"ERA_INTERIM",
+		"dicoParam":
+		[
+			{"U10":"10_metre_U_wind_component_surface"},
+			{"V10":"10_metre_V_wind_component_surface"},
+			{"DWT2":"2_metre_dewpoint_temperature_surface"},
+			{"T2MEAN":"2_metre_temperature_surface"},
+			{"SST": "Sea_surface_temperature_surface"},
+			{"SKT": "Skin_temperature_surface"},
+			{"SFCP":"Surface_pressure_surface"},
+			{"MSLP":"Mean_sea_level_pressure_surface"}
+		]
+	},
+	{
+		"nomCat":"ARPEGE_SP1",
+		"dicoParam":
+		[
+			{"RH2":"Relative_humidity_height_above_ground"},
+			{"T2MEAN":"Temperature_height_above_ground"},
+			{"MSLP":"Pressure_msl"},
+			{"TOTALCC":"Total_cloud_cover_surface_layer"},
+			{"DIR10":"Wind_direction_from_which_blowing_height_above_ground"},
+			{"SPEED10":"Wind_speed_height_above_ground"},
+			{"GUST10":"Wind_speed_gust_height_above_ground"},
+			{"U10":"u-component_of_wind_height_above_ground"},
+			{"V10":"v-component_of_wind_height_above_ground"}
+		]
+	}
+]
