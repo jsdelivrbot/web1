@@ -1,15 +1,18 @@
 #-*- coding: utf-8 -*-
 
 from django.shortcuts import render_to_response
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
 from sendfile import sendfile
 import json
+import os
 
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
 from scatter_plot import scatter_plot
+
+tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'teledm/tmp')
 
 def home(request):
     return render_to_response('teledm/home.html')
@@ -34,7 +37,6 @@ def mapViewer(request):
 
 def mapDist(request):
     print request.POST
-    fileName = ''
     if request.method == 'POST':
         if request.POST.get('submit') == "SUBMIT":
             ddirout = "/home/dev/web1/teledm/protected"
@@ -54,15 +56,18 @@ def mapDist(request):
             datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
             list_dates = ldf['vmean'].index.values.tolist()
             geojson = pays+"_"+niveau+"_sante.geojson"
-            dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson}
+            filename = varname + '_' + prod + '_r' + res + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
+            dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson, 'form':request.POST, 'filename':filename}
             jsdatas = json.dumps(dictdatas, cls=DjangoJSONEncoder)
-            fileName = varname + '_r' + res + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
             return render_to_response('teledm/mapDist.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
         elif request.POST.get('submit') == "Download":
-            return sendfile(request, fileName)
-
+            filename = os.path.join(tmpDir, request.POST['filename'])
+            print filename
+            return sendfile(request, filename)
     else:
-        return render_to_response('teledm/mapDist.html',{},context_instance=RequestContext(request))
+        jsdatas = json.dumps({'form':''}, cls=DjangoJSONEncoder)
+        return render_to_response('teledm/mapDist.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
+
 
 def calval(request):
     if request.method == 'POST':

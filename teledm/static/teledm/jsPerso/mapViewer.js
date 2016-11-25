@@ -726,7 +726,7 @@ function initMap()
     map.addLayer(fond);
     
     map.zoomToMaxExtent();
-    map.events.register('click', map, getInfosMap);
+    //map.events.register('click', map, getInfosMap);
     map.addControl(
         new OpenLayers.Control.MousePosition({
             prefix: 'Lon/Lat: ',
@@ -735,6 +735,23 @@ function initMap()
             emptyString: ''
         })
     );
+    var handler = new OpenLayers.Handler.Click(
+        map, { 
+            click: function(evt) {
+                console.log('click has triggered');
+                var feature = map.getFeatureFromEvent(evt);
+            }
+            ,dblclick: function(evt) {
+                console.log('dblclick has triggered');
+            }
+        },{
+            single: true  
+            ,double: true
+            ,stopSingle: true
+            ,stopDouble: true
+        }  
+        );
+    handler.activate();
 }
 
 

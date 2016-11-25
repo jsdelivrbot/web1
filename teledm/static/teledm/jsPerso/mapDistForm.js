@@ -38,10 +38,10 @@ var listvar = {"satellite":{"modis":{"MYD04":{"reso_spatiale":["009","025","075"
                 "modele":{
                 },
     };
-window.onload = function () {
+function setForm(infoForm) {
 	
 	//Get html elements
-     $('select').select2();
+    var form = infoForm;
 	var type = document.getElementById("typeSel");
 	var capteur = document.getElementById("capteurSel");	
 	var produit = document.getElementById("produitSel");
@@ -54,6 +54,10 @@ window.onload = function () {
 	for (var tp in listvar) {
 		typeSel.options[typeSel.options.length] = new Option(tp, tp);
 	}
+
+    if (form.length != 0){
+        type.value = form.type;
+    }
 	
 	//type Changed
 	type.onchange = function () {
@@ -139,17 +143,27 @@ window.onload = function () {
 	for (var ps in selection_geographique) {
 		paysSel.options[paysSel.options.length] = new Option(ps, ps);
 	}
+    if (form.length != 0){
+        pays.value = form.pays;
+    }
 	
-	//pays Changed
-	pays.onchange = function () {
-		 
-		 decoupageSel.length = 1; // remove all options bar first
-		 if (this.selectedIndex < 1)
-			 return; // done
-		 
-           var dist = selection_geographique[this.value];
-		 for (var i = 0; i< dist.length; i++) {
-			 decoupageSel.options[decoupageSel.options.length] = new Option(dist[i], dist[i]);
-		 }
+    //pays Changed
+    pays.onchange = function (form) {
+        var dist = selection_geographique[this.value];
+        decoupageSel.length = 1; // remove all options bar first
+        if (this.selectedIndex < 1){
+            return; //done
+        } else {   
+            for (var i = 0; i< dist.length; i++) {
+                decoupageSel.options[decoupageSel.options.length] = new Option(dist[i], dist[i]);
+                decoupageSel.value = form.decoupage;
+            }
+        }
 	}
+}
+
+
+window.onload = function(){
+    $('select').select2();
+    setForm();
 }

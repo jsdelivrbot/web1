@@ -1,0 +1,81 @@
+{% load staticfiles %}
+<html lang=fr>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'portailCRC/css/home.css' %}" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!--
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+              <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+              <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]
+        -->
+        <title>CRC</title>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row" id="header">
+                <div class="col-lg-2" id="logos">
+                    <div id="logo">
+                        <div class="custom">
+                            <a title="accueil labo" accesskey="0" href="http://climatologie.u-bourgogne.fr/" target="blank" rel="external">
+                                <img style="margin-left: 20px;" src="{% static 'portailCRC/images/Logo_CRC_transparent.png' %}" alt="Logo_CRC_transparent" width="160" height="107">
+                            </a>
+                            <br>
+                            <a href="http://biogeosciences.u-bourgogne.fr/" target="blank" rel="external">
+                                <img style="margin-left:20px;" src="{% static 'portailCRC/images/logo_biogeo_72.jpg' %}" alt="logo_biogeo_72" width="154" height="27">
+                            </a>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-10" id="bandeau"
+                    <div class="custom">
+                        <img src="{% static 'portailCRC/images/bandeau-labo4.jpg' %}" alt="bandeau-labo4" width="1000" height="92" hspace="10" vspace="20">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <aside_left class="col-lg-4">
+                    </br>
+                    </br>
+                    </br>
+                    </br>
+                    </br>
+                    </br>
+                    <div id="nav">
+                        <ul class="menu" id="menu">
+                            <a>Bases de données du CRC</a>
+                        <ul>
+                            <li class="item" id="item">
+                                <a href={% url 'teledm:home' %}>TeleDM/TelePaF</a>
+                            </li>
+                    </div>
+                    </br>
+                    </br>
+                    </br>
+                    </br>
+                    </br>
+                    </br>
+                </aside_left>
+                <main class="col-lg-8">
+                </main>
+            </div>
+            <footer id="footer">
+                <div class="row" id="adr">
+                    Centre de Recherches de Climatologie<br/>
+                    CNRS / Université de Bourgogne<br/>
+                    6 boulevard Gabriel
+                    21000 Dijon
+                    France
+                </div>
+           </footer>
+        </div>
+    </body>
+</html>

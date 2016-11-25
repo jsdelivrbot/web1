@@ -1,11 +1,41 @@
-function chart(jsdatas, map) {
+function charts(jsdatas, form, map) {
         var datas = jsdatas.datas;
+        // load dates
+        var numbers = jsdatas.dates;
+        var option = '';
+        for (var i=0;i<numbers.length;i++){
+           option += '<option value="'+ i + '">' + numbers[i] + '</option>';
+        }
+        $('#dates').append(option);
+        $('#dates').change(function() {
+            var d = $(this).val();
+            $('#mapcontainer').highcharts().addSeries({
+                data : datas.lvmean.all_dist[d],
+                mapData: geojson,
+                joinBy: ['name','code'],
+                name: 'vmean',
+                allowPointSelect: true,
+                cursor: 'pointer',
+                states: {
+                    hover: {
+                        color: '#BADA55'
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.properties.name}' 
+            }); 
+        });
         var series_temporelles = datas.lvmean.series_temporelles;
         //fonction d affichage carto
         $.getJSON(map, function (geojson) {
-            mapChart = $('#mapcontainer').highcharts('Map', {
+            $('#mapcontainer').highcharts('Map', {
                 title : {
-                    text : 'Statistiques de '+jsdatas.shape
+                    text : 'Statistiques du '+ form.pays + '(par ' + form.decoupage + ')',
+                },
+                subtitle: {
+                    text: 'Periode du ' + form.datedebut + ' au ' + form.datefin,
+                    x: -10
                 },
                 mapNavigation: {
                     enabled: true,
@@ -52,13 +82,7 @@ function chart(jsdatas, map) {
                 },
             });
         });
-        // load dates
-        var numbers = jsdatas.dates;
-        var option = '';
-        for (var i=0;i<numbers.length;i++){
-           option += '<option value="'+ i + '">' + numbers[i] + '</option>';
-        }
-        $('#dates').append(option);
+        
         // fonction graphe serie temporelle
         var chart = new Highcharts.Chart({
             chart: {
@@ -68,7 +92,7 @@ function chart(jsdatas, map) {
                 panKey: 'ctrl',
             },
             title: {
-                text: 'Daily ',
+                text: '',
                 x: -20 //center
             },
             subtitle: {
@@ -103,16 +127,13 @@ function chart(jsdatas, map) {
                 }
             },
             series: [{
-                name: 'Garango',
-                data: series_temporelles.Garango,
+                name: '',
+                data: series_temporelles[0],
                 dashStyle: 'shortdot',
             }],
             credits: {
                 enabled: false                
             },
         });
-    $('#dates').change(function() {
-        alert($(this).val());
         //mapChart.series[0].update(mapdatas.vmean[$(this).val()]);
-    });
 };

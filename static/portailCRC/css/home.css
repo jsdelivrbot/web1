@@ -1,0 +1,39 @@
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+
+
+footer {
+    background-color: #036061;
+    height: 75px;
+	}
+
+
+ul a {
+    color: #036061;
+}
+
+
+li a {
+    color: 	#FF8000;
+}
+
+
+#adr {
+    padding-left: 25px;
+    padding-top: 5px;
+}
