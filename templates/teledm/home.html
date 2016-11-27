@@ -14,7 +14,7 @@
         </br>
         </br>
         <div id="t">
-            Welcome to TeleDM
+           Accueil TeleDM
         </div>
         <div class="row">
             <div class="col-lg-6">
@@ -30,6 +30,9 @@
                 <select class="form-control" name="resospatiale1" id="resospatialeS1" >
                     <option data-hidden="true">Résolution spatiale</option>
                 </select>
+                <select class="form-control" name="pasdetemps" id="pasdetempsS1">
+                    <option selected hidden>Résolution temporelle</option>
+                </select>
                 <select class="form-control" name="variable1" id="variableS1" >
                     <option data-hidden="true">Variable</option>
                 </select>
@@ -39,11 +42,10 @@
             </div>
         </div>
         <div class="row">
-            <input type="button" value="Menu" onclick="createURL()">    
+            <input type="button" id="submit" value="Menu" onclick="returnSubmit()">    
         </div>
         </br>
         </br>
-        <div id="listeCatMap" </div>
         </br>
         </br>
         </br>
