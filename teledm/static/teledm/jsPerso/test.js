@@ -89,28 +89,71 @@ function setForm(){
         if (this.selectedIndex < 1)
             return; // absence de choix
         //charge les choix de variables
-        console.log(urlPath);
+        var listSelected = [];
+        $.each(selectSource1, function(value){
+            if (this.selectedIndex != 0){
+                listSelected.push(this.value);
+            }
+        });
+        var ind = listSelected.indexOf(this.value);
+        var reso = listSelected[3];
+        if (listSelected[2]=="seviri_aerus"){
+            var fileName = "seviri_r" + reso.replace('res','') +'_'+this.value;
+        }else{
+            var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
+        }
+        var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+        console.log(urlInfo);
         var listVariables = [];
         $.each(urlPath, function(value){
-            var urlInfo = 'http://localhost:8080/thredds/wms/satellite/msg/seviri_aerus/res003/seviri_r003_d.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+            //var urlInfo = 'http://localhost:8080/thredds/wms/satellite/aura_omi/omaeruv/res025/omaeruv_r025_d.nc?service=WMS&version=1.3.0&request=GetCapabilities'
+                         //'http://localhost:8080/thredds/wms/satellite/msg/seviri_aerus/res003/seviri_r003_d.nc?service=WMS&version=1.3.0&request=GetCapabilities';
             $.ajax({
                 type: "GET",
                 url: urlInfo,
                 dataType: "xml",
                 async: false,
                 success: function(xml) {
-                    if ($(xml).find('GetFeatureInfo')!=0){
-                        $(xml).find('GetFeatureInfo').each( function(){  //Pour tout les catalogues
-                            listVariables.push($(this).attr('xlink:href'));   //Titre du catalogue
-                        })
-                    }                
+                    $(xml).find('Layer[queryable="1"]').each(function(){
+                        listVariables.push( = $(this).find("Name").first().text());
+                        var times = $(this).find('Dimension[name="time"]').text();
+                        var time = [];
+                        console.log(times.split(',')[0]);
+                        time.push(times.split(',')[times.split(',').length-1]);
+                        console.log(time);
+                        //var level = $(this).find('Dimension[name="elevation"]').text().split(','));
+                        dictVarDate.push({
+                                key: name,
+                                value: time
+                        });
+                        //levels.push($(this).find('Dimension[name="elevation"]').text());
+                    })
                 }
-            });
+            })
         });
-        console.log(listVariables[0]);
+        console.log(listVariables["FinalAerosolAbsOpticalDepth_354_nm"]);
+        setSelect(listVariables, selectSource1[5]);
+        //dates debut/fin
+        $( "#date" ).datepicker({
+            yearRange: '1979:2025',
+            dateFormat: 'yy-mm-dd',
+            changeMonth: true,
+            changeYear: true,
+            showMonthAfterYear: true,
+            minDate: new Date(listVariables),
+            maxDate: new Date(fin),
+            onSelect: function( selectedDate ) {
+                $( "#date2" ).datepicker( "option", "minDate", selectedDate );
+            },
+            //beforeShowDay: function(date){ 
+                //return [(date.getDay() == 2 || date.getDay() == 3 || date.getDay() == 4 || date.getDay() == 5 || date.getDay() == 6 || date.getDay() == 0), ""]
+            //},
+        });
     };
-
 }
+
+
+
 var urlPath = [];
 
 function createURL(valueSelected, selector){
@@ -123,7 +166,7 @@ function createURL(valueSelected, selector){
             listSelected.push(this.value);
         }
     });
-    ind = listSelected.indexOf(valueSelected);
+    var ind = listSelected.indexOf(valueSelected);
     var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
     if (URL == "/catalog.xml"){
         var URLCat = ROOT + "/catalog.xml";

@@ -176,7 +176,10 @@ function setForm(){
             maxDate: new Date(fin),
             onSelect: function( selectedDate ) {
                 $( "#date2" ).datepicker( "option", "minDate", selectedDate );
-            }
+            },
+            //beforeShowDay: function(date){ 
+                //return [(date.getDay() == 2 || date.getDay() == 3 || date.getDay() == 4 || date.getDay() == 5 || date.getDay() == 6 || date.getDay() == 0), ""]
+            //},
         });
         
         $( "#date2" ).datepicker({
