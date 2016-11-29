@@ -1,5 +1,6 @@
 const ROOT = "http://localhost:8080/thredds";
 var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
+
 var lstInfos = {
     date:"",
     param:"",
@@ -28,11 +29,20 @@ function setSelect(array, bx){
 }
 
 function resetSelect(listSelect, id){
+    resetDate();
     for (var i = id; i < listSelect.length; i++){
         listSelect[i].length = 1;
         listSelect[i].removeAttribute("selected");
     }
     listSelect.slice(id,listSelect.length).select2().select2('');
+}
+
+
+function resetDate(){
+    $('#date1').datepicker('destroy');
+    $('#date2').datepicker('destroy');
+    $('#date1').val("");
+    $('#date2').val("");
 }
 
 
@@ -47,6 +57,7 @@ function setForm(){
     selectSource1[0].onchange =  function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 1);
+        
         if (this.selectedIndex < 1)
             return; // absence de choix
         //charge les choix de capteur
@@ -105,53 +116,70 @@ function setForm(){
         var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
         console.log(urlInfo);
         var listVariables = [];
-        $.each(urlPath, function(value){
-            //var urlInfo = 'http://localhost:8080/thredds/wms/satellite/aura_omi/omaeruv/res025/omaeruv_r025_d.nc?service=WMS&version=1.3.0&request=GetCapabilities'
-                         //'http://localhost:8080/thredds/wms/satellite/msg/seviri_aerus/res003/seviri_r003_d.nc?service=WMS&version=1.3.0&request=GetCapabilities';
-            $.ajax({
-                type: "GET",
-                url: urlInfo,
-                dataType: "xml",
-                async: false,
-                success: function(xml) {
-                    $(xml).find('Layer[queryable="1"]').each(function(){
-                        listVariables.push( = $(this).find("Name").first().text());
-                        var times = $(this).find('Dimension[name="time"]').text();
-                        var time = [];
-                        console.log(times.split(',')[0]);
-                        time.push(times.split(',')[times.split(',').length-1]);
-                        console.log(time);
-                        //var level = $(this).find('Dimension[name="elevation"]').text().split(','));
-                        dictVarDate.push({
-                                key: name,
-                                value: time
-                        });
-                        //levels.push($(this).find('Dimension[name="elevation"]').text());
-                    })
-                }
-            })
-        });
-        console.log(listVariables["FinalAerosolAbsOpticalDepth_354_nm"]);
+        var dictVarDate = [];
+        var debut = [];
+        var fin = [];
+        //$.each(urlPath, function(value){
+        $.ajax({
+            type: "GET",
+            url: urlInfo,
+            dataType: "xml",
+            async: false,
+            success: function(xml) {
+                $(xml).find('Layer[queryable="1"]').each(function(){
+                    listVariables.push($(this).find("Name").first().text());
+                    var times = $(this).find('Dimension[name="time"]').text();
+                    var ldates = times.split(',');
+                    debut = ldates[1];
+                    fin = ldates[ldates.length-1];
+                })
+            }
+        })
         setSelect(listVariables, selectSource1[5]);
-        //dates debut/fin
-        $( "#date" ).datepicker({
-            yearRange: '1979:2025',
-            dateFormat: 'yy-mm-dd',
-            changeMonth: true,
-            changeYear: true,
-            showMonthAfterYear: true,
-            minDate: new Date(listVariables),
-            maxDate: new Date(fin),
-            onSelect: function( selectedDate ) {
-                $( "#date2" ).datepicker( "option", "minDate", selectedDate );
-            },
-            //beforeShowDay: function(date){ 
-                //return [(date.getDay() == 2 || date.getDay() == 3 || date.getDay() == 4 || date.getDay() == 5 || date.getDay() == 6 || date.getDay() == 0), ""]
-            //},
-        });
+        console.log(debut);
+        console.log(fin);
+        changeDates1(debut,fin);
+        changeDates2(debut,fin);
+        //dates debut/fin     
     };
 }
 
+function changeDates1(start,end){
+    $('#date1').datepicker('destroy');
+    $( "#date1" ).datepicker({
+        yearRange: '1979:2025',
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        showMonthAfterYear: true,
+        defaultDate: new Date(start),
+        minDate: new Date(start),
+        maxDate: new Date (end),
+        //daysOfWeekDisabled: [0,2,3,4,5,6],
+        onSelect: function( selectedDate ) {
+            $( "#date2" ).datepicker( "option", "minDate", selectedDate );
+        },
+    });
+}
+
+
+function changeDates2(start,end){
+    $('#date2').datepicker('destroy');
+    $( "#date2" ).datepicker({
+        yearRange: '1979:2025',
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        showMonthAfterYear: true,
+        defaultDate: new Date(start),
+        minDate: new Date(start),
+        maxDate: new Date (end),
+        //daysOfWeekDisabled: [0,2,3,4,5,6],
+        onSelect: function( selectedDate ) {
+            $( "#date1" ).datepicker( "option", "maxDate", selectedDate );
+        },
+    });
+}
 
 
 var urlPath = [];
