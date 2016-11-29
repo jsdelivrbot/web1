@@ -50,18 +50,14 @@
                             </select>
                         </div>
                         <div class="col-lg-6">
-                            <select class="form-control" name="variable" id="variableS1" >
-                                <option selected hidden>Variable</option>
-                            </select>
                             <select class="form-control" name="resospatiale" id="resospatialeS1" >
                                 <option selected hidden>Résolution spatiale</option>
                             </select>
-                            <select class="form-control" name="pasdetemps" id="pasdetempsSel1" >
+                            <select class="form-control" name="pasdetemps" id="pasdetempsS1" >
                                 <option selected hidden>Résolution temporelle</option>
-                                <option value="d">Quotidien</option>
-                                <option value="w">Hebdomadaire</option>
-                                <option value="m">Mensuel</option>
-                                <option value="t">Trimestriel</option>
+                            </select>
+                            <select class="form-control" name="variable" id="variableS1" >
+                                <option selected hidden>Variable</option>
                             </select>
                             <select class="form-control" name="level1" id="levelS1" >
                                 <option data-hidden="true">Layer</option>
@@ -161,6 +157,11 @@
                     <input type="button" value="Mise à jour de la carte" onclick="updateMap()">
                 </div>
             </form>
+        </div>
+        <div id="popup" style="display:none">
+            <div id="popupContainer" ></div>
+            <script src="https://code.highcharts.com/highcharts.js"></script>
+            <script src="https://code.highcharts.com/modules/exporting.js"></script>
         </div>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>
