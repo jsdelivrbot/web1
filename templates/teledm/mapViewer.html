@@ -12,6 +12,9 @@
     <body>
         </br>
         <div id="map" class="map" ></div>
+        <div id="popup">
+            <div id="popupContainer" ></div>
+        </div>
         <script src="http://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.2/moment.min.js"></script>
         <script src="http://openlayers.org/api/OpenLayers.js"></script>
@@ -158,17 +161,17 @@
                 </div>
             </form>
         </div>
-        <div id="popup" style="display:none">
-            <div id="popupContainer" ></div>
-            <script src="https://code.highcharts.com/highcharts.js"></script>
-            <script src="https://code.highcharts.com/modules/exporting.js"></script>
-        </div>
+        <!--<script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>-->
+        <script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>
+        <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.0/locale/fr.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js"></script>
         <script type="text/javascript" src="{% static 'teledm/jsPerso/mapViewer.js' %}"></script>   
     </body>
 </html>
+
 {% endblock form %}
