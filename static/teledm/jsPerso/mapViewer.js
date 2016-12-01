@@ -1,80 +1,9 @@
-var listvar = {"satellite":{"modis":{
-                                    "MYD04":{
-                                              "reso_spatiale":["009","025","075","125"],
-                                              "datedebut":["2004-07-01"],
-                                              "datefin":["2016-01-31"],
-                                              "variables":[
-                                                            "AerosolAbsOpticalDepthVsHeight_354_nm",
-                                                            "Deep_Blue_Surface_Reflectance_Land_412_nm",
-                                                            "Deep_Blue_Aerosol_Optical_Depth_550_Land",
-                                                            ]
-                                             },
-                                     "MYD05":{
-                                              "reso_spatiale":["005","009","025","075","125"],
-                                              "datedebut":["2004-07-01"],
-                                              "datefin":["2016-01-31"],
-                                              "variables":[
-                                                            "Water_Vapor_Infrared",
-                                                            ]
-                                             },
-                                     "MYD07":{
-                                              "reso_spatiale":["005","009","025","075","125"],
-                                              "datedebut":["2004-07-01"],
-                                              "datefin":["2016-01-31"],
-                                              "variables":[
-                                                            "Total_Ozone",
-                                                            "Lifted_Index",
-                                                            "Surface_Temperature",
-                                                            ]
-                                             }  
-                                    },
-                            "msg":{
-                                  },
-                            "aura_omi":{
-                                        "omaeruv":{
-                                                   "reso_spatiale":["025","075","125"],
-                                                   "datedebut":["2004-10-01"],
-                                                   "datefin":["2016-01-31"],
-                                                   "variables":[
-                                                                "FinalAerosolOpticalDepth_358_nm",
-                                                                "AerosolAbsOpticalDepthVsHeight_500_nm",
-                                                                ]
-                                                    }
-                                                    
-                                        },
-                            "toms":{
-                                    }
-                            },
-                "re_analyse":{
-                              "ecmwf":{
-                                        "era_interim":{
-                                                      "reso_spatiale":["075","125"],
-                                                      "datedebut":["1980-01-01"],
-                                                      "datefin":["2016-01-31"],
-                                                      "variables":[
-                                                                    "tclw",
-                                                                    "tco3",
-                                                                    ]
-                                                      }
-                                       },
-                            },
-                "modele":{
-                          },
-            };
-
-var level2 = [];
-var level3 = [];
-var level30 = ['AerosolAbsOpticalDepthVsHeight_354_nm', 'FinalAerosolOpticalDepth_358_nm'];
-
-//Variables globales composant la carte
+const ROOT = "http://localhost:8080/thredds";
+var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
 var map;
 var fond;
 var mapPanel;
 
-//Racine de l'URL de la requete (nom du serveur TDS)
-const ROOT = "http://localhost:8080/thredds/";
-//const ROOT = "http://195.83.22.81:8080/thredds/";
-//Objet contenant les informations choisies par l'utilisateur
 var lstInfos = {
     date:"",
     param:"",
@@ -93,21 +22,31 @@ var lstInfos = {
     bbox:'',
     colorbarBand:'',
     opacity:''
-    };
-    
-//Tableau des catalogues disponibles
-var tabCatalog=[];
+};
 
 
-//*********************************FORMULAIRE***************************************//
+var varInfos = {
+    variables:[],
+    debut:"",
+    fin:""
+};
 
+
+var dataset = {
+    header: "",
+    dates: [],
+    datas: []
+};
+
+// #####################  set form  ############
 function setSelect(array, bx){
     for (var tp in array) {
-            bx.options[bx.options.length] = new Option(tp, tp);
+            bx.options[bx.options.length] = new Option(array[tp], array[tp]);
     }
 }
 
 function resetSelect(listSelect, id){
+    resetDate();
     for (var i = id; i < listSelect.length; i++){
         listSelect[i].length = 1;
         listSelect[i].removeAttribute("selected");
@@ -115,103 +54,176 @@ function resetSelect(listSelect, id){
     listSelect.slice(id,listSelect.length).select2().select2('');
 }
 
+
+function resetDate(){
+    $('#date').datepicker('destroy');
+    $('#date').val("");
+}
+
+
 function setForm(){
     //type capteur produit variable resospatiale level
     var selectSource1 = $("[id$='S1']");
 
     //chargement du type1
-    setSelect(listvar, selectSource1[0]);
+    createURL('', selectSource1[0]);
 
     //choix du type
     selectSource1[0].onchange =  function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 1);
+        
         if (this.selectedIndex < 1)
             return; // absence de choix
         //charge les choix de capteur
-        setSelect(listvar[this.value], selectSource1[1]);
-        $("[id^='date']").datepicker("setDate", null);
+        createURL(this.value, selectSource1[1]);
         };
-    
-    //choix du capteur
-    selectSource1[1].onchange = function(){         
+    // choix du capteur
+    selectSource1[1].onchange =  function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 2);
         if (this.selectedIndex < 1)
             return; // absence de choix
-        //chargement des choix de produits
-        setSelect(listvar[typeS1.value][this.value], selectSource1[2]);
-        $("[id^='date']").datepicker("setDate", null);
-    };
-        
-    //choix du produit
-    selectSource1[2].onchange = function(){
-
-        var resospatiale = listvar[selectSource1[0].value][selectSource1[1].value][this.value]['reso_spatiale'];
-        var debut = listvar[selectSource1[0].value][selectSource1[1].value][this.value]['datedebut'];
-        var fin = listvar[selectSource1[0].value][selectSource1[1].value][this.value]['datefin'];
-        var vbl = listvar[selectSource1[0].value][selectSource1[1].value][this.value]['variables'];
-
+        //charge les choix de produit
+        createURL(this.value, selectSource1[2]);
+        };
+    // choix du produit
+    selectSource1[2].onchange =  function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 3);
         if (this.selectedIndex < 1)
-            return; // absence de selection
-
-        for (var i = 0; i < resospatiale.length; i++) {
-            selectSource1[4].options[selectSource1[4].options.length] = new Option(resospatiale[i][0]+'.'+resospatiale[i].slice(1,5)+' deg', resospatiale[i]);
-        }
-
-        for (var v in vbl) {
-            selectSource1[3].options[selectSource1[3].options.length] = new Option(vbl[v], vbl[v]);
-        }
-        
-        //dates debut/fin
-        $( "#date" ).datepicker({
-            yearRange: '1979:2025',
-            dateFormat: 'yy-mm-dd',
-            changeMonth: true,
-            changeYear: true,
-            showMonthAfterYear: true,
-            minDate: new Date(debut),
-            maxDate: new Date(fin),
-            onSelect: function( selectedDate ) {
-                $( "#date2" ).datepicker( "option", "minDate", selectedDate );
-            }
-        });
-        
-        $( "#date2" ).datepicker({
-            yearRange: '1979:2025',
-            dateFormat: 'yy-mm-dd',
-            changeMonth: true,
-            changeYear: true,
-            showMonthAfterYear: true,
-            minDate: new Date(debut),
-            maxDate: new Date(fin),
-                onSelect: function( selectedDate ) {
-                $( "#date" ).datepicker( "option", "maxDate", selectedDate );
-                }
-        });
+            return; // absence de choix
+        //charge les choix de variables
+        createURL(this.value, selectSource1[3]);
         };
-    
-    //variable Changed
-    selectSource1[3].onchange = function(){         
-    
-        resetSelect(selectSource1, 5);                     
+    // choix de la resolution spatiale
+    selectSource1[3].onchange =  function(){
+        //reinitialise les menus deroulants
+        resetSelect(selectSource1, 4);
         if (this.selectedIndex < 1)
-            return; // done
-        
-        if (level30.indexOf(this.value) > -1) {
-            for (var lev = 1; lev < 31; lev++) {
-                selectSource1[5].options[selectSource1[5].options.length] = new Option(lev, lev);
+            return; // absence de choix
+        //charge les choix de variables
+        createURL(this.value, '');
+        for (var i=0; i<resoTemp.length; ++i) {
+            selectSource1[4].options[selectSource1[4].options.length] = new Option(resoTemp[i][1], resoTemp[i][0]);
             }
+        };
+    // choix reso temporelle
+    selectSource1[4].onchange =  function(){
+        //reinitialise les menus deroulants
+        resetSelect(selectSource1, 5);
+        if (this.selectedIndex < 1)
+            return; // absence de choix
+        //charge les choix de variables
+        var listSelected = [];
+        $.each(selectSource1, function(value){
+            if (this.selectedIndex != 0){
+                listSelected.push(this.value);
+            }
+        });
+        var ind = listSelected.indexOf(this.value);
+        var reso = listSelected[3];
+        if (listSelected[2]=="seviri_aerus"){
+            var fileName = "seviri_r" + reso.replace('res','') +'_'+this.value;
+        }else{
+            var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
         }
-        else {        
-            levelS1.options[selectSource1[5].options.length] = new Option(1, '');
-        }
+        var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+        getDateRange(urlInfo);
+        setSelect(varInfos.variables, selectSource1[5]);
+        changeDates(varInfos.debut,varInfos.fin);
+        //dates debut/fin     
     };
 }
 
 
+function getDateRange(url){
+    var lstvariables = [];
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "xml",
+        async: false,
+        success: function(xml) {
+            $(xml).find('Layer[queryable="1"]').each(function(){
+                lstvariables.push($(this).find("Name").first().text());
+                var times = $(this).find('Dimension[name="time"]').text();
+                var ldates = times.split(',');
+                varInfos.variables = lstvariables;
+                varInfos.debut = ldates[1];
+                varInfos.fin = ldates[ldates.length-1];
+            })
+        }
+    }) 
+}
+
+
+function changeDates(start,end){
+    $('#date').datepicker('destroy');
+    $( "#date" ).datepicker({
+        yearRange: '1979:2025',
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        showMonthAfterYear: true,
+        defaultDate: new Date(start),
+        minDate: new Date(start),
+        maxDate: new Date (end),
+    });
+}
+
+
+var urlPath = [];
+
+function createURL(valueSelected, selector){
+    var selectSource1 = $("[id$='S1']");
+    var listSelected = [];
+    var titre = [];
+    
+    $.each(selectSource1, function(value){
+        if (this.selectedIndex != 0){
+            listSelected.push(this.value);
+        }
+    });
+    var ind = listSelected.indexOf(valueSelected);
+    var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
+    if (URL == "/catalog.xml"){
+        var URLCat = ROOT + "/catalog.xml";
+    }
+    else {
+        var URLCat = ROOT + '/' + URL;
+    }
+    
+    $.ajax( {
+				type: "GET",
+				url: URLCat,
+				dataType: "xml",
+				async: false,
+				success: function(xml) {
+        				if($(xml).find('catalogRef')!=0)  //Si catalogue(s) présent
+        				{
+        					$(xml).find('catalogRef').each( function(){  //Pour tout les catalogues
+        						titre.push($(this).attr('xlink:title'));   //Titre du catalogue
+        					})
+        				}
+                            if($(xml).find('dataset')!=0)   //Si data(s) présente(s)
+                            {
+        					$(xml).find('dataset').each( function(){  //Pour toutes les datas
+                                      if ($(this).attr('urlPath')){
+            						urlPath.push($(this).attr('urlPath'));  //URL du dataset
+                                      }
+        					}) //Fin each
+        				}//Fin if
+				}//Fin success AJAX
+			})//Fin AJAX
+    if (selector != ''){
+        setSelect(titre, selector);
+    }
+}
+// #######################################################################################
+
+
+// ################## info layer selected ################################################
 
 function getInfos()
 {
@@ -282,7 +294,7 @@ function getInfos()
         lstInfos.resspatiale = resospatiale;
     }
 
-    var restempo = $('#pasdetempsSel1').val();
+    var restempo = $('#pasdetempsS1').val();
     if(restempo=='Résolution temoprelle')
     {
         
@@ -315,7 +327,6 @@ function getInfos()
         lstInfos.scaleMax=scaleMaxForm;
     
     
-    
         //Date
     var dateForm= $("input[id='date']").val();
     if(dateForm=='')
@@ -327,8 +338,11 @@ function getInfos()
     {
         lstInfos.date=dateForm;
     }
-
-    var nomFichier = produit + "_r" + resospatiale + "_" + restempo + ".nc";
+    if (lstInfos.produit == 'seviri_aerus'){
+        var nomFichier = "seviri_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
+    }else{
+        var nomFichier = produit + "_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
+    }
     lstInfos.nomFichier = nomFichier;
     
         //ColorBar
@@ -353,15 +367,20 @@ function getInfos()
 }
 
 
+
+
+//######################## animation map #############################################################
+
+
 function autoScale()
 {
     getInfos();
     var URLRequest = 
-        ROOT+"wms/"
+        ROOT+"/wms/"
         + lstInfos.nomDataset
         + "/" + lstInfos.capteur
         + "/" + lstInfos.produit
-        + "/res" + lstInfos.resspatiale
+        + "/" + lstInfos.resspatiale
         + "/" + lstInfos.nomFichier
         + "?item=minmax"
         + "&LAYERS="+ lstInfos.param
@@ -442,7 +461,6 @@ function prevDate()
     }
 }
 
-
 var requestID;   //ID de la requete d'animation
 var fps = 1;
 var running = true;  //variable d'execution
@@ -478,8 +496,11 @@ function stopAnim(e)
     $("#dateD").html("");
     running = false;
 }
+// #############################################################################################################
 
 
+
+// ########################## get infoMap ######################################################################
 
 function handler(request) {
     // if the response was XML, try the parsed doc
@@ -499,7 +520,6 @@ function handler(request) {
 function getInfosMap1(e)
 {
     var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
-    alert(lonLat.lon);
     if(typeof map.layers[1] =='undefined')  //si pas de layers
     {
         var errorPopup = new OpenLayers.Popup (
@@ -532,43 +552,31 @@ function getInfosMap1(e)
             var dateForm= $("input[id='date']").val();
             lstInfos.date=dateForm;
             var URLRequest = 
-                ROOT+"wms/"
+                ROOT+"/ncss/"
                 + lstInfos.nomDataset
                 + "/" + lstInfos.capteur
                 + "/" + lstInfos.produit
-                + "/res" + lstInfos.resspatiale
+                + "/" + lstInfos.resspatiale
                 + "/" + lstInfos.nomFichier
-                + "?LAYERS="+ lstInfos.param
-                + "&TIME=" + encodeURIComponent(lstInfos.date)
-                + "&SRS=EPSG%3A4326"
-                + "&CRS=EPSG%3A4326"
-                + "&REQUEST=GetFeatureInfo"
-                + "&service=WMS"
-                + "&version=1.3.0"
-                + "&BBOX=" + map.getExtent().toBBOX()
-                + "&I=" + e.xy.x
-                + "&J=" + e.xy.y
-                + "&INFO_FORMAT=text%2Fxml"
-                + "&QUERY_LAYERS="+ lstInfos.param
-                + "&STYLES="
-                + "&WIDTH=" + map.size.w
-                + "&HEIGHT=" + map.size.h
+                + "?time_start="+ encodeURIComponent(lstInfos.date)
+                + "&time_end="+ encodeURIComponent(lstInfos.date)
+                + "&var="+ lstInfos.param
+
+                + "&latitude=" + lonlat.lat
+                + "&longitude=" + lonlat.lon
+
+                + "&accept=xml"
                 ;
-            alert(URLRequest);
             $.ajax({
                 type: "GET",
                 url: URLRequest,
                 dataType: "xml",
                 async: false,
-                success: function(xmldoc) 
+                success: function(xml) 
                 {
-                    var lon = parseFloat($(xmldoc).find('longitude').text());
-                    var lat = parseFloat($(xmldoc).find('latitude').text());
-                    var iIndex = parseInt($(xmldoc).find('iIndex').text());
-                    var jIndex = parseInt($(xmldoc).find('jIndex').text());
-                    var gridCentreLon = parseFloat($(xmldoc).find('gridCentreLon').text());
-                    var gridCentreLat = parseFloat($(xmldoc).find('gridCentreLat').text());
-                    var val = parseFloat($(xmldoc).find('value').text());
+                    var lon = parseFloat($(xml).find('data[name="lon"]').text());
+                    var lat = parseFloat($(xml).find('data[name="lat"]').text());
+                    var val = parseFloat($(xml).find('data[name="'+lstInfos.param+'"]').text());
                     var res = "";
                     if (lon) 
                     {
@@ -576,7 +584,7 @@ function getInfosMap1(e)
                         var truncVal = val.toPrecision(3);
                         if(truncVal > 200)  //Kelvin -> Celsius
                         {
-                            truncVal-=273,15
+                            //truncVal-=273,15
                         }
                         res = "Lon: "+ lon.toFixed(6) + 
                               " </br>Lat: " + lat.toFixed(6) +
@@ -587,16 +595,100 @@ function getInfosMap1(e)
                         res = "Impossible d'obtenir les informations demandées";
                     }
                     //map.removePopup(tempPopup);   //supprime le popup temporaire
-                    var popup = new OpenLayers.Popup (
-                        "id", // TODO: does this need to be unique?
-                        lonLat,
-                        new OpenLayers.Size(100, 50),
-                        res,
-                        true, //bouton fermer
-                        null  //action additionnel du bouton fermer
-                    );
-                    popup.autoSize = true;
-                    map.addPopup(popup);
+                    
+                    var urlInfo = ROOT + "/ncss"
+                    + "/" + lstInfos.nomDataset 
+                    + "/" + lstInfos.capteur
+                    + "/" + lstInfos.produit
+                    + "/" + lstInfos.resspatiale
+                    + "/" + lstInfos.nomFichier
+                    + "?time_start="+ encodeURIComponent(varInfos.debut)
+                    + "&time_end="+ encodeURIComponent(varInfos.fin)
+                    + "&var="+ lstInfos.param
+    
+                    + "&latitude=" + lonlat.lat
+                    + "&longitude=" + lonlat.lon
+    
+                    + "&accept=csv"
+                    ;
+                    console.log(urlInfo);
+                    $.ajax({
+                        type: "GET",
+                        url: urlInfo,
+                        dataType: "text",
+                        async: true,
+                        complete: function(){
+                        },
+                        success: function(text) {
+                            var lines = text.split('\n');
+                            $.each(lines, function(lineNo, line){
+                                var items = line.split(',');
+                                if (lineNo != 0){
+                                    if (items[3] != undefined){
+                                        var dateISO = items[0].replace(/\D/g, " ")
+                                        var dateCompo = dateISO.split(" ");
+                                        dateCompo[1]--;
+                                        var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
+                                        var tmp = [];
+                                        tmp.push(dateUTC, parseFloat(items[3]))
+                                        ldates.push(dateUTC);
+                                        ldatas.push(tmp[1]);
+                                    }
+                                }else{
+                                    header = items[3];
+                                }
+                            });
+                        },
+                        error: function(res,statut,erreur){
+                        }
+                    })
+                    //plotSerie(dataset, lonlat);
+                    $('#popupContainer').highcharts({
+                        chart:{
+                            type: 'spline',
+                            zoomType: 'xy',
+                        },
+                        credits:{
+                            enabled: false
+                        },
+                        title: {
+                            text: 'Profil temporel'
+                        },
+                        subtitle: {
+                            text: 'Longitude: '+lonlat.lon + ', Latitude: '+lonlat.lat
+                        },
+                        legend: {
+                            enabled: true,
+                        },
+                        rangeSelector : {
+                            selected : 1
+                        },
+                        plotOptions: {
+                            series:{  
+                                pointInterval: 24*3600*1000
+                            },
+                        },        
+                        tooltip: {
+                            xDateFormat: '%d-%m-%Y',
+                            valueDecimals: 9
+                        },
+                        xAxis: {
+                            categories: dataset.dates,
+                            type: 'datetime',
+                        },
+                        yAxis: {
+                            title: {
+                                text: dataset.header
+                            }
+                        },
+                        exporting:{
+                            enabled: true
+                        },
+                        series: [{
+                            name: dataset.header,
+                            data: dataset.datas
+                        }]
+                    });
                 },
                 error: function(request, status, error){
                     console.log(error);
@@ -605,6 +697,150 @@ function getInfosMap1(e)
         }
     }//fin else
 }
+
+
+function getDataPoint(url){
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "xml",
+        async: false,
+        success: function(xml) {
+            $(xml).find('data[name="'+lstInfos.param+'"]').each(function(){
+                var value = parseFloat($(this).text());
+                if( value != undefined){
+                    var date = $(this).text()
+                    date = date.replace(/\D/g, " ").split(" ");
+                    //dataset.dates.push(Date.UTC(date[0],date[1],date[2]));
+                    dataset.dates.push(date);
+                    dataset.datas.push(value);
+                }
+            });
+            //$(xml).find('data[name="'+lstInfos.param+'"]').each(function(){
+        },
+        error: function(res,statut,erreur){
+        }
+    })
+}
+
+
+
+function getDataPoint1(url, coords){
+    var lonlat = coords;
+    var header = "";
+    var ldates = [];
+    var ldatas = [];
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "text",
+        async: true,
+        complete: function(){
+        },
+        success: function(text) {
+            var lines = text.split('\n');
+            $.each(lines, function(lineNo, line){
+                var items = line.split(',');
+                if (lineNo != 0){
+                    if (items[3] != undefined){
+                        var dateISO = items[0].replace(/\D/g, " ")
+                        var dateCompo = dateISO.split(" ");
+                        dateCompo[1]--;
+                        var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
+                        var tmp = [];
+                        tmp.push(dateUTC, parseFloat(items[3]))
+                        ldates.push(dateUTC);
+                        ldatas.push(tmp[1]);
+                    }
+                }else{
+                    header = items[3];
+                }
+            });
+        },
+        error: function(res,statut,erreur){
+        }
+    })
+    dataset.header = header;
+    dataset.datas = ldatas;
+    dataset.dates = ldates;
+    plotSerie(dataset, lonlat);
+}
+
+
+function parseCSV(text) {
+    var lines = text.split('\n');
+    console.log(lines);
+    $.each(lines, function(lineNo, line){
+        var items = line.split(',');
+        if (lineNo == 0){
+            dataset.header = items[3];            
+        }else{
+            var dateISO = items[0];
+            dateISO = dateISO.replace(/\D/g, " ");
+            var dateCompo = dateISO.split(" ");
+            dateCompo[1]--;
+            var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
+            var temp = [];
+            temp.push(dateUTC, (parseFloat(items[3])))
+            if (items[3] != undefined){
+                dataset.datas.push(temp);
+            }
+        }
+    })
+    console.log(dataset.header);
+}
+
+
+
+function plotSerie(dataSerie, lonlat) {
+    $('#popupContainer').highcharts({
+        chart:{
+            type: 'spline',
+            zoomType: 'xy',
+        },
+        credits:{
+            enabled: false
+        },
+        title: {
+            text: 'Profil temporel'
+        },
+        subtitle: {
+            text: 'Longitude: '+lonlat.lon + ', Latitude: '+lonlat.lat
+        },
+        legend: {
+            enabled: true,
+        },
+        rangeSelector : {
+            selected : 1
+        },
+        plotOptions: {
+            series:{  
+                pointInterval: 24*3600*1000
+            },
+        },        
+        tooltip: {
+            xDateFormat: '%d-%m-%Y',
+            valueDecimals: 9
+        },
+        xAxis: {
+            categories: dataSerie.dates,
+            type: 'datetime',
+        },
+        yAxis: {
+            title: {
+                text: dataSerie.header
+            }
+        },
+        exporting:{
+            enabled: true
+        },
+        series: [{
+            name: dataSerie.header,
+            data: dataSerie.datas
+        }]
+    });
+}
+
 
 
 function getInfosMap(e)
@@ -642,11 +878,11 @@ function getInfosMap(e)
             var dateForm= $("input[id='date']").val();
             lstInfos.date=dateForm;
             var URLRequest = 
-                ROOT+"ncss/"
+                ROOT+"/ncss/"
                 + lstInfos.nomDataset
                 + "/" + lstInfos.capteur
                 + "/" + lstInfos.produit
-                + "/res" + lstInfos.resspatiale
+                + "/" + lstInfos.resspatiale
                 + "/" + lstInfos.nomFichier
                 + "?time_start="+ encodeURIComponent(lstInfos.date)
                 + "&time_end="+ encodeURIComponent(lstInfos.date)
@@ -674,7 +910,7 @@ function getInfosMap(e)
                         var truncVal = val.toPrecision(3);
                         if(truncVal > 200)  //Kelvin -> Celsius
                         {
-                            truncVal-=273,15
+                            //truncVal-=273,15
                         }
                         res = "Lon: "+ lon.toFixed(6) + 
                               " </br>Lat: " + lat.toFixed(6) +
@@ -685,7 +921,7 @@ function getInfosMap(e)
                         res = "Impossible d'obtenir les informations demandées";
                     }
                     //map.removePopup(tempPopup);   //supprime le popup temporaire
-                    var popup = new OpenLayers.Popup (
+                    var popup = new OpenLayers.Popup(
                         "id", // TODO: does this need to be unique?
                         lonLat,
                         new OpenLayers.Size(100, 50),
@@ -703,6 +939,10 @@ function getInfosMap(e)
         }
     }//fin else
 }
+// #############################################################################################################
+
+// ################################################ map init update ############################################
+
 
 
 function initMap()
@@ -726,7 +966,7 @@ function initMap()
     map.addLayer(fond);
     
     map.zoomToMaxExtent();
-    map.events.register('click', map, getInfosMap);
+    map.events.register('click', map, getInfosMap1);
     map.addControl(
         new OpenLayers.Control.MousePosition({
             prefix: 'Lon/Lat: ',
@@ -738,6 +978,70 @@ function initMap()
 }
 
 
+
+function majLayer()
+{
+    //Récupère les infos saisies par l'utilisateur
+    try
+    {
+    getInfos();
+    }
+    catch(e)
+    {
+        return null;
+    }
+    //setDescLayer();  //mise a jour description du layer
+    //pour tout les dataset selectionnés : générer l'URL à parser
+    var URL = ROOT+ "/wms/" +
+        lstInfos.nomDataset +
+        "/" + lstInfos.capteur +
+        "/" + lstInfos.produit +
+        "/" + lstInfos.resspatiale +
+        "/" + lstInfos.nomFichier +
+        "?service=WMS&" +
+        "version=1.3.0" +
+        "&request=GetMap&CRS="+encodeURIComponent("CRS:84") +
+        "&LAYERS=" + lstInfos.param +
+        "&TRANSPARENT=true&FORMAT=image%2Fpng" +
+        "&SRS=EPSG";
+       
+        csr = lstInfos.scaleMin+","+lstInfos.scaleMax;
+        style = "boxfill/"+lstInfos.colorbar;
+    if(typeof map.layers[1] !=='undefined')    //si il existe déja un layer
+    {   
+        map.removeLayer(map.layers[1]);         //supprimer ce layer
+    }
+
+
+    var layer = new OpenLayers.Layer.WMS(
+        "Layer Test",
+        URL,
+        {
+            layers: "Deep_Blue_Aerosol_Optical_Depth_550_Land",
+            transparent: "true",
+            format: "image/png",
+            styles: "boxfill/rainbow",
+            colorscalerange: csr,
+            time:lstInfos.date,
+            numcolorbands : $("select[name='colorbandNum']").val(),
+            opacity : "100" //lstInfos.opacity
+            },
+        {isBaseLayer: false}
+    );
+    autoScale();
+    setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
+    map.addLayer(layer);    
+}
+
+
+function updateMap()
+{
+    majLayer();
+}
+// #############################################################################################################
+
+
+// ###################################################set scale colorbar minmax ################################
 
 function setColorbar()
 {
@@ -791,186 +1095,13 @@ function setMinMax()
 	$("#smid").html(smid.toPrecision(3));
 	
 }
+// #############################################################################################################
 
 
-
-//******************************TRAITEMENT****************************************//
-
-
-function majLayer()
-{
-    //Récupère les infos saisies par l'utilisateur
-    try
-    {
-    getInfos();
-    }
-    catch(e)
-    {
-        return null;
-    }
-    //setDescLayer();  //mise a jour description du layer
-    //pour tout les dataset selectionnés : générer l'URL à parser
-    var URL = ROOT+ "wms/" +
-        lstInfos.nomDataset +
-        "/" + lstInfos.capteur +
-        "/" + lstInfos.produit +
-        "/res" + lstInfos.resspatiale +
-        "/" + lstInfos.nomFichier +
-        "?service=WMS&" +
-        "version=1.3.0" +
-        "&request=GetMap&CRS="+encodeURIComponent("CRS:84") +
-        "&LAYERS=" + lstInfos.param +
-        "&TRANSPARENT=true&FORMAT=image%2Fpng" +
-        "&SRS=EPSG";
-       
-        csr = lstInfos.scaleMin+","+lstInfos.scaleMax;
-        style = "boxfill/"+lstInfos.colorbar;
-    if(typeof map.layers[1] !=='undefined')    //si il existe déja un layer
-    {   
-        map.removeLayer(map.layers[1]);         //supprimer ce layer
-    }
-
-
-    var layer = new OpenLayers.Layer.WMS(
-        "Layer Test",
-        URL,
-        {
-            layers: "Deep_Blue_Aerosol_Optical_Depth_550_Land",
-            transparent: "true",
-            format: "image/png",
-            styles: "boxfill/rainbow",
-            colorscalerange: csr,
-            time:lstInfos.date,
-            numcolorbands : $("select[name='colorbandNum']").val(),
-            opacity : "100" //lstInfos.opacity
-            },
-        {isBaseLayer: false}
-    );
-    autoScale();
-    setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
-    map.addLayer(layer);
-    
-}
-
-
-function setDateInfos()
-{
-	//Dataset
-    getInfos();
-    wms = new OpenLayers.Format.WMSCapabilities();
-    var URLREQUEST = ROOT+ "wms/" +
-        lstInfos.nomDataset +
-        "/" + lstInfos.capteur +
-        "/" + lstInfos.produit +
-        "/res" + lstInfos.resspatiale +
-        "/" + lstInfos.nomFichier +
-        "?service=WMS&version=1.3.0&request=GetCapabilities";
-     //lstInfos.date
-	OpenLayers.Request.GET({
-		url:URLRequest,
-		async:false,
-		success: function(xml){
-			var xmlData = xml.responseText;
-			var dimension = $(xmlData).find("Dimension").text().trim();
-			var res = dimension.split("/");
-			if($("input[name='date']").val()=="")
-			{
-				$("input[name='date']").val(res[0]);
-			}
-			$("#dateD").html(res[0]);
-			$("#dateF").html(res[1]);
-			alert(res[0]);
-			var period = res[2];
-			switch(period)
-			{
-				case "P1D":
-					;
-					break;
-					
-				default:
-					text="Periodicité inconnu:" + res[2];
-			}
-			$("#period").html(res[2]);
-		},
-		error : function(e)
-		{
-			console.log("ERREUR DANS LA REQUETE");
-		}
-		});	
-}
-
-
-
-
+// #############################################################################################################
 window.onload = function(){
     $('select').select2();
     setForm();
     initMap();
     setColorbar();
 }
-
-
-function updateMap()
-{
-    majLayer();
-}
-
-
-
-
-
-function getCapCat(catalog)
-{
-	//vider la date du formulaire
-	//$("#").val('');
-	
-	var urlRequest = ROOT+"wms/"+catalog+".nc?service=WMS&version=1.0.0&request=GetCapabilities";
-        alert(urlRequest);
-	var jqxhr = $.ajax(urlRequest)
-    .fail(function() 
-    {
-		raiseAlert("Catalogue inaccessible","Le catalogue demandé est inaccessible");
-		return null;
-	})
-    .done(function() 
-    {
-    alert('ok');
-	wms = new OpenLayers.Format.WMSCapabilities();
-	
-		OpenLayers.Request.GET({
-			url:urlRequest,
-			async:false,
-			success: function(e){
-				var response = wms.read(e.responseText);
-				var capability = response.capability;
-				//$('#layerSelector')   //vider le résultat de la requete précédente
-					//.find('option')
-					//.remove()
-					//.end();
-				for (var i=0, len=capability.layers.length; i<len; i+=1)
-				{ 
-					var layerObj = capability.layers[i]; 
-					//$("#layerSelector").append("<option value='"+layerObj.name+"'>"+layerObj.name+"</option>");
-					
-					lstInfos.bbox=layerObj.llbbox;
-					alert(lstInfos.bbox);
-				}
-				setDateInfos();   //met a jour les informations temporelles (dates debut, fin et période)
-				//autoScale();   //met a jour les valeurs scalemin et scalemax
-			},
-			error : function(e)
-			{
-				throw new ServletException(e);
-				console.log("BUG");
-				$('#layerSelector')   //vider le résultat et afficher "pas de layer dispo"
-					.find('option')
-					.remove()
-					.end()
-					.append('<option value="null">Aucun Layer dispo</option>')
-				;
-			}
-		});	
-	});
-
-}
-

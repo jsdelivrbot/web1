@@ -1,12 +1,14 @@
 #-*- coding: utf-8 -*-
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, HttpResponse
 #from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
 from sendfile import sendfile
 import json
 import os
+import pandas as pd
+import numpy as np
 
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
@@ -15,7 +17,15 @@ from scatter_plot import scatter_plot
 tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'teledm/tmp')
 
 def home(request):
-    return render_to_response('teledm/home.html')
+    print request.POST
+    if request.is_ajax():
+        dates = [d.strftime('%Y-%m-%d') for d in pd.date_range('2014-01-01','2014-01-31', freq='D')]
+        datas = np.random.randint(0,3,31).tolist()
+        datas = {'dates':dates, 'datas':datas}
+        return HttpResponse(json.dumps(datas), content_type='teledm/home.html')
+    else:
+        return render_to_response('teledm/home.html', context_instance=RequestContext(request))
+    
 
 def mapViewer(request):
     if request.method == "POST":
@@ -32,7 +42,7 @@ def mapViewer(request):
         info = json.dumps(dictdatas, cls=DjangoJSONEncoder)
         return render_to_response('teledm/mapViewer.html',{'Info': info},context_instance=RequestContext(request))
     else:
-    	info = json.dumps({"date": "2007-01-01"}, cls=DjangoJSONEncoder)
+        info = json.dumps({"date": "2007-01-01"}, cls=DjangoJSONEncoder)
         return render_to_response('teledm/mapViewer.html',{'deb': info},context_instance=RequestContext(request))
 
 def mapDist(request):

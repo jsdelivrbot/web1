@@ -17,9 +17,13 @@
 }
 
 
-footer {
+#footer {
+    bottom: 0px;
     background-color: #036061;
     height: 75px;
+    padding-left: 10px;
+    padding-rigth: 10px;
+    padding-bottom: 0px;
 	}
 
 

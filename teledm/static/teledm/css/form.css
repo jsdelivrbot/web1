@@ -89,3 +89,10 @@ input.input-small{
 #smidmin {
     margin-bottom: 25px;
 }
+
+
+
+#btn:active, .active {
+    background-color: #585858;
+    color: white;
+}

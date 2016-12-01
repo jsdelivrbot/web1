@@ -251,7 +251,6 @@ $("#test").on('submit', function(e){
     e.preventDefault();    
     console.log("form submitted!");
     $.ajax({
-        async: false,
         type: "POST",
         url: '',
         dataType: 'json',
@@ -271,71 +270,9 @@ $("#test").on('submit', function(e){
         }
 
     })
-    if($("#container").highcharts().series.length !=0){
-        $("#container").highcharts().series[0].remove(true);
-    }
-    $("#container").highcharts().addSeries({
-        name: 'test',
-        data: dataset.datas
-    });
+    console.log(dataset.dates);
+    console.log(dataset.datas);
 });
-
-
-
-//Création du chart dans le div #container
-$('#container').highcharts({
-    chart:{
-        type: 'spline',
-        zoomType: 'xy',
-    },
-    credits:{
-        enabled: false
-    },
-    title: {
-        text: 'Profil temporel'
-    },
-    subtitle: {
-        text: 'Longitude: '
-    },
-    legend: {
-        enabled: true,
-    },
-    rangeSelector : {
-        selected : 1
-    },
-    plotOptions: {
-        series:{  
-            pointInterval: 24*3600*1000
-        },
-    },        
-    tooltip: {
-        xDateFormat: '%d-%m-%Y',
-        valueDecimals: 9
-    },
-    xAxis: {
-        type: 'datetime',
-    },
-    yAxis: {
-        title: {
-            text: dataset.header
-        }
-    },
-    exporting:{
-        enabled: true
-    },
-    });
-
-
-$("#container").hide();
-$('#btn').click(function() {
-    $(this).toggleClass("active");
-    if($(this).hasClass('active')){
-        $("#container").show();
-    }else{
-        $("#container").hide();
-    }
-});
-
 
 window.onload = function(){
     $('select').select2();

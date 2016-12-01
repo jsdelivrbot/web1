@@ -405,10 +405,10 @@ function parseCSV()
 		  url: lstInfos.lstDataset[l].URLData,
 		  cache: false,
 		  async:true,
-			complete: function () {
-				nbReq++;	//incrémenter le compteur de progression
-				loading(nbReq);   //actualiser le message de chargement
-			},
+		  complete: function () {
+    		      nbReq++;	//incrémenter le compteur de progression
+			loading(nbReq);   //actualiser le message de chargement
+		  },
 		  success: function(data){
 			// Split the lines
 			var lines = data.split('\n');	
