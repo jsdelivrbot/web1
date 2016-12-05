@@ -4,7 +4,7 @@ settings for crc project.
 """
 
 import os
-
+from django.core.urlresolvers import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -69,7 +69,7 @@ MIDDLEWARE_CLASSES = [
 ]
 
 ROOT_URLCONF = 'crc.urls'
-LOGIN_REDIRECT_URL = ''
+LOGIN_REDIRECT_URL = '/crc/teledm'
 
 ADMIN_REORDER = (
     'crc',

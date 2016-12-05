@@ -112,7 +112,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
     anfin = datetime.strptime(fin,"%Y-%m-%d").strftime("%Y")
     
     
-    ddirin = "/home/sebastien/Bureau/teledm/donnees/"+types+"/"+sat+"/"+prod+"/res"+res
+    ddirin = "/home/sebastien/Bureau/teledm/donnees/"+types+"/"+sat+"/"+prod+"/"+res
     os.chdir(ddirin)
     
     files = sorted(glob.glob(prod+'*'+res_temp+'.nc'))#liste des fichiers .nc

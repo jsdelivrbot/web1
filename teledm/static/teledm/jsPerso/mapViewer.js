@@ -34,6 +34,8 @@ var varInfos = {
 
 var dataset = {
     header: "",
+    lon: "",
+    lat: "",
     dates: [],
     datas: []
 };
@@ -131,7 +133,7 @@ function setForm(){
         var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
         getDateRange(urlInfo);
         setSelect(varInfos.variables, selectSource1[5]);
-        changeDates(varInfos.debut,varInfos.fin);
+        changeDates(varInfos.debut,varInfos.fin,this.value);
         //dates debut/fin     
     };
 }
@@ -158,7 +160,7 @@ function getDateRange(url){
 }
 
 
-function changeDates(start,end){
+function changeDates(start,end,period){
     $('#date').datepicker('destroy');
     $( "#date" ).datepicker({
         yearRange: '1979:2025',
@@ -336,7 +338,16 @@ function getInfos()
     }
     else
     {
-        lstInfos.date=dateForm;
+        if (lstInfos.restempo == 'w'){
+            lstInfos.date = moment(dateForm).startOf('isoWeek').format('YYYY-MM-DD');
+        }else if (lstInfos.restempo == 'm'){
+            lstInfos.date = moment(dateForm).startOf('Month').format('YYYY-MM-DD');
+        }else if (lstInfos.restempo == 't'){
+            lstInfos.date = moment(dateForm).startOf('quarter').format('YYYY-MM-DD');
+        }else{
+            lstInfos.date=dateForm;
+        }
+        $("input[id='date']").val(lstInfos.date);
     }
     if (lstInfos.produit == 'seviri_aerus'){
         var nomFichier = "seviri_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
@@ -371,62 +382,27 @@ function getInfos()
 
 //######################## animation map #############################################################
 
-
-function autoScale()
-{
-    getInfos();
-    var URLRequest = 
-        ROOT+"/wms/"
-        + lstInfos.nomDataset
-        + "/" + lstInfos.capteur
-        + "/" + lstInfos.produit
-        + "/" + lstInfos.resspatiale
-        + "/" + lstInfos.nomFichier
-        + "?item=minmax"
-        + "&LAYERS="+ lstInfos.param
-        + "&TIME=" + encodeURIComponent(lstInfos.date)
-        + "&SRS=EPSG%3A4326"
-        + "&CRS=EPSG%3A4326"
-        + "&REQUEST=GetMetadata"
-        + "&service=WMS"
-        + "&version=1.3.0"
-        + "&BBOX=-25,-0.3,57,51"
-        + "&WIDTH=50"
-        + "&HEIGHT=50"
-        ;
-    $.ajax({
-        type: "GET",
-        url: URLRequest,
-        dataType: "JSON",
-        async: false,
-        success: function(json) 
-        {
-            $("input[name='scaleMin']").val(json.min);
-            $("input[name='scaleMax']").val(json.max);
-                if(((lstInfos.param=='tasmin')||(lstInfos.param=='tasmax'))&&(json.min>200))
-                {
-                    lstInfos.unit="K";
-                };
-        },
-        error: function(request, status, error){
-            console.log(error);
-        }
-    });
-}
-
 function nextDate()
 {
     //forumlaire
-    //var period = $("select[name='usrPeriod']").val();
+    var period = $("#pasdetempsS1").val();
     var dateA = $("input[id='date']").val();
     //moment js
     var dateAM = moment.utc(dateA);
-    var periodM = moment.duration('P1D');
+    if (period == 'w'){
+        var periodM = moment.duration('P1W');
+    }else if (period == 'm'){
+       var periodM = moment.duration('P1M'); 
+    }else if (period == 't'){
+       var periodM = moment.duration(3, 'months'); 
+    }else{
+        var periodM = moment.duration('P1D');
+    }
     //affichage
     var res = moment(dateAM).add(periodM);
     res = res.toISOString();
     $("input[id='date']").val(res);
-    //$("#dateD").html(res);
+    //$("#dateAnimation").html(res);
     if(typeof map.layers[1] =='undefined') //si pas de layer
     {
         majLayer();
@@ -441,13 +417,21 @@ function nextDate()
 function prevDate()
 {
     //forumlaire
-    //var period = $("select[name='usrPeriod']").val();
+    var period = $("#pasdetempsS1").val();
     var dateA = $("input[id='date']").val();
     //moment js
     var dateAM = moment.utc(dateA);
-    //var periodM = moment.duration('P1D');
+    if (period == 'w'){
+        var periodM = moment.duration('P1W');
+    }else if (period == 'm'){
+       var periodM = moment.duration('P1M'); 
+    }else if (period == 't'){
+       var periodM = moment.duration(3, 'months'); 
+    }else{
+        var periodM = moment.duration('P1D');
+    }
     //affichage
-    var res = moment(dateAM).add(-1, 'days');
+    var res = moment(dateAM).add(-1, period);
     res = res.toISOString();
     $("input[id='date']").val(res);
     //$("#dateD").html(res);
@@ -501,21 +485,6 @@ function stopAnim(e)
 
 
 // ########################## get infoMap ######################################################################
-
-function handler(request) {
-    // if the response was XML, try the parsed doc
-    //alert(request.responseXML);
-    // otherwise, you've got the response text
-    if (request.status == 200){
-        alert(request.responseXML);
-        alert(request.getAllResponseHeaders());
-    }
-    else {
-        alert('Echec de la connexion');
-    }
-}
-
-
 
 function getInfosMap1(e)
 {
@@ -621,6 +590,11 @@ function getInfosMap1(e)
                         },
                         success: function(text) {
                             var lines = text.split('\n');
+                            dataset.header = '';
+                            dataset.lon = '';
+                            dataset.lat = '';
+                            dataset.datas = [];
+                            dataset.dates = [];
                             $.each(lines, function(lineNo, line){
                                 var items = line.split(',');
                                 if (lineNo != 0){
@@ -631,64 +605,24 @@ function getInfosMap1(e)
                                         var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
                                         var tmp = [];
                                         tmp.push(dateUTC, parseFloat(items[3]))
-                                        ldates.push(dateUTC);
-                                        ldatas.push(tmp[1]);
+                                        dataset.dates.push(items[0]);
+                                        dataset.datas.push(tmp);
+                                        dataset.lat = items[1];
+                                        dataset.lon = items[2];
                                     }
                                 }else{
-                                    header = items[3];
+                                    dataset.header = items[3];
                                 }
                             });
+                            console.log(dataset.dates);
+                            console.log(dataset.lon);
+                            console.log(dataset.header);
+                            updatePlot(dataset);
                         },
                         error: function(res,statut,erreur){
                         }
                     })
                     //plotSerie(dataset, lonlat);
-                    $('#popupContainer').highcharts({
-                        chart:{
-                            type: 'spline',
-                            zoomType: 'xy',
-                        },
-                        credits:{
-                            enabled: false
-                        },
-                        title: {
-                            text: 'Profil temporel'
-                        },
-                        subtitle: {
-                            text: 'Longitude: '+lonlat.lon + ', Latitude: '+lonlat.lat
-                        },
-                        legend: {
-                            enabled: true,
-                        },
-                        rangeSelector : {
-                            selected : 1
-                        },
-                        plotOptions: {
-                            series:{  
-                                pointInterval: 24*3600*1000
-                            },
-                        },        
-                        tooltip: {
-                            xDateFormat: '%d-%m-%Y',
-                            valueDecimals: 9
-                        },
-                        xAxis: {
-                            categories: dataset.dates,
-                            type: 'datetime',
-                        },
-                        yAxis: {
-                            title: {
-                                text: dataset.header
-                            }
-                        },
-                        exporting:{
-                            enabled: true
-                        },
-                        series: [{
-                            name: dataset.header,
-                            data: dataset.datas
-                        }]
-                    });
                 },
                 error: function(request, status, error){
                     console.log(error);
@@ -699,249 +633,23 @@ function getInfosMap1(e)
 }
 
 
-function getInfosMap(e)
-{
-    var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
-    if(typeof map.layers[1] =='undefined')  //si pas de layers
-    {
-        var errorPopup = new OpenLayers.Popup (
-            "error",
-            lonLat,
-            new OpenLayers.Size(100, 50),
-            "Pas de couche sélectionnée",
-            true, //ajout un bouton "fermer la fenetre"
-            null  //action apres close
-            );
-        errorPopup.autoSize = true;
-        map.addPopup(errorPopup);
+function updatePlot(datas){
+    if($("#container").highcharts().series.length !=0){
+        $("#container").highcharts().series[0].remove(true);
     }
-    else
-    {
-        if(map.maxExtent.containsLonLat(lonLat))
-        {
-            var tempPopup = new OpenLayers.Popup (
-                "temp",
-                lonLat,
-                new OpenLayers.Size(100, 50),
-                "Loading...",
-                true, //ajout un bouton "fermer la fenetre"
-                null  //action apres close
-			);
-			//tempPopup.autoSize = true;
-			//map.addPopup(tempPopup);
-            var lonlat = map.getLonLatFromViewPortPx(e.xy);
-            //mise a jour date
-            var dateForm= $("input[id='date']").val();
-            lstInfos.date=dateForm;
-            var URLRequest = 
-                ROOT+"ncss/"
-                + lstInfos.nomDataset
-                + "/" + lstInfos.capteur
-                + "/" + lstInfos.produit
-                + "/res" + lstInfos.resspatiale
-                + "/" + lstInfos.nomFichier
-                + "?time_start="+ encodeURIComponent(lstInfos.date)
-                + "&time_end="+ encodeURIComponent(lstInfos.date)
-                + "&var="+ lstInfos.param
-
-                + "&latitude=" + lonlat.lat
-                + "&longitude=" + lonlat.lon
-
-                + "&accept=xml"
-                ;
-            $.ajax({
-                type: "GET",
-                url: URLRequest,
-                dataType: "xml",
-                async: false,
-                success: function(xml) 
-                {
-                    var lon = parseFloat($(xml).find('data[name="lon"]').text());
-                    var lat = parseFloat($(xml).find('data[name="lat"]').text());
-                    var val = parseFloat($(xml).find('data[name="'+lstInfos.param+'"]').text());
-                    var res = "";
-                    if (lon) 
-                    {
-                        // We have a successful result
-                        var truncVal = val.toPrecision(3);
-                        if(truncVal > 200)  //Kelvin -> Celsius
-                        {
-                            truncVal-=273,15
-                        }
-                        res = "Lon: "+ lon.toFixed(6) + 
-                              " </br>Lat: " + lat.toFixed(6) +
-        				   " </br>Value: " + truncVal;
-                    } 
-                    else 
-                    {
-                        res = "Impossible d'obtenir les informations demandées";
-                    }
-                    //map.removePopup(tempPopup);   //supprime le popup temporaire
-                    var popup = new OpenLayers.Popup (
-                        "id", // TODO: does this need to be unique?
-                        lonLat,
-                        new OpenLayers.Size(100, 50),
-                        res,
-                        true, //bouton fermer
-                        null  //action additionnel du bouton fermer
-                    );
-                    popup.autoSize = true;
-                    map.addPopup(popup);
-                },
-                error: function(request, status, error){
-                    console.log(error);
-                }
-            });
-        }
-    }//fin else
-}
-
-function getDataPoint(url){
-    $.ajax({
-        type: "GET",
-        url: url,
-        dataType: "xml",
-        async: false,
-        success: function(xml) {
-            $(xml).find('data[name="'+lstInfos.param+'"]').each(function(){
-                var value = parseFloat($(this).text());
-                if( value != undefined){
-                    var date = $(this).text()
-                    date = date.replace(/\D/g, " ").split(" ");
-                    //dataset.dates.push(Date.UTC(date[0],date[1],date[2]));
-                    dataset.dates.push(date);
-                    dataset.datas.push(value);
-                }
-            });
-            //$(xml).find('data[name="'+lstInfos.param+'"]').each(function(){
-        },
-        error: function(res,statut,erreur){
-        }
-    })
-}
-
-
-
-function getDataPoint1(url, coords){
-    var lonlat = coords;
-    var header = "";
-    var ldates = [];
-    var ldatas = [];
-    $.ajax({
-        type: "GET",
-        url: url,
-        dataType: "text",
-        async: true,
-        complete: function(){
-        },
-        success: function(text) {
-            var lines = text.split('\n');
-            $.each(lines, function(lineNo, line){
-                var items = line.split(',');
-                if (lineNo != 0){
-                    if (items[3] != undefined){
-                        var dateISO = items[0].replace(/\D/g, " ")
-                        var dateCompo = dateISO.split(" ");
-                        dateCompo[1]--;
-                        var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
-                        var tmp = [];
-                        tmp.push(dateUTC, parseFloat(items[3]))
-                        ldates.push(dateUTC);
-                        ldatas.push(tmp[1]);
-                    }
-                }else{
-                    header = items[3];
-                }
-            });
-        },
-        error: function(res,statut,erreur){
-        }
-    })
-    dataset.header = header;
-    dataset.datas = ldatas;
-    dataset.dates = ldates;
-    plotSerie(dataset, lonlat);
-}
-
-
-function parseCSV(text) {
-    var lines = text.split('\n');
-    console.log(lines);
-    $.each(lines, function(lineNo, line){
-        var items = line.split(',');
-        if (lineNo == 0){
-            dataset.header = items[3];            
-        }else{
-            var dateISO = items[0];
-            dateISO = dateISO.replace(/\D/g, " ");
-            var dateCompo = dateISO.split(" ");
-            dateCompo[1]--;
-            var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
-            var temp = [];
-            temp.push(dateUTC, (parseFloat(items[3])))
-            if (items[3] != undefined){
-                dataset.datas.push(temp);
-            }
-        }
-    })
-    console.log(dataset.header);
-}
-
-
-
-function plotSerie(dataSerie, lonlat) {
-    $('#popupContainer').highcharts({
-        chart:{
-            type: 'spline',
-            zoomType: 'xy',
-        },
-        credits:{
-            enabled: false
-        },
-        title: {
-            text: 'Profil temporel'
-        },
-        subtitle: {
-            text: 'Longitude: '+lonlat.lon + ', Latitude: '+lonlat.lat
-        },
-        legend: {
-            enabled: true,
-        },
-        rangeSelector : {
-            selected : 1
-        },
-        plotOptions: {
-            series:{  
-                pointInterval: 24*3600*1000
-            },
-        },        
-        tooltip: {
-            xDateFormat: '%d-%m-%Y',
-            valueDecimals: 9
-        },
-        xAxis: {
-            categories: dataSerie.dates,
-            type: 'datetime',
-        },
-        yAxis: {
-            title: {
-                text: dataSerie.header
-            }
-        },
-        exporting:{
-            enabled: true
-        },
-        series: [{
-            name: dataSerie.header,
-            data: dataSerie.datas
-        }]
+    $("#container").highcharts().setTitle({ text: datas.header }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
+    $("#container").highcharts().addSeries({
+        name: datas.header,
+        data: datas.datas,
+        lineWidth: 1,
+        color: "#000000",
+        marker: { fillColor: '#000000', radius: 2 }
     });
+    $("#container").highcharts().redraw();
 }
 
 
-
-function getInfosMap(e)
-{
+function getInfosMap(e){
     var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
     if(typeof map.layers[1] =='undefined')  //si pas de layers
     {
@@ -1007,7 +715,7 @@ function getInfosMap(e)
                         var truncVal = val.toPrecision(3);
                         if(truncVal > 200)  //Kelvin -> Celsius
                         {
-                            //truncVal-=273,15
+                            truncVal-=273,15
                         }
                         res = "Lon: "+ lon.toFixed(6) + 
                               " </br>Lat: " + lat.toFixed(6) +
@@ -1018,7 +726,7 @@ function getInfosMap(e)
                         res = "Impossible d'obtenir les informations demandées";
                     }
                     //map.removePopup(tempPopup);   //supprime le popup temporaire
-                    var popup = new OpenLayers.Popup(
+                    var popup = new OpenLayers.Popup (
                         "id", // TODO: does this need to be unique?
                         lonLat,
                         new OpenLayers.Size(100, 50),
@@ -1036,6 +744,70 @@ function getInfosMap(e)
         }
     }//fin else
 }
+
+
+//Création du chart dans le div #container
+$('#container').highcharts({
+    chart:{
+        type: 'spline',
+        zoomType: 'xy',
+    },
+    credits:{
+        enabled: false
+    },
+    title: {
+        text: 'Profil temporel'
+    },
+    subtitle: {
+        text: ''
+    },
+    legend: {
+        enabled: true,
+    },
+    rangeSelector : {
+        selected : 1
+    },
+    plotOptions: {
+        series:{  
+            pointInterval: 24*3600*1000
+        },
+    },        
+    tooltip: {
+        xDateFormat: '%d-%m-%Y',
+        valueDecimals: 9
+    },
+    xAxis: {
+        type: 'datetime',
+    },
+    yAxis: {
+        title: {
+            text: dataset.header
+        }
+    },
+    series: [{
+        lineWidth: 1,
+        color: "#000000"
+    }],
+    exporting:{
+        enabled: true
+    },
+});
+
+
+$("#container").hide();
+$('#btn').click(function() {
+    $(this).toggleClass("active");
+    if($(this).hasClass('active')){
+        if($("#container").highcharts().series.length !=0){
+            $("#container").highcharts().series[0].remove(true);
+        }
+        $("#container").show();
+    }else{
+        $("#container").hide();
+    }
+});
+
+
 // #############################################################################################################
 
 // ################################################ map init update ############################################
@@ -1048,7 +820,9 @@ function initMap()
     {
         projection: new OpenLayers.Projection("EPSG:4326"),
         resolutions: [0.03, 0.09, 0.15, 0.4],
-        restrictedExtent: [-180, -90, 180, 90]
+        restrictedExtent: [-180, -90, 180, 90],
+        maxResolution: 0.5,
+        minResolution: 0.01
     }
     );
     fond = new OpenLayers.Layer.WMS(
@@ -1063,7 +837,11 @@ function initMap()
     map.addLayer(fond);
     
     map.zoomToMaxExtent();
+    //if ($("#container").is(":visible")){
     map.events.register('click', map, getInfosMap1);
+    //}else{
+        //map.events.register('click', map, getInfosMap);
+    //}
     map.addControl(
         new OpenLayers.Control.MousePosition({
             prefix: 'Lon/Lat: ',
@@ -1108,7 +886,7 @@ function majLayer()
     {   
         map.removeLayer(map.layers[1]);         //supprimer ce layer
     }
-
+    
 
     var layer = new OpenLayers.Layer.WMS(
         "Layer Test",
@@ -1135,10 +913,56 @@ function updateMap()
 {
     majLayer();
 }
+
+
 // #############################################################################################################
 
 
 // ###################################################set scale colorbar minmax ################################
+
+function autoScale()
+{
+    getInfos();
+    var URLRequest = 
+        ROOT+"/wms/"
+        + lstInfos.nomDataset
+        + "/" + lstInfos.capteur
+        + "/" + lstInfos.produit
+        + "/" + lstInfos.resspatiale
+        + "/" + lstInfos.nomFichier
+        + "?item=minmax"
+        + "&LAYERS="+ lstInfos.param
+        + "&TIME=" + encodeURIComponent(lstInfos.date)
+        + "&SRS=EPSG%3A4326"
+        + "&CRS=EPSG%3A4326"
+        + "&REQUEST=GetMetadata"
+        + "&service=WMS"
+        + "&version=1.3.0"
+        + "&BBOX=-25,-0.3,57,51"
+        + "&WIDTH=50"
+        + "&HEIGHT=50"
+        ;
+    $.ajax({
+        type: "GET",
+        url: URLRequest,
+        dataType: "JSON",
+        async: false,
+        success: function(json) 
+        {
+            $("input[name='scaleMin']").val(json.min);
+            $("input[name='scaleMax']").val(json.max);
+                if(((lstInfos.param=='tasmin')||(lstInfos.param=='tasmax'))&&(json.min>200))
+                {
+                    lstInfos.unit="K";
+                };
+        },
+        error: function(request, status, error){
+            console.log(error);
+        }
+    });
+}
+
+
 
 function setColorbar()
 {

@@ -143,15 +143,28 @@ function setForm(){
         setSelect(listVariables, selectSource1[5]);
         console.log(debut);
         console.log(fin);
-        changeDates1(debut,fin);
-        changeDates2(debut,fin);
+        changeDates1(debut,fin,this.value);
+        changeDates2(debut,fin,this.value);
         //dates debut/fin     
     };
 }
 
-function changeDates1(start,end){
+function changeDates1(start,end,period){
     $('#date1').datepicker('destroy');
     $( "#date1" ).datepicker({
+        beforeShowDay: function(date){
+            if (period == 'w'){
+                return [date.getDay() == 1, ""];
+            }else if (period == 'm'){
+                return [date.getDate() == 1, ""];
+            }else if (period == 't'){
+                if ($.isArray(date.getMonth(), [1,2,4,5,7,8,10,11])!=-1){
+                    return [false];
+                }else{
+                    return[true];
+                }
+            }
+        },
         yearRange: '1979:2025',
         dateFormat: 'yy-mm-dd',
         changeMonth: true,
@@ -168,9 +181,17 @@ function changeDates1(start,end){
 }
 
 
-function changeDates2(start,end){
+function changeDates2(start,end,period){
     $('#date2').datepicker('destroy');
     $( "#date2" ).datepicker({
+        beforeShowDay: function(date){
+            if (period == 'w'){
+                alert(date.getDay());
+                return [date.getDay() == 1, ""];
+            }else if (period == 'm'){
+                return [date.getDate() == 1, ""];
+            }
+        },
         yearRange: '1979:2025',
         dateFormat: 'yy-mm-dd',
         changeMonth: true,
@@ -323,17 +344,49 @@ $('#container').highcharts({
     exporting:{
         enabled: true
     },
-    });
+});
 
 
 $("#container").hide();
 $('#btn').click(function() {
     $(this).toggleClass("active");
     if($(this).hasClass('active')){
+        if($("#container").highcharts().series.length !=0){
+            $("#container").highcharts().series[0].remove(true);
+        }
         $("#container").show();
     }else{
         $("#container").hide();
     }
+});
+
+
+
+
+var data = [
+    {
+        name: 'node1', id: 1,
+        children: [
+            { name: 'child1', id: 2 },
+            { name: 'child2', id: 3 }
+        ]
+    },
+    {
+        name: 'node2', id: 4,
+        children: [
+            { name: 'child3', id: 5 }
+        ]
+    }
+];
+$('#tree1').tree({
+    data: data,
+    autoOpen: true,
+    dragAndDrop: true
+});
+$(function() {
+    $('#tree1').tree({
+        data: data
+    });
 });
 
 

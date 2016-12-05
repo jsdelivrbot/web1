@@ -46,34 +46,60 @@ def mapViewer(request):
         return render_to_response('teledm/mapViewer.html',{'deb': info},context_instance=RequestContext(request))
 
 def mapDist(request):
-    print request.POST
-    if request.method == 'POST':
-        if request.POST.get('submit') == "SUBMIT":
-            ddirout = "/home/dev/web1/teledm/protected"
-            deb = request.POST['datedebut'] #"2007-01-01"
-            fin = request.POST['datefin'] #"2007-06-30"
-            pays = request.POST['pays']  
-            niveau = request.POST['decoupage'] 
-            types = request.POST['type'] 
-            sat = request.POST['capteur']  
-            prod = request.POST['produit']
-            res_temp = request.POST['pasdetemps']
-            res = request.POST['resospatiale']
-            varname = request.POST['variable'] #'Deep_Blue_Aerosol_Optical_Depth_550_Land'
-            shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
-            ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)        
-            val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
-            datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
-            list_dates = ldf['vmean'].index.values.tolist()
-            geojson = pays+"_"+niveau+"_sante.geojson"
-            filename = varname + '_' + prod + '_r' + res + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
-            dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson, 'form':request.POST, 'filename':filename}
-            jsdatas = json.dumps(dictdatas, cls=DjangoJSONEncoder)
-            return render_to_response('teledm/mapDist.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
-        elif request.POST.get('submit') == "Download":
-            filename = os.path.join(tmpDir, request.POST['filename'])
-            print filename
-            return sendfile(request, filename)
+    
+#    if request.method == 'POST':
+#        if request.POST.get('submit') == "SUBMIT":
+#            ddirout = "/home/dev/web1/teledm/protected"
+#            deb = request.POST['datedebut'] #"2007-01-01"
+#            fin = request.POST['datefin'] #"2007-06-30"
+#            pays = request.POST['pays']  
+#            niveau = request.POST['decoupage'] 
+#            types = request.POST['type'] 
+#            sat = request.POST['capteur']  
+#            prod = request.POST['produit']
+#            res_temp = request.POST['pasdetemps']
+#            res = request.POST['resospatiale']
+#            varname = request.POST['variable'] #'Deep_Blue_Aerosol_Optical_Depth_550_Land'
+#            shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
+#            ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)        
+#            val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
+#            datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
+#            list_dates = ldf['vmean'].index.values.tolist()
+#            geojson = pays+"_"+niveau+"_sante.geojson"
+#            filename = varname + '_' + prod + '_r' + res + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
+#            dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson, 'filename':filename}
+#            jsdatas = json.dumps(dictdatas, cls=DjangoJSONEncoder)
+#            return render_to_response('teledm/mapDist.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
+#        elif request.POST.get('submit') == "Download":
+#            filename = os.path.join(tmpDir, request.POST['filename'])
+#            print filename
+#            return sendfile(request, filename)
+    if request.is_ajax():
+        print request.POST
+        ddirout = "/home/dev/web1/teledm/protected"
+        deb = request.POST['datedebut'] #"2007-01-01"
+        fin = request.POST['datefin'] #"2007-06-30"
+        pays = request.POST['pays']  
+        niveau = request.POST['decoupage'] 
+        types = request.POST['type'] 
+        sat = request.POST['capteur']  
+        prod = request.POST['produit']
+        res_temp = request.POST['pasdetemps']
+        res = request.POST['resospatiale']
+        varname = request.POST['variable'] #'Deep_Blue_Aerosol_Optical_Depth_550_Land'
+        shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
+        print shape
+        ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)
+        print ldf['vmean']
+        val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
+        datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
+        list_dates = ldf['vmean'].index.values.tolist()
+        geojson = pays+"_"+niveau+"_sante.geojson"
+        filename = varname + '_' + prod + '_r' + res + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
+        dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson, 'filename':filename}
+        print list_dates
+        #jsdatas = json.dumps(dictdatas, cls=DjangoJSONEncoder)
+        return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='teledm/mapDist.html')
     else:
         jsdatas = json.dumps({'form':''}, cls=DjangoJSONEncoder)
         return render_to_response('teledm/mapDist.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))

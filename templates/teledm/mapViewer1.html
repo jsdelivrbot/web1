@@ -1,14 +1,41 @@
 {% extends "teledm/base.html" %}
 {% load staticfiles %}
-
-{% block css %}
-    <link rel="stylesheet" type="text/css" href="http://openlayers.org/en/v3.18.2/css/ol.css" type="text/css">
-    <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/form.css' %}" >
-{% endblock %}
-
+{% block content %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WMS Time</title>
+        <link rel="stylesheet" href="http://openlayers.org/en/v3.18.2/css/ol.css" type="text/css">
+        <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/form.css' %}" >
+        <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    </head>
+    <body>
+        </br>
+        <div id="map" class="map" ></div>
+        <div id="popup">
+            <div id="popupContainer" ></div>
+        </div>
+        <script src="http://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.2/moment.min.js"></script>
+        <script src="http://openlayers.org/api/OpenLayers.js"></script>
+    </body>
+</html>
+{% endblock content %}
 {% block form %}
+    <html>
+    <head>
+        <!--<link rel="stylesheet" type="text/css" href="{% static 'bootstrap/select2/dist/css/select2.css' %}">-->
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css">
+        <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/form.css' %}" >
+        <!--
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+        -->
+        
+
+    </head>
+    <body>
         <div class="row">
-            <form id="mapForm" action="" method="post" class="form-horizontal">{% csrf_token %}      
+            <form id="moyenne" action="" method="post" class="form-horizontal">{% csrf_token %}      
                 <div class="row" id="Sat">
                     <div class="row">
                         <label>Sélection de la donnée</label>
@@ -53,7 +80,6 @@
                         <div class="infos">
                         </div>
                         </br>
-                        <div id="dateAnimation"></div>
                         <div role="group" aria-label="Animation controls">
                             <button type="button" class="btn btn-default btn-sm" id="backward" onclick="prevDate()">
                             <span class="glyphicon glyphicon-backward"></span>
@@ -135,31 +161,17 @@
                 </div>
             </form>
         </div>
-{% endblock %}
+        <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+        <!--<script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>-->
+        <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js"></script>
+        <script type="text/javascript" src="{% static 'teledm/jsPerso/mapViewer.js' %}"></script>   
+    </body>
+</html>
 
-{% block content1 %}
-    </br>
-    <div id="map" class="map" ></div>
-{% endblock %}
-
-{% block content2 %}
-    <div class="row">
-        <input type="button" id="btn" value="Profil"/>
-    </div>
-    <div id="container" ></div>
-{% endblock %}
-
-{% block js %}
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
-    <!--<script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>-->
-    <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
-    <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
-    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>-->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js"></script>
-    <script type="text/javascript" src="http://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
-    <script type="text/javascript" src="{% static 'teledm/jsPerso/mapViewer.js' %}"></script>   
-{% endblock %}
+{% endblock form %}
