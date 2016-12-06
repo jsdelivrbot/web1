@@ -1,96 +1,100 @@
-var selectGeographique = {"Benin":["tanguita", "Nikki"],
+const ROOT = "http://localhost:8080/thredds";
+var selectPays = {"Benin":["tanguita", "Nikki"],
                               "Burkina":["Diapaga","Bogande", "Sapouy"],
                               "Mali":["San", "Koro"],
                               "Senegal":["Dakar", "Saint-Louis"],
                             };
+
 var variablesEpidemio = ["incidence"];
-
 var stationsAeronet = ["Banizoumbou", "Cinzana", "Dakar"];
-
-var variablesAeronet = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom", "FineModeFraction_500nm[eta]"];
-
-var stationsTeom = ["Banizoumbou", "Cinzana", "Dedougou"];
-
+var variablesAeronet = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_340', '%TripletVar_380', '%TripletVar_412', '%TripletVar_440',
+                         '%TripletVar_443', '%TripletVar_490', '%TripletVar_500', '%TripletVar_531', '%TripletVar_532', '%TripletVar_551',
+                         '%TripletVar_555', '%TripletVar_667', '%TripletVar_675', '%TripletVar_870', '%WaterError', '2nd_Order_Reg_Fit_Error-Total_AOD_500nm[regression_dtau_a]',
+                         '340-440Angstrom', '380-500Angstrom', '380nm_Input_AOD', '412nm_Input_AOD', '440-675Angstrom', '440-675Angstrom(Polar)',
+                         '440-870Angstrom', '440nm_Input_AOD', '443nm_Input_AOD', '490nm_Input_AOD', '500-870Angstrom', '500nm_Input_AOD',
+                         '531nm_Input_AOD', '532nm_Input_AOD', '551nm_Input_AOD', '555nm_Input_AOD', '667nm_Input_AOD', '675nm_Input_AOD',
+                         '870nm_Input_AOD', 'AE-Fine_Mode_500nm[alpha_f]', 'AOT_1020', 'AOT_1020-AOT', 'AOT_1020-CH4', 'AOT_1020-CO2',
+                         'AOT_1020-ExactWavelength(nm)', 'AOT_1020-NO2', 'AOT_1020-O3', 'AOT_1020-Rayleigh', 'AOT_1020-Total',
+                         'AOT_1020-Water', 'AOT_1640', 'AOT_1640-AOT', 'AOT_1640-CH4', 'AOT_1640-CO2', 'AOT_1640-ExactWavelength(nm)',
+                         'AOT_1640-NO2', 'AOT_1640-O3', 'AOT_1640-Rayleigh', 'AOT_1640-Total', 'AOT_1640-Water', 'AOT_340', 'AOT_340-AOT',
+                         'AOT_340-CH4', 'AOT_340-CO2', 'AOT_340-ExactWavelength(nm)', 'AOT_340-NO2', 'AOT_340-O3', 'AOT_340-Rayleigh', 'AOT_340-Total',
+                         'AOT_340-Water', 'AOT_380', 'AOT_380-AOT', 'AOT_380-CH4', 'AOT_380-CO2', 'AOT_380-ExactWavelength(nm)', 'AOT_380-NO2',
+                         'AOT_380-O3', 'AOT_380-Rayleigh', 'AOT_380-Total', 'AOT_380-Water', 'AOT_412', 'AOT_412-AOT', 'AOT_412-CH4', 'AOT_412-CO2',
+                         'AOT_412-ExactWavelength(nm)', 'AOT_412-NO2', 'AOT_412-O3', 'AOT_412-Rayleigh', 'AOT_412-Total', 'AOT_412-Water', 'AOT_440',
+                         'AOT_440-AOT', 'AOT_440-CH4', 'AOT_440-CO2', 'AOT_440-ExactWavelength(nm)', 'AOT_440-NO2', 'AOT_440-O3', 'AOT_440-Rayleigh',
+                         'AOT_440-Total', 'AOT_440-Water', 'AOT_443', 'AOT_443-AOT', 'AOT_443-CH4', 'AOT_443-CO2', 'AOT_443-ExactWavelength(nm)', 'AOT_443-NO2',
+                         'AOT_443-O3', 'AOT_443-Rayleigh', 'AOT_443-Total', 'AOT_443-Water', 'AOT_490', 'AOT_490-AOT', 'AOT_490-CH4', 'AOT_490-CO2', 'AOT_490-ExactWavelength(nm)',
+                         'AOT_490-NO2', 'AOT_490-O3', 'AOT_490-Rayleigh', 'AOT_490-Total', 'AOT_490-Water', 'AOT_500', 'AOT_500-AOT', 'AOT_500-CH4', 'AOT_500-CO2',
+                         'AOT_500-ExactWavelength(nm)', 'AOT_500-NO2', 'AOT_500-O3', 'AOT_500-Rayleigh', 'AOT_500-Total', 'AOT_500-Water', 'AOT_531', 'AOT_531-AOT',
+                         'AOT_531-CH4', 'AOT_531-CO2', 'AOT_531-ExactWavelength(nm)', 'AOT_531-NO2', 'AOT_531-O3', 'AOT_531-Rayleigh', 'AOT_531-Total',
+                         'AOT_531-Water', 'AOT_532', 'AOT_532-AOT', 'AOT_532-CH4', 'AOT_532-CO2', 'AOT_532-ExactWavelength(nm)', 'AOT_532-NO2',
+                         'AOT_532-O3', 'AOT_532-Rayleigh', 'AOT_532-Total', 'AOT_532-Water', 'AOT_551', 'AOT_551-AOT', 'AOT_551-CH4', 'AOT_551-CO2',
+                         'AOT_551-ExactWavelength(nm)', 'AOT_551-NO2', 'AOT_551-O3', 'AOT_551-Rayleigh', 'AOT_551-Total', 'AOT_551-Water', 'AOT_555',
+                         'AOT_555-AOT', 'AOT_555-CH4', 'AOT_555-CO2', 'AOT_555-ExactWavelength(nm)', 'AOT_555-NO2', 'AOT_555-O3', 'AOT_555-Rayleigh',
+                         'AOT_555-Total', 'AOT_555-Water', 'AOT_667', 'AOT_667-AOT', 'AOT_667-CH4', 'AOT_667-CO2', 'AOT_667-ExactWavelength(nm)',
+                         'AOT_667-NO2', 'AOT_667-O3', 'AOT_667-Rayleigh', 'AOT_667-Total', 'AOT_667-Water', 'AOT_675', 'AOT_675-AOT',
+                         'AOT_675-CH4', 'AOT_675-CO2', 'AOT_675-ExactWavelength(nm)', 'AOT_675-NO2', 'AOT_675-O3', 'AOT_675-Rayleigh',
+                         'AOT_675-Total', 'AOT_675-Water', 'AOT_870', 'AOT_870-AOT', 'AOT_870-CH4', 'AOT_870-CO2', 'AOT_870-ExactWavelength(nm)',
+                         'AOT_870-NO2', 'AOT_870-O3', 'AOT_870-Rayleigh', 'AOT_870-Total', 'AOT_870-Water', 'Air_Mass', 'Angstrom_Exponent(AE)-Total_500nm[alpha]',
+                         'Coarse_Mode_AOD_500nm[tau_c]', 'Exact_Wavelengths_for_Input_AOD', 'FineModeFraction_500nm[eta]', 'Fine_Mode_AOD_500nm[tau_f]',
+                         'Number_of_Wavelengths', 'Pressure[hPa]', 'RMSE_Coarse_Mode_AOD_500nm[Dtau_c]', 'RMSE_FineModeFraction_500nm[Deta]',
+                         'RMSE_Fine_Mode_AOD_500nm[Dtau_f]', 'Solar_Zenith_Angle', 'SunphotometerNumber', 'Total_AOD_500nm[tau_a]',
+                         'Total_NO2[DobsonUnits]', 'Total_O3[DobsonUnits]', 'Water(cm)', 'Water(cm)-ExactWavelength(nm)', 'dAE/dln(wavelength)-Fine_Mode_500nm[alphap_f]',
+                         'dAE/dln(wavelength)-Total_500nm[alphap]']
+//var variablesAeronet = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom", "FineModeFraction_500nm[eta]"];
+var stationsTeom = ["Banizoumbou", "Cinzana", "MBour", "Dedougou"];
 var variablesTeom = ["concentration"];
 
-var listvar = {"satellite":{"modis":{
-                                    "MYD04":{
-                                              "reso_spatiale":["009","025","075","125"],
-                                              "datedebut":["2004-07-01"],
-                                              "datefin":["2016-01-31"],
-                                              "variables":[
-                                                            "AerosolAbsOpticalDepthVsHeight_354_nm",
-                                                            "Deep_Blue_Surface_Reflectance_Land_412_nm",
-                                                            "Deep_Blue_Aerosol_Optical_Depth_550_Land",
-                                                            ]
-                                             },
-                                     "MYD05":{
-                                              "reso_spatiale":["005","009","025","075","125"],
-                                              "datedebut":["2004-07-01"],
-                                              "datefin":["2016-01-31"],
-                                              "variables":[
-                                                            "Water_Vapor_Infrared",
-                                                            ]
-                                             },
-                                     "MYD07":{
-                                              "reso_spatiale":["005","009","025","075","125"],
-                                              "datedebut":["2004-07-01"],
-                                              "datefin":["2016-01-31"],
-                                              "variables":[
-                                                            "Total_Ozone",
-                                                            "Lifted_Index",
-                                                            "Surface_Temperature",
-                                                            ]
-                                             }  
-                                    },
-                            "msg":{
-                                  },
-                            "aura_omi":{
-                                        "omaeruv":{
-                                                   "reso_spatiale":["025","075","125"],
-                                                   "datedebut":["2004-10-01"],
-                                                   "datefin":["2016-01-31"],
-                                                   "variables":[
-                                                                "FinalAerosolOpticalDepth_358_nm",
-                                                                "AerosolAbsOpticalDepthVsHeight_500_nm",
-                                                                ]
-                                                    }
-                                                    
-                                        },
-                            "toms":{
-                                    }
-                            },
-                "re_analyse":{
-                              "ecmwf":{
-                                        "era_interim":{
-                                                      "reso_spatiale":["075","125"],
-                                                      "datedebut":["1980-01-01"],
-                                                      "datefin":["2016-01-31"],
-                                                      "variables":[
-                                                                    "tclw",
-                                                                    "tco3",
-                                                                    ]
-                                                      }
-                                       },
-                            },
-                "modele":{
-                          },
-            };
+var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
+var map;
+var fond;
+var mapPanel;
 
-var level2 = [];
-var level3 = [];
-var level30 = ['AerosolAbsOpticalDepthVsHeight_354_nm', 'FinalAerosolOpticalDepth_358_nm'];
+var lstInfos = {
+    date:"",
+    param:"",
+    unit:"",
+    nomDataset:"",
+    capteur:"",
+    produit:"",
+    resspatiale:"",
+    restempo:"",
+    layer:"",
+    nomFichier:"",
+    bbox:"",
+    colorbar:"",
+    scaleMin:"",
+    scaleMax:"",
+    bbox:'',
+    colorbarBand:'',
+    opacity:''
+};
 
 
-//*********************************FORMULAIRE***************************************//
+var varInfos = {
+    variables:[],
+    debut:"",
+    fin:""
+};
 
+
+var dataset = {
+    header: "",
+    lon: "",
+    lat: "",
+    dates: [],
+    datas: []
+};
+
+// #####################  set form  ############
 function setSelect(array, bx){
     for (var tp in array) {
-    		bx.options[bx.options.length] = new Option(tp, tp);
+            bx.options[bx.options.length] = new Option(array[tp], array[tp]);
     }
 }
 
 function resetSelect(listSelect, id){
+    resetDate();
     for (var i = id; i < listSelect.length; i++){
         listSelect[i].length = 1;
         listSelect[i].removeAttribute("selected");
@@ -98,212 +102,156 @@ function resetSelect(listSelect, id){
     listSelect.slice(id,listSelect.length).select2().select2('');
 }
 
-function active(){
-    //liste des menus deroulants source2: type capteur produit variable resospatiale level
-    //var selectSource2 = document.querySelectorAll("[id$=S2]");
-    var selectSource2 = $("[id$='S2']");
 
-    if(document.getElementById('checkbox').checked){
-        for (i = 0; i < selectSource2.length; i++){
-            selectSource2[i].disabled=false;
-        }
-        //chargement des types
-        setSelect(listvar, selectSource2[0]);
-        
-        //choix des type2
-        selectSource2[0].onchange = function(){
-            
-            //reinitialisation des selectSource2
-            resetSelect(selectSource2, 1);   		 
-            
-            if (this.selectedIndex < 1)
-                return; // absence de choix
+function resetDate(){
+    $('#date').datepicker('destroy');
+    $('#date').val("");
+}
 
-            // chargement des choix capteur2
-            setSelect(listvar[this.value], selectSource2[1]); 
-            
-        };
 
-        // choix du capteur2
-        selectSource2[1].onchange = function(){		 
-
-            //reinitialisation des selectSource2 suivants
-            resetSelect(selectSource2, 2); 
-            	 
-            if (this.selectedIndex < 1)
-                return; // absence de choix
-            
-            //chargement des choix de produits
-            setSelect(listvar[selectSource2[0].value][this.value], selectSource2[2]);
-            };
-
-        //produit Changed
-        selectSource2[2].onchange = function(){
-
-            var resospatiale = listvar[selectSource2[0].value][selectSource2[1].value][this.value]['reso_spatiale'];
-            var debut = listvar[selectSource2[0].value][selectSource2[1].value][this.value]['datedebut'];
-            var fin = listvar[selectSource2[0].value][selectSource2[1].value][this.value]['datefin'];
-            var vbl = listvar[selectSource2[0].value][selectSource2[1].value][this.value]['variables'];
-
-            //reinitialisation des selectSource2 suivants
-            resetSelect(selectSource2, 3);
-            
-            if (this.selectedIndex < 1)
-                return; // absence de choix
-            
-            for (var i = 0; i < resospatiale.length; i++) {
-                selectSource2[4].options[selectSource2[4].options.length] = new Option(resospatiale[i][0]+'.'+resospatiale[i].slice(1,5)+' deg', resospatiale[i]);
-            }
-            for (var i = 0; i < vbl.length; i++) {
-                selectSource2[3].options[selectSource2[3].options.length] = new Option(vbl[i], vbl[i]);
-            }
-        };
-        selectSource2[3].onchange = function(){		 
+var urlPath = [];
+function createURL(valueSelected, selector){
+    var selectSource1 = $("[id$='S1']");
+    var listSelected = [];
+    var titre = [];
     
-            resetSelect(selectSource2, 5)    		 
-            if (this.selectedIndex < 1)
-                return; // absence de choix
-            
-            if (level30.indexOf(this.value) > -1) {
-                for (var lev = 1; lev < 31; lev++) {
-                    selectSource2[5].options[selectSource2[5].options.length] = new Option(lev, lev);
-                }
-            }
-            else {        
-                selectSource2[5].options[selectSource2[5].options.length] = new Option(1, '');
-            }
-        };
-    }
-    else{
-        for (i = 0; i < selectSource2.length; i++){
-            selectSource2[i].disabled=true;
+    $.each(selectSource1, function(value){
+        if (this.selectedIndex != 0){
+            listSelected.push(this.value);
         }
-        resetSelect(selectSource2, 0)
+    });
+    var ind = listSelected.indexOf(valueSelected);
+    var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
+    if (URL == "/catalog.xml"){
+        var URLCat = ROOT + "/catalog.xml";
     }
-} 
-
-
+    else {
+        var URLCat = ROOT + '/' + URL;
+    }
+    
+    $.ajax( {
+				type: "GET",
+				url: URLCat,
+				dataType: "xml",
+				async: false,
+				success: function(xml) {
+        				if($(xml).find('catalogRef')!=0)  //Si catalogue(s) présent
+        				{
+        					$(xml).find('catalogRef').each( function(){  //Pour tout les catalogues
+        						titre.push($(this).attr('xlink:title'));   //Titre du catalogue
+        					})
+        				}
+                            if($(xml).find('dataset')!=0)   //Si data(s) présente(s)
+                            {
+        					$(xml).find('dataset').each( function(){  //Pour toutes les datas
+                                      if ($(this).attr('urlPath')){
+            						urlPath.push($(this).attr('urlPath'));  //URL du dataset
+                                      }
+        					}) //Fin each
+        				}//Fin if
+				}//Fin success AJAX
+			})//Fin AJAX
+    if (selector != ''){
+        setSelect(titre, selector);
+    }
+}
 
 
 function setForm(){
     //type capteur produit variable resospatiale level
     var selectSource1 = $("[id$='S1']");
-
-    //chargement du type1
-    setSelect(listvar, selectSource1[0]);
+    createURL('', selectSource1[0]); //chargement du type1
 
     //choix du type
     selectSource1[0].onchange =  function(){
-        //reinitialise les menus deroulants
-        resetSelect(selectSource1, 1);
+        resetSelect(selectSource1, 1);  //reinitialise les menus deroulants
         if (this.selectedIndex < 1)
             return; // absence de choix
-        //charge les choix de capteur
-        setSelect(listvar[this.value], selectSource1[1]);
-        $("[id^='date']").datepicker("setDate", null);
-    	};
-    
-    //choix du capteur
-    selectSource1[1].onchange = function(){		 
+        createURL(this.value, selectSource1[1]);  //charge les choix de capteur
+        };
+
+    // choix du capteur
+    selectSource1[1].onchange =  function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 2);
         if (this.selectedIndex < 1)
             return; // absence de choix
-        //chargement des choix de produits
-        setSelect(listvar[typeS1.value][this.value], selectSource1[2]);
-        $("[id^='date']").datepicker("setDate", null);
-    };
-    	
-    //choix du produit
-    selectSource1[2].onchange = function(){
-
-        var resospatiale = listvar[selectSource1[0].value][selectSource1[1].value][this.value]['reso_spatiale'];
-        var debut = listvar[selectSource1[0].value][selectSource1[1].value][this.value]['datedebut'];
-        var fin = listvar[selectSource1[0].value][selectSource1[1].value][this.value]['datefin'];
-        var vbl = listvar[selectSource1[0].value][selectSource1[1].value][this.value]['variables'];
-
+        //charge les choix de produit
+        createURL(this.value, selectSource1[2]);
+        };
+    // choix du produit
+    selectSource1[2].onchange =  function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 3);
         if (this.selectedIndex < 1)
-            return; // absence de selection
-
-        for (var i = 0; i < resospatiale.length; i++) {
-            selectSource1[4].options[selectSource1[4].options.length] = new Option(resospatiale[i][0]+'.'+resospatiale[i].slice(1,5)+' deg', resospatiale[i]);
-        }
-
-        for (var v in vbl) {
-            selectSource1[3].options[selectSource1[3].options.length] = new Option(vbl[v], vbl[v]);
-        }
-        
-        //dates debut/fin
-        $( "#date1" ).datepicker({
-            yearRange: '1979:2025',
-            dateFormat: 'yy-mm-dd',
-            changeMonth: true,
-            changeYear: true,
-            showMonthAfterYear: true,
-            minDate: new Date(debut),
-            maxDate: new Date(fin),
-            onSelect: function( selectedDate ) {
-                $( "#date2" ).datepicker( "option", "minDate", selectedDate );
-            }
-        });
-        
-        $( "#date2" ).datepicker({
-            yearRange: '1979:2025',
-            dateFormat: 'yy-mm-dd',
-            changeMonth: true,
-            changeYear: true,
-            showMonthAfterYear: true,
-            minDate: new Date(debut),
-            maxDate: new Date(fin),
-                onSelect: function( selectedDate ) {
-                $( "#date1" ).datepicker( "option", "maxDate", selectedDate );
-                }
-        });
-    	};
-    
-    //variable Changed
-    selectSource1[3].onchange = function(){		 
-    
-        resetSelect(selectSource1, 5);            		 
+            return; // absence de choix
+        //charge les choix de variables
+        createURL(this.value, selectSource1[3]);
+        };
+    // choix de la resolution spatiale
+    selectSource1[3].onchange =  function(){
+        //reinitialise les menus deroulants
+        resetSelect(selectSource1, 4);
         if (this.selectedIndex < 1)
-            return; // done
-        
-        if (level30.indexOf(this.value) > -1) {
-            for (var lev = 1; lev < 31; lev++) {
-                selectSource1[5].options[selectSource1[5].options.length] = new Option(lev, lev);
+            return; // absence de choix
+        //charge les choix de variables
+        createURL(this.value, '');
+        for (var i=0; i<resoTemp.length; ++i) {
+            selectSource1[4].options[selectSource1[4].options.length] = new Option(resoTemp[i][1], resoTemp[i][0]);
             }
+        };
+    // choix reso temporelle
+    selectSource1[4].onchange =  function(){
+        //reinitialise les menus deroulants
+        resetSelect(selectSource1, 5);
+        if (this.selectedIndex < 1)
+            return; // absence de choix
+        //charge les choix de variables
+        var listSelected = [];
+        $.each(selectSource1, function(value){
+            if (this.selectedIndex != 0){
+                listSelected.push(this.value);
+            }
+        });
+        var ind = listSelected.indexOf(this.value);
+        var reso = listSelected[3];
+        if (listSelected[2]=="seviri_aerus"){
+            var fileName = "seviri_r" + reso.replace('res','') +'_'+this.value;
+        }else{
+            var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
         }
-        else {        
-            levelS1.options[selectSource1[5].options.length] = new Option(1, '');
-        }
+        var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+        getDateRange(urlInfo);
+        setSelect(varInfos.variables, selectSource1[5]);
+        changeDates1(varInfos.debut,varInfos.fin,this.value);
+        changeDates2(varInfos.debut,varInfos.fin,this.value);
+        //dates debut/fin     
     };
-    
+
     //chargement liste des pays
-    for (var ps in selectGeographique) {
-        paysSel.options[paysSel.options.length] = new Option(ps, ps);
+    for (var ps in selectPays) {
+        pays.options[pays.options.length] = new Option(ps, ps);
     }
 
-    $('#paysSel').on('change', function(){
-        var dist = selectGeographique[this.value];
-        var slct = $("[id^='district']");
+    $('#pays').on('change', function(){
+        var dist = selectPays[this.value];
+        var slct = $("#district");
         resetSelect(slct, 0);
         for (var tp in dist) {
-        		districtSel.options[districtSel.options.length] = new Option(dist[tp], dist[tp]);
+        		district.options[district.options.length] = new Option(dist[tp], dist[tp]);
         }
     });
     for (var v in stationsAeronet){
-        stationsaeronetSel.options[stationsaeronetSel.options.length] = new Option(stationsAeronet[v], stationsAeronet[v]);
+        stationsaeronet.options[stationsaeronet.options.length] = new Option(stationsAeronet[v], stationsAeronet[v]);
     }
     for (var v in variablesAeronet){
-        variablesaeronetSel.options[variablesaeronetSel.options.length] = new Option(variablesAeronet[v], variablesAeronet[v]);
+        variablesaeronet.options[variablesaeronet.options.length] = new Option(variablesAeronet[v], variablesAeronet[v]);
     }
     for (var v in stationsTeom){
-        stationsteomSel.options[stationsteomSel.options.length] = new Option(stationsTeom[v], stationsTeom[v]);
+        stationsteom.options[stationsteom.options.length] = new Option(stationsTeom[v], stationsTeom[v]);
     }
     for (var v in variablesTeom){
-        variablesteomSel.options[variablesteomSel.options.length] = new Option(variablesTeom[v], variablesTeom[v]);
+        variablesteom.options[variablesteom.options.length] = new Option(variablesTeom[v], variablesTeom[v]);
     }
     $('.input-small').keypress(function(event) {
 
@@ -346,17 +294,200 @@ function setForm(){
         $('.input-small').val("");
     });
 
-    $('.input-small').click(function(){
-        $("#buffer option").removeAttr("selected");
-        $("#buffer").select2().select2("");
+    $('.input-small').on('click', function(){
+        $("#buffer.select2-offscreen").empty();
+        $("#buffer").append(new Option());
     });
 }
 
 
-//**********************************MAIN*****************************************//
+function getDateRange(url){
+    var lstvariables = [];
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "xml",
+        async: false,
+        success: function(xml) {
+            $(xml).find('Layer[queryable="1"]').each(function(){
+                lstvariables.push($(this).find("Name").first().text());
+                var times = $(this).find('Dimension[name="time"]').text();
+                var ldates = times.split(',');
+                varInfos.variables = lstvariables;
+                varInfos.debut = ldates[1];
+                varInfos.fin = ldates[ldates.length-1];
+            })
+        }
+    }) 
+}
+
+
+function changeDates1(start,end,period){
+    $('#date1').datepicker('destroy');
+    $( "#date1" ).datepicker({
+        yearRange: '1979:2025',
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        showMonthAfterYear: true,
+        defaultDate: new Date(start),
+        minDate: new Date(start),
+        maxDate: new Date (end),
+        onSelect: function( selectedDate ) {
+            $( "#date2" ).datepicker( "option", "minDate", selectedDate );
+        },
+    });
+}
+
+function changeDates2(start,end,period){
+    $('#date2').datepicker('destroy');
+    $( "#date2" ).datepicker({
+        yearRange: '1979:2025',
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        showMonthAfterYear: true,
+        defaultDate: new Date(start),
+        minDate: new Date(start),
+        maxDate: new Date (end),
+        onSelect: function( selectedDate ) {
+            $( "#date1" ).datepicker( "option", "maxDate", selectedDate );
+        },
+    });
+}
+
+
+
+// #######################################################################################
+
+
+// ################## info layer selected ################################################
+
+function getInfos()
+{
+        //vide objet info précédente
+    lstInfos.date="";
+    lstInfos.param="";
+    lstInfos.nomDataset="";
+    lstInfos.capteur="";
+    lstInfos.produit="";
+    lstInfos.resspatiale="";
+    lstInfos.restempo="";
+    lstInfos.layer="";
+    lstInfos.nomFichier="";
+    
+        //Datasets
+    var type = $('#typeS1').val();
+    if(type=='Type de données')
+    {
+        
+        alert("Erreur ! Aucun type de données sélectionné !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.nomDataset = type;
+    }
+    
+    var capteur = $('#capteurS1').val();
+    if(capteur=='Capteur/Source')
+    {
+        
+        alert("Erreur ! Aucune source de données sélectionnée !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.capteur = capteur;
+    }
+
+    var produit = $('#produitS1').val();
+    if(produit=='Produit')
+    {
+        
+        alert("Erreur ! Aucun produit sélectionné !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.produit = produit;
+    }
+
+    var resospatiale = $('#resospatialeS1').val();
+    if(resospatiale=='Résolution spatiale')
+    {
+        
+        alert("Erreur ! Aucune résolution spatiale sélectionnée !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.resspatiale = resospatiale;
+    }
+
+    var restempo = $('#pasdetempsS1').val();
+    if(restempo=='Résolution temoprelle')
+    {
+        
+        alert("Erreur ! Aucun type de données sélectionné !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.restempo = restempo;
+    }
+
+    var level = $('#levelS1').val();
+    if(level=='layer')
+    {
+        
+        alert("Erreur ! Aucun niveau de couche sélectionné !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.level = level;
+    }
+    
+        //Date
+    var dateForm= $("input[id='date']").val();
+    if(dateForm=='')
+    {
+        alert("Erreur ! Aucune date saisie !");
+        throw new Exception();
+    }
+    else
+    {
+        if (lstInfos.restempo == 'w'){
+            lstInfos.date = moment(dateForm).startOf('isoWeek').format('YYYY-MM-DD');
+        }else if (lstInfos.restempo == 'm'){
+            lstInfos.date = moment(dateForm).startOf('Month').format('YYYY-MM-DD');
+        }else if (lstInfos.restempo == 't'){
+            lstInfos.date = moment(dateForm).startOf('quarter').format('YYYY-MM-DD');
+        }else{
+            lstInfos.date=dateForm;
+        }
+        $("input[id='date']").val(lstInfos.date);
+    }
+    if (lstInfos.produit == 'seviri_aerus'){
+        var nomFichier = "seviri_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
+    }else{
+        var nomFichier = produit + "_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
+    }
+    lstInfos.nomFichier = nomFichier;
+    
+        //Paramètres
+    var paramForm = $("#variableS1 option:selected").text();
+    if(lstInfos.paramForm==''){
+        alert("Erreur ! Aucun paramètre selectionné !");
+        throw new Exception();
+    };
+    lstInfos.param = paramForm;
+    
+}
+
 
 window.onload = function(){
-    $('select').select2({dropdownAutoWidth : true});
+    $('select').select2();
     setForm();
-    active();
 }

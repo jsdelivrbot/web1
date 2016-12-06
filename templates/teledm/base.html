@@ -26,78 +26,74 @@
         <title>TELEDM/TELEPAF</title>
     </head>
     <body>
-        <div class="container-fluid">
-            <div class="row">
-                <nav class="navbar navbar-default navbar-custom navbar-inverse navbar-fixed-top">
-                    <div class="container-fluid">
-                        <div class="navbar-header">
-                            <ul class="nav navbar-nav" id="left">
-                                <li><a href={% url 'teledm:home' %}><b>Accueil</b></a></li>
-                                <li><a href={% url 'teledm:mapViewer' %}><b>Cartographie</b></a></li>
-                                <li><a href={% url 'teledm:mapDist' %}><b>Extraction Géographique</b></a></li>
-                                <li><a href={% url 'teledm:calval' %}><b>Calibration/Validation</b></a></li>
-                            </ul>
-                            <ul class="nav navbar-nav" id="right">
-                                <li><a href="accounts/profile/"><b>Enregistrement</b></a></li>
-                                <li><a href="/accounts/logout/"><b>Deconnexion</b></a></li>
-                                <li><a href={% url 'portailCRC:home' %}><b>CRC</b></a></li>
-                                <!--<li><img name="langpair" src="{% static 'teledm/images/fr.jpeg' %}" id="fr"/></li>-->
-                                <!--<li><img name="langpair" src="{% static 'teledm/images/eng.jpeg' %}" id="eng"/></li>-->
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-                <header class="row">
-                    <div class="col-lg-2" id="themes">
-                        </br>
-                        </br>
-                        <h4><b>Teledetection</b></h4>
-                        <h4><b>Poussieres</b></h4>
-                        <h4><b>Meningite</b></h4>
-                        <h4><b>IRA</b></h4>
-                    </div>
-                    <div class="col-lg-8">
-                        <img src="{% static 'teledm/images/image_en_tete.jpeg' %}"/>
-                    </div>
-                    <div class="col-lg-2" id="missions">
-                        </br>
-                        </br>
-                        <h2><b>TeleDM</b></h2>
-                        <h2><b>TelePaF</b></h2>
-                    </div>
-                </header>
-                <div class="row">
-                    <aside_left class="col-lg-4" id="sectionForm">
-                        {% block form %}{% endblock %}
-                    </aside_left>
-                    <section class="col-lg-8" id="section1">
-                        {% block content1 %}{% endblock %}
-                    </section>
+        <nav id="navbar" class="navbar navbar-fixed-top navbar-light bg-faded">
+            <div class="container-fluid">
+                <div class="navbar-inner">
+                    <ul class="nav navbar-nav" id="left">
+                        <li class="active"><a href={% url 'teledm:home' %}><b>Accueil</b></a></li>
+                        <li><a href={% url 'teledm:mapViewer' %}><b>Cartographie</b></a></li>
+                        <li><a href={% url 'teledm:mapDist' %}><b>Extraction Géographique</b></a></li>
+                        <li><a href={% url 'teledm:calval' %}><b>Calibration/Validation</b></a></li>
+                    </ul>
+                    <ul class="nav navbar-nav" id="right">
+                        <li class="nav-item"><a class="nav-link" href="/accounts/logout/"><b>Deconnexion</b></a></li>
+                        <li class="nav-item"><a class="nav-link" href={% url 'portailCRC:home' %}><b>CRC</b></a></li>
+                    </ul>
                 </div>
-                <div class="row">
-                    <section class="col-lg-12" id="section2">
-                        {% block content2 %}{% endblock %}
-                    </section>
-                </div>
-                <footer>
-                    <div class="row" id="logos">
-                        <img src="{% static 'teledm/images/cnrm.jpeg' %}"/>
-                        <img src="{% static 'teledm/images/cnrs.jpeg' %}"/>
-                        <img src="{% static 'teledm/images/crc.jpeg' %}"/>
-                        <img src="{% static 'teledm/images/ehesp.jpeg' %}"/>
-                        <img src="{% static 'teledm/images/institutPasteur.jpeg' %}"/>
-                        <img src="{% static 'teledm/images/ird.jpeg' %}"/>
-                        <img src="{% static 'teledm/images/ub.jpeg' %}"/>
-                        <img src="{% static 'teledm/images/ulg.jpeg' %}"/>
-                        <img src="{% static 'teledm/images/uLille1.jpeg' %}"/>                        
-                    </div>
-               </footer>
             </div>
+        </nav>
+        <div class="container-fluid">
+            <header class="row">
+                <div class="col-lg-2" id="themes">
+                    </br>
+                    </br>
+                    <h4><b>Teledetection</b></h4>
+                    <h4><b>Poussieres</b></h4>
+                    <h4><b>Meningite</b></h4>
+                    <h4><b>IRA</b></h4>
+                </div>
+                <div class="col-lg-8">
+                    <img src="{% static 'teledm/images/image_en_tete.jpeg' %}"/>
+                </div>
+                <div class="col-lg-2" id="missions">
+                    </br>
+                    </br>
+                    <h2><b>TeleDM</b></h2>
+                    <h2><b>TelePaF</b></h2>
+                </div>
+            </header>
+            <div class="row">
+                <aside_left class="col-lg-4" id="sectionForm">
+                    {% block form %}{% endblock %}
+                </aside_left>
+                <section class="col-lg-8" id="section1">
+                    {% block content1 %}{% endblock %}
+                </section>
+            </div>
+            <div class="row">
+                <section class="col-lg-12" id="section2">
+                    {% block content2 %}{% endblock %}
+                </section>
+            </div>
+            <footer>
+                <div class="row" id="logos">
+                    <img src="{% static 'teledm/images/cnrm.jpeg' %}"/>
+                    <img src="{% static 'teledm/images/cnrs.jpeg' %}"/>
+                    <img src="{% static 'teledm/images/crc.jpeg' %}"/>
+                    <img src="{% static 'teledm/images/ehesp.jpeg' %}"/>
+                    <img src="{% static 'teledm/images/institutPasteur.jpeg' %}"/>
+                    <img src="{% static 'teledm/images/ird.jpeg' %}"/>
+                    <img src="{% static 'teledm/images/ub.jpeg' %}"/>
+                    <img src="{% static 'teledm/images/ulg.jpeg' %}"/>
+                    <img src="{% static 'teledm/images/uLille1.jpeg' %}"/>                        
+                </div>
+           </footer>
         </div>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>
         <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!--<script type="text/javascript" src="{% static 'teledm/jsPerso/base.js' %}"></script>-->
         {% block js %}{% endblock %}
     </body>
 </html>

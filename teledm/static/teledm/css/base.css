@@ -73,12 +73,12 @@ li a {
     padding-left: 300px;
 }
 
-.navbar-custom {
+.navbar-fixed-top {
     background-color:#002233;
 }
 
 #left {
-    padding-right: 250px;
+    padding-right: 470px;
 }
 
 #fr,#eng {

@@ -1,7 +1,7 @@
-$('.navbar li').click(function(e) {
-    $('.navbar li.active').removeClass('active');
+$('#left li a').click(function(e) {
+    console.log('ok');
+    $('#left li.active').removeClass('active');
     var $this = $(this);
-    alert($this);
     if (!$this.hasClass('active')) {
         $this.addClass('active');
     }

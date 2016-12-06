@@ -586,7 +586,11 @@ function getInfosMap1(e)
                         url: urlInfo,
                         dataType: "text",
                         async: true,
+                        beforeSend: function(){
+                            $("#container").highcharts().showLoading();
+                        },
                         complete: function(){
+                            $("#container").highcharts().hideLoading();
                         },
                         success: function(text) {
                             var lines = text.split('\n');
@@ -637,7 +641,7 @@ function updatePlot(datas){
     if($("#container").highcharts().series.length !=0){
         $("#container").highcharts().series[0].remove(true);
     }
-    $("#container").highcharts().setTitle({ text: datas.header }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
+    $("#container").highcharts().setTitle({ text: "Periode du: "+datas.dates[0]+" au :"+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
     $("#container").highcharts().addSeries({
         name: datas.header,
         data: datas.datas,
@@ -887,6 +891,9 @@ function majLayer()
         map.removeLayer(map.layers[1]);         //supprimer ce layer
     }
     
+    if($("#container").highcharts().series.length !=0){
+        $("#container").highcharts().series[0].remove(true);
+    }
 
     var layer = new OpenLayers.Layer.WMS(
         "Layer Test",

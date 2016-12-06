@@ -33,11 +33,14 @@
                 <select class="form-control" name="produit1" id="produitS1" >
                     <option data-hidden="true">Produit</option>
                 </select>
-                <select class="form-control" name="variable1" id="variableS1" >
-                    <option data-hidden="true">Variable</option>
-                </select>
                 <select class="form-control" name="resospatiale1" id="resospatialeS1" >
                     <option data-hidden="true">Résolution spatiale</option>
+                </select>
+                <select class="form-control" name="pasdetemps" id="pasdetempsS1" >
+                    <option data-hidden="true">Pas de Temps</option>
+                </select>
+                <select class="form-control" name="variable1" id="variableS1" >
+                    <option data-hidden="true">Variable</option>
                 </select>
                 <select class="form-control" name="level1" id="levelS1" >
                     <option data-hidden="true">Layer</option>
@@ -53,11 +56,14 @@
                 <select class="form-control" name="produit2" id="produitS2" disabled="true" >
                     <option data-hidden="true">Produit</option>
                 </select>
-                <select class="form-control" name="variable2" id="variableS2" disabled="true" >
-                    <option data-hidden="true">Variable</option>
-                </select>
                 <select class="form-control" name="resospatiale2" id="resospatialeS2" disabled="true" >
                     <option data-hidden="true">Résolution spatiale</option>
+                </select>
+                <select class="form-control" name="pasdetemps" id="pasdetempsS2" >
+                    <option data-hidden="true">Pas de Temps</option>
+                </select>
+                <select class="form-control" name="variable2" id="variableS2" disabled="true" >
+                    <option data-hidden="true">Variable</option>
                 </select>
                 <select class="form-control" name="level2" id="levelS2" disabled="true" >
                     <option data-hidden="true">Layer</option>
@@ -79,12 +85,6 @@
                 </div>
                 </br>
                 <div class="row">
-                    <select class="form-control" name="pasdetemps" id="pasdetemps" >
-                        <option data-hidden="true">Pas de Temps</option>
-                        <option value="Daily">Quotidien</option>
-                        <option value="Weekly">Hebdomadaire</option>
-                        <option value="Monthly">Mensuel</option>
-                    </select>
                 </div>
             </div>
             <div class="col-lg-6">
@@ -137,10 +137,10 @@
                 <div class="col-lg-6">
                     <div class="row">
                         <h5><em>Aeronet</em></h5>
-                        <select class="form-control" name="stationsaeronet" id="stationsaeronetSel" >
+                        <select class="form-control" name="stationsaeronet" id="stationsaeronet" >
                             <option data-hidden="true">Station</option>
                         </select>
-                        <select class="form-control" name="variablesaeronet" id="variablesaeronetSel" >
+                        <select class="form-control" name="variablesaeronet" id="variablesaeronet" >
                             <option data-hidden="true">Variable</option>
                         </select>
                     </div>
@@ -156,10 +156,10 @@
                 <div class="col-lg-6">
                     <div class="row">
                         <h5><em>TEOM</em></h5>
-                        <select class="form-control" name="stationsteom" id="stationsteomSel" >
+                        <select class="form-control" name="stationsteom" id="stationsteom" >
                             <option data-hidden="true">Station</option>
                         </select>
-                        <select class="form-control" name="variablesteom" id="variablesteomSel" >
+                        <select class="form-control" name="variablesteom" id="variablesteom" >
                             <option data-hidden="true">Variable</option>
                         </select>
                     </div>
@@ -171,7 +171,7 @@
                     <h6>(Aeronet/Teom)</h6>
                 </div>
                 <div class="col-lg-6">
-                    <select class="form-control" name="integration" id="integrationSel" >
+                    <select class="form-control" name="integration" id="integration" >
                         <option data-hidden="true"></option>
                         <option value="+-1h">+-1h</option>
                         <option value="+-5h">+-5h</option>
@@ -188,13 +188,13 @@
                 </div>
                 </br>
                 <div class="row">
-                    <select class="form-control" name="pays" id="paysSel" >
+                    <select class="form-control" name="pays" id="pays" >
                         <option data-hidden="true">Pays</option>
                     </select>
-                    <select class="form-control" name="district" id="districtSel" >
+                    <select class="form-control" name="district" id="district" >
                         <option data-hidden="true">District</option>
                     </select>
-                    <select class="form-control" name="variablesepidemio" id="variablesepidemioSel" >
+                    <select class="form-control" name="variablesepidemio" id="variablesepidemio" >
                         <option data-hidden="true">Variable</option>
                         <option value="incidence">incidence</option>
                     </select>
@@ -225,7 +225,6 @@
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
     <script type="text/javascript" src="//rawgithub.com/phpepe/highcharts-regression/master/highcharts-regression.js"> </script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="{% static 'bootstrap/select2/dist/js/select2.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/jsPerso/calvalForm.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/jsPerso/scatterPlots.js' %}"></script> 
 {% endblock %}

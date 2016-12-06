@@ -89,25 +89,32 @@
 </div>
 {% endblock %}
 {% block content1 %}
-        <div id="mapcontainer"></div>
-        <select id="dates" name="dates" style="width: 100px !important; min-width: 50px; max-width: 50px;">
-        </select>
-        <select id="calcul" name="calcul" style="width: 140px !important; min-width: 50px; max-width: 50px;">
-            <option value="vmean">valeurs moyennes</option>
-            <option value="vmax">valeurs maximales</option>
-            <option value="vmin">valeurs minimales</option>
-            <option value="vstd">valeurs d'écart type</option>
-        </select>
-        <div id="plotcontainer"></div>
-        <div>
-            <input type="button" id="clear" value="Clear" name="clear">
+        <div class="row">
+            <div id="mapcontainer"></div>
+        </div>
+        <div class="row">
+            <select id="dates" name="dates" style="width: 100px !important; min-width: 50px; max-width: 50px;">
+            </select>
+            <select id="calcul" name="calcul" style="width: 140px !important; min-width: 50px; max-width: 50px;">
+                <option value="vmean">valeurs moyennes</option>
+                <option value="vmax">valeurs maximales</option>
+                <option value="vmin">valeurs minimales</option>
+                <option value="vstd">valeurs d'écart type</option>
+            </select>
+            <div id="load" >
+                <!--<img src="{% static 'teledm/images/load.gif' %}"/>-->
+            </div>
+        </div>
+        <div class="row">
+            <div id="plotcontainer"></div>
+            <div>
+                <input type="button" id="clear" value="Clear" name="clear">
+            </div>
         </div>
 {% endblock %}
 
 {% block js%}
     <script type="text/javascript">
-        <!--var jsdatas = {{ jsdatas|safe }};-->
-        <!--document.getElementById('filename').value = jsdatas.filename;--> <!-- nom du fichier exporte-->
         var addr = "{% static 'teledm/shapes/' %}";
     </script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>

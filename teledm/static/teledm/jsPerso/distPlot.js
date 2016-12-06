@@ -60,6 +60,12 @@ $("#moyenne").on('submit', function(e){
         //csrfmiddlewaretoken: '{{ csrf_token }}',
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            $("#mapcontainer").highcharts().showLoading();
+            $("#plotcontainer").highcharts().showLoading();
+        },
+        complete: function(){
+            $("#mapcontainer").highcharts().hideLoading();
+            $("#plotcontainer").highcharts().hideLoading();
         },
         success: function(data){
             console.log("success");
@@ -206,6 +212,7 @@ $('#plotcontainer').highcharts({
     },
 });
 
+//$("#load").hide();
 $("#clear").on('click', function(){
     while($("#plotcontainer").highcharts().series.length > 0){
                 $("#plotcontainer").highcharts().series[0].remove(true);
