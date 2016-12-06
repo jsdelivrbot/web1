@@ -374,7 +374,15 @@ var data = [
     {
         name: 'node2', id: 4,
         children: [
-            { name: 'child3', id: 5 }
+            { name: 'child3', id: 5,
+                children: [
+                    { name: 'child4', id: 6,
+                        children: [
+                            { name: 'child5', id: 7}
+                        ]
+                    }    
+                ]
+             }
         ]
     }
 ];

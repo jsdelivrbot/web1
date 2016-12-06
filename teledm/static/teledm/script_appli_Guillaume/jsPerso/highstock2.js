@@ -127,10 +127,10 @@ function getCatData()
 			})
 	};
 
-parseRec("http://127.0.0.1/template/conf.xml", "#listeCat");
+        parseRec("http://127.0.0.1/template/conf.xml", "#listeCat");
 		
 
-})
+    })
 }
 
 //JSTree - Fonction créer Node
