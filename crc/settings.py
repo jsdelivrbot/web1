@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'leaflet',
     'djgeojson',
     'teledm',
-    'portailCRC'
+    'portailCRC',
 ]
 
 LEAFLET_CONFIG = {
@@ -45,7 +45,20 @@ LEAFLET_CONFIG = {
 }
 
 
-# SENDFILE settings
+
+## smtp config
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'test@gmail.com'
+SERVER_EMAIL = 'test@gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'username@gmail.com'
+EMAIL_HOST_PASSWORD = 'password'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+
+## SENDFILE settings
 SENDFILE_BACKEND = 'sendfile.backends.development'
 #SENDFILE_BACKEND = 'sendfile.backends.xsendfile'
 #SENDFILE_BACKEND = 'sendfile.backends.nginx'

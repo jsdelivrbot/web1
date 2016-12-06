@@ -34,7 +34,7 @@ if __name__ == "__main__":
     sat = "modis"          #"modis","aura_omi","ecmwf","msg"
     prod = "MYD04"         #"MYD04","MYD05","MYD07","omaeruv","seviri_aerus","macc","era_interim"
     res_temp = "w"         #"d","w","m","t"
-    res = "009"            #"003","005","009","025","075","125"
+    res = "res009"            #"003","005","009","025","075","125"
     varname = 'Deep_Blue_Aerosol_Optical_Depth_550_Land'
     shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
     

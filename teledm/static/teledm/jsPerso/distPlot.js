@@ -45,6 +45,12 @@ function updateMap(datas, url){
 $("#moyenne").on('submit', function(e){
     e.preventDefault();    
     console.log("form submitted!");
+    while($("#mapcontainer").highcharts().series.length > 0){
+        $("#mapcontainer").highcharts().series[0].remove(true);
+    }
+    while($("#plotcontainer").highcharts().series.length > 0){
+        $("#plotcontainer").highcharts().series[0].remove(true);
+    }
     $.ajax({
         async: false,
         type: "POST",
@@ -57,6 +63,15 @@ $("#moyenne").on('submit', function(e){
         },
         success: function(data){
             console.log("success");
+            var d = data.dates;
+            var tmp = [];
+            $.each(d, function(i,v){
+                var dateISO = v.replace(/\D/g, " ")
+                var dateCompo = dateISO.split(" ");
+                dateCompo[1]--;
+                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
+                tmp.push(dateUTC)
+            });
             dataset.dates = data.dates;
             dataset.datas = data.datas;
             dataset.fileOut = data.filename;
@@ -92,10 +107,10 @@ $("#moyenne").on('submit', function(e){
 
 $('#mapcontainer').highcharts('Map', {
     title : {
-        text : 'Statistiques du (par )',
+        text : 'Statistiques',
     },
     subtitle: {
-        text: 'Periode du  au ' ,
+        text: 'Periode' ,
         x: -10
     },
     mapNavigation: {
@@ -111,11 +126,16 @@ $('#mapcontainer').highcharts('Map', {
         	point:{
                 	events:{
                     	click: function(){
-                            var newserie = series_temporelles[this.name];
+                            console.log(dataset.dates);
+                            var newserie = dataset.datas.lvmean.series_temporelles[this.name];
                             newserie.data = $.map(newserie.data, function (value) {
                                 return isNaN(value) ? { y: null } : value;
                             });
-                            chart.series[0].update(newserie);               
+                            $("#plotcontainer").highcharts().addSeries({
+                                name: newserie.name,
+                                data: newserie.data
+                            });
+                            $("#plotcontainer").highcharts().xAxis[0].setCategories(dataset.dates);           
                         }
                     }
             }
@@ -145,6 +165,9 @@ $('#plotcontainer').highcharts({
         type: 'spline',
         zoomType: 'xy',
     },
+    lang:{
+        decimalPoint: ','
+    },
     credits:{
         enabled: false
     },
@@ -161,23 +184,30 @@ $('#plotcontainer').highcharts({
         selected : 1
     },
     plotOptions: {
-        series:{  
-            pointInterval: 24*3600*1000
+        series:{
+            //pointInterval: 24*3600*1000
         },
     },        
     tooltip: {
-        xDateFormat: '%d-%m-%Y',
+        xDateFormat: '%Y-%m-%d',
         valueDecimals: 9
     },
-    xAxis: {
-        type: 'datetime',
-    },
-    yAxis: {
+    xAxis: [{
+        categories: [],
+        type: 'Category',
+    }],
+    yAxis: [{
         title: {
-            text: dataset.header
+            text: ''
         }
-    },
+    }],
     exporting:{
         enabled: true
     },
+});
+
+$("#clear").on('click', function(){
+    while($("#plotcontainer").highcharts().series.length > 0){
+                $("#plotcontainer").highcharts().series[0].remove(true);
+            }
 });

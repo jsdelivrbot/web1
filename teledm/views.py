@@ -16,6 +16,7 @@ from scatter_plot import scatter_plot
 
 tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'teledm/tmp')
 
+
 def home(request):
     print request.POST
     if request.is_ajax():
