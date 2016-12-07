@@ -107,7 +107,9 @@ def mapDist(request):
 
 
 def calval(request):
-    if request.method == 'POST':
+    if request.is_ajax():
+        print 'ok'
+        print request.POST
         if request.POST['ulx']:
             ulx = float(request.POST['ulx'])
             uly = float(request.POST['uly'])
@@ -126,14 +128,14 @@ def calval(request):
         type1 = request.POST['type1']
         sat1 = request.POST['capteur1']
         prd_sat1 = request.POST['produit1']
-        res_sat1 = request.POST['resospatiale1']
+        res_sat1 = request.POST['resospatiale1'][3:]
         variable_sat1 = request.POST['variable1']
         level_sat1 = request.POST['level1']
         if 'type2' in request.POST:
             type2 = request.POST['type2']
             sat2 = request.POST['capteur2']
             prd_sat2 = request.POST['produit2']
-            res_sat2 = request.POST['resospatiale2']
+            res_sat2 = request.POST['resospatiale2'][3:]
             variable_sat2 = request.POST['variable2']
             level_sat2 = request.POST['level2']
         else:
@@ -166,6 +168,6 @@ def calval(request):
                      pays,district,variable_meningite)
         jsdatas = json.dumps(df, cls=DjangoJSONEncoder)
         
-        return render_to_response('teledm/calval.html', {'jsdatas': jsdatas}, context_instance=RequestContext(request))
+        return HttpResponse({'jsdatas': jsdatas}, context_type='teledm/calval.html')
     else:
         return render_to_response('teledm/calval.html',{},context_instance=RequestContext(request))

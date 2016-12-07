@@ -7,7 +7,7 @@
 
 {% block form %}
 </br>
-<form id="moyenne" action="" method="post" class="form-horizontal">{% csrf_token %}
+<form id="scatter" action="" method="post" class="form-horizontal">{% csrf_token %}
     <div class="row" id="Sat">
         <div class="row">
             <label>Données Satellite/ré-analyse/modèle</label>
@@ -18,7 +18,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="checkbox">
-                    <label><input type="checkbox" id="checkbox" value="any" onclick="active();" ><em>Source 2</em></label>
+                    <label><input type="checkbox" id="checkbox" value="any" onclick="setFormS2();" ><em>Source 2</em></label>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
                 <select class="form-control" name="resospatiale2" id="resospatialeS2" disabled="true" >
                     <option data-hidden="true">Résolution spatiale</option>
                 </select>
-                <select class="form-control" name="pasdetemps" id="pasdetempsS2" >
+                <select class="form-control" name="pasdetemps" id="pasdetempsS2" disabled="true">
                     <option data-hidden="true">Pas de Temps</option>
                 </select>
                 <select class="form-control" name="variable2" id="variableS2" disabled="true" >
@@ -214,13 +214,9 @@
         <div class="row" id="plot2"></div>
         <div class="row" id="plot3"></div>
         <div class="row" id="container"></div>
-{% endblock content1 %}
+{% endblock %}
 
 {% block js %}
-    <script type="text/javascript">
-        var datas = {{ jsdatas | safe }};
-        scatterPlot(datas);
-    </script>
     <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
     <script type="text/javascript" src="//rawgithub.com/phpepe/highcharts-regression/master/highcharts-regression.js"> </script>

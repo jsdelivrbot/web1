@@ -297,7 +297,7 @@ function getInfos()
     }
 
     var restempo = $('#pasdetempsS1').val();
-    if(restempo=='Résolution temoprelle')
+    if(restempo=='Résolution temporelle')
     {
         
         alert("Erreur ! Aucun type de données sélectionné !");

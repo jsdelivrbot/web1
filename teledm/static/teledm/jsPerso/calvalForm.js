@@ -51,23 +51,36 @@ var fond;
 var mapPanel;
 
 var lstInfos = {
-    date:"",
-    param:"",
-    unit:"",
-    nomDataset:"",
-    capteur:"",
-    produit:"",
-    resspatiale:"",
-    restempo:"",
-    layer:"",
-    nomFichier:"",
-    bbox:"",
-    colorbar:"",
-    scaleMin:"",
-    scaleMax:"",
-    bbox:'',
-    colorbarBand:'',
-    opacity:''
+    type1:"",
+    capteur1:"",
+    produit1:"",
+    resspatiale1:"",
+    restempo1:"",
+    layer1:"",
+    level1:"",
+    type2:"",
+    capteur2:"",
+    produit2:"",
+    resspatiale2:"",
+    restempo2:"",
+    layer2:"",
+    level2:"",
+    debut:"",
+    fin:"",
+    xmin:"",
+    xmax:"",
+    ymin:"",
+    ymax:"",
+    buffer:"",
+    stAero:"",
+    varAero:"",
+    nivTrait:"",
+    stTeom:"",
+    varTeom:"",
+    integr:"",
+    pays:"",
+    district:"",
+    varEpidemio:""
 };
 
 
@@ -110,12 +123,12 @@ function resetDate(){
 
 
 var urlPath = [];
-function createURL(valueSelected, selector){
-    var selectSource1 = $("[id$='S1']");
+function createURL(valueSelected, selector, selects){
+    //var selectSource1 = $("[id$='"+Src+"']");
     var listSelected = [];
     var titre = [];
     
-    $.each(selectSource1, function(value){
+    $.each(selects, function(value){
         if (this.selectedIndex != 0){
             listSelected.push(this.value);
         }
@@ -160,14 +173,14 @@ function createURL(valueSelected, selector){
 function setForm(){
     //type capteur produit variable resospatiale level
     var selectSource1 = $("[id$='S1']");
-    createURL('', selectSource1[0]); //chargement du type1
+    createURL('', selectSource1[0], selectSource1); //chargement du type1
 
     //choix du type
     selectSource1[0].onchange =  function(){
         resetSelect(selectSource1, 1);  //reinitialise les menus deroulants
         if (this.selectedIndex < 1)
             return; // absence de choix
-        createURL(this.value, selectSource1[1]);  //charge les choix de capteur
+        createURL(this.value, selectSource1[1], selectSource1);  //charge les choix de capteur
         };
 
     // choix du capteur
@@ -177,7 +190,7 @@ function setForm(){
         if (this.selectedIndex < 1)
             return; // absence de choix
         //charge les choix de produit
-        createURL(this.value, selectSource1[2]);
+        createURL(this.value, selectSource1[2], selectSource1);
         };
     // choix du produit
     selectSource1[2].onchange =  function(){
@@ -186,7 +199,7 @@ function setForm(){
         if (this.selectedIndex < 1)
             return; // absence de choix
         //charge les choix de variables
-        createURL(this.value, selectSource1[3]);
+        createURL(this.value, selectSource1[3], selectSource1);
         };
     // choix de la resolution spatiale
     selectSource1[3].onchange =  function(){
@@ -195,7 +208,7 @@ function setForm(){
         if (this.selectedIndex < 1)
             return; // absence de choix
         //charge les choix de variables
-        createURL(this.value, '');
+        createURL(this.value, '', selectSource1);
         for (var i=0; i<resoTemp.length; ++i) {
             selectSource1[4].options[selectSource1[4].options.length] = new Option(resoTemp[i][1], resoTemp[i][0]);
             }
@@ -301,6 +314,84 @@ function setForm(){
 }
 
 
+function setFormS2(){
+    //type capteur produit variable resospatiale level
+    var selectSource = $("[id$='S2']");
+    createURL('', selectSource[0], selectSource); //chargement du type1
+    if(document.getElementById('checkbox').checked){
+        for (i = 0; i < selectSource.length; i++){
+            selectSource[i].disabled=false;
+        }
+        //choix du type
+        selectSource[0].onchange =  function(){
+            resetSelect(selectSource, 1);  //reinitialise les menus deroulants
+            if (this.selectedIndex < 1)
+                return; // absence de choix
+            createURL(this.value, selectSource[1], selectSource);  //charge les choix de capteur
+            };
+    
+        // choix du capteur
+        selectSource[1].onchange =  function(){
+            //reinitialise les menus deroulants
+            resetSelect(selectSource, 2);
+            if (this.selectedIndex < 1)
+                return; // absence de choix
+            //charge les choix de produit
+            createURL(this.value, selectSource[2], selectSource);
+            };
+        // choix du produit
+        selectSource[2].onchange =  function(){
+            //reinitialise les menus deroulants
+            resetSelect(selectSource, 3);
+            if (this.selectedIndex < 1)
+                return; // absence de choix
+            //charge les choix de variables
+            createURL(this.value, selectSource[3], selectSource);
+            };
+        // choix de la resolution spatiale
+        selectSource[3].onchange =  function(){
+            //reinitialise les menus deroulants
+            resetSelect(selectSource, 4);
+            if (this.selectedIndex < 1)
+                return; // absence de choix
+            //charge les choix de variables
+            createURL(this.value, '', selectSource);
+            for (var i=0; i<resoTemp.length; ++i) {
+                selectSource[4].options[selectSource[4].options.length] = new Option(resoTemp[i][1], resoTemp[i][0]);
+                }
+            };
+        // choix reso temporelle
+        selectSource[4].onchange =  function(){
+            //reinitialise les menus deroulants
+            resetSelect(selectSource, 5);
+            if (this.selectedIndex < 1)
+                return; // absence de choix
+            //charge les choix de variables
+            var listSelected = [];
+            $.each(selectSource, function(value){
+                if (this.selectedIndex != 0){
+                    listSelected.push(this.value);
+                }
+            });
+            var ind = listSelected.indexOf(this.value);
+            var reso = listSelected[3];
+            if (listSelected[2]=="seviri_aerus"){
+                var fileName = "seviri_r" + reso.replace('res','') +'_'+this.value;
+            }else{
+                var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
+            }
+            var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+            getDateRange(urlInfo);
+            setSelect(varInfos.variables, selectSource[5]);
+        };
+    }else{
+        for (i = 0; i < selectSource.length; i++){
+            selectSource[i].disabled=true;
+        }
+        resetSelect(selectSource, 0)
+    }
+}
+
 function getDateRange(url){
     var lstvariables = [];
     $.ajax({
@@ -363,101 +454,42 @@ function changeDates2(start,end,period){
 
 // ################## info layer selected ################################################
 
-function getInfos()
-{
-        //vide objet info précédente
-    lstInfos.date="";
-    lstInfos.param="";
-    lstInfos.nomDataset="";
-    lstInfos.capteur="";
-    lstInfos.produit="";
-    lstInfos.resspatiale="";
-    lstInfos.restempo="";
-    lstInfos.layer="";
-    lstInfos.nomFichier="";
-    
-        //Datasets
-    var type = $('#typeS1').val();
-    if(type=='Type de données')
-    {
-        
+function verifForm(){   
+    if( $('#typeS1').val() =='Type de données'){        
         alert("Erreur ! Aucun type de données sélectionné !");
         throw new Exception();
     }
-    else
-    {
-        lstInfos.nomDataset = type;
-    }
-    
-    var capteur = $('#capteurS1').val();
-    if(capteur=='Capteur/Source')
-    {
-        
+    if($('#capteurS1').val() == 'Capteur/Source'){
         alert("Erreur ! Aucune source de données sélectionnée !");
         throw new Exception();
     }
-    else
-    {
-        lstInfos.capteur = capteur;
-    }
-
-    var produit = $('#produitS1').val();
-    if(produit=='Produit')
-    {
-        
+    if($('#produitS1').val() == 'Produit'){
         alert("Erreur ! Aucun produit sélectionné !");
         throw new Exception();
     }
-    else
-    {
-        lstInfos.produit = produit;
-    }
-
-    var resospatiale = $('#resospatialeS1').val();
-    if(resospatiale=='Résolution spatiale')
-    {
-        
+    if($('#resospatialeS1').val() == 'Résolution spatiale'){
         alert("Erreur ! Aucune résolution spatiale sélectionnée !");
         throw new Exception();
     }
-    else
-    {
-        lstInfos.resspatiale = resospatiale;
-    }
-
-    var restempo = $('#pasdetempsS1').val();
-    if(restempo=='Résolution temoprelle')
-    {
-        
+    if($('#pasdetempsS1').val() == 'Résolution temporelle'){
         alert("Erreur ! Aucun type de données sélectionné !");
         throw new Exception();
     }
-    else
-    {
-        lstInfos.restempo = restempo;
-    }
-
-    var level = $('#levelS1').val();
-    if(level=='layer')
-    {
-        
+    if($('#variableS1').val() == 'Variable'){
         alert("Erreur ! Aucun niveau de couche sélectionné !");
         throw new Exception();
     }
-    else
-    {
-        lstInfos.level = level;
+    if($('#levelS1').val() == 'layer'){
+        alert("Erreur ! Aucun niveau de couche sélectionné !");
+        throw new Exception();
     }
-    
-        //Date
     var dateForm= $("input[id='date']").val();
     if(dateForm=='')
     {
         alert("Erreur ! Aucune date saisie !");
         throw new Exception();
-    }
-    else
-    {
+    }else{
+        var date
         if (lstInfos.restempo == 'w'){
             lstInfos.date = moment(dateForm).startOf('isoWeek').format('YYYY-MM-DD');
         }else if (lstInfos.restempo == 'm'){
@@ -469,25 +501,257 @@ function getInfos()
         }
         $("input[id='date']").val(lstInfos.date);
     }
-    if (lstInfos.produit == 'seviri_aerus'){
-        var nomFichier = "seviri_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
-    }else{
-        var nomFichier = produit + "_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
-    }
-    lstInfos.nomFichier = nomFichier;
-    
-        //Paramètres
-    var paramForm = $("#variableS1 option:selected").text();
-    if(lstInfos.paramForm==''){
-        alert("Erreur ! Aucun paramètre selectionné !");
-        throw new Exception();
-    };
-    lstInfos.param = paramForm;
-    
 }
 
 
 window.onload = function(){
     $('select').select2();
     setForm();
+    setFormS2;
 }
+
+$("#scatter").on('submit',  function(e){
+    e.preventDefault(); 
+    console.log("send");
+    //verifForm();
+    console.log('send2');
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: $("#scatter").serialize(),
+        //csrfmiddlewaretoken: '{{ csrf_token }}',
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            $("[id^='plot']").each(function(){
+                $(this).highcharts().showLoading();
+            });
+        },
+        complete: function(){
+            $("[id^='plot']").each(function(){
+                $(this).highcharts().hideLoading();
+            });
+        },
+        success: function(data){
+            console.log('succes');
+        }
+    });
+});
+
+
+$('#plot1').highcharts({
+    xAxis: {
+        title: {
+            enabled: true,
+            text: ''
+        },
+    },
+    yAxis: {
+        title: {
+            text: ''
+        }
+    },
+    title: {
+        text: 'Scatter plot'
+    },
+    subtitle: {
+        text: 'Source: CRCT'
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'left',
+        x: 80,
+        verticalAlign: 'top',
+        y: 55,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#F5F5F5'
+    },
+    series: [{
+        type: 'line',
+        color: 'rgb(255, 102, 102)',
+        marker: {
+            enabled: false
+        },
+        states: {
+            hover: {
+                lineWidth: 0
+            }
+        },
+        enableMouseTracking: false
+    }, {
+        type: 'scatter',
+        color: 'rgb(80,80,80)',
+        marker: {
+            radius: 2,
+        }
+    }]
+});
+
+
+$('#plot2').highcharts({
+    xAxis: {
+        title: {
+            enabled: true,
+            text: ''
+        },
+    },
+    yAxis: {
+        title: {
+            text: ''
+        }
+    },
+    title: {
+        text: 'Scatter Plot'
+    },
+    subtitle: {
+        text: 'Source: CRCT'
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'left',
+        x: 80,
+        verticalAlign: 'top',
+        y: 55,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#F5F5F5'
+    },
+    series: [{
+        type: 'line',
+        color: 'rgb(255, 102, 102)',
+        marker: {
+            enabled: false
+        },
+        states: {
+            hover: {
+                lineWidth: 0
+            }
+        },
+        enableMouseTracking: false
+    }, {
+        type: 'scatter',
+        color: 'rgb(80,80,80)',
+        marker: {
+            radius: 2,
+        }
+    }]
+});
+
+$('#plot3').highcharts({
+    chart: {
+        zoomType: 'xy'
+    },
+    title: {
+        text: 'Profils temporels'
+    },
+    subtitle: {
+        text: 'Source: CRCT'
+    },
+    xAxis: [{
+        categories: '',
+        crosshair: true
+    }],
+    yAxis: [{ // Primary yAxis
+        labels: {
+            format: '{value}',
+            style: {
+                color: Highcharts.getOptions().colors[0]
+            }
+        },
+        title: {
+            text: '',
+            style: {
+                color: Highcharts.getOptions().colors[0]
+            }
+        },
+        opposite: true
+    }, { // Secondary yAxis
+        gridLineWidth: 0,
+        title: {
+            text: '',
+            style: {
+                color: Highcharts.getOptions().colors[1]
+            }
+        },
+        labels: {
+            format: '{value}',
+            style: {
+                color: Highcharts.getOptions().colors[1]
+            }
+        }
+
+    }, { // Tertiary yAxis
+        gridLineWidth: 0,
+        title: {
+            text: '',
+            style: {
+                color: Highcharts.getOptions().colors[2]
+            }
+        },
+        labels: {
+            format: '{value}',
+            style: {
+                color: Highcharts.getOptions().colors[2]
+            }
+        },
+        opposite: true
+    }, { // 4th yAxis
+        gridLineWidth: 0,
+        title: {
+            text: '',
+            style: {
+                color: Highcharts.getOptions().colors[3]
+            }
+        },
+        labels: {
+            format: '{value}',
+            style: {
+                color: Highcharts.getOptions().colors[3]
+            }
+        },
+    }],
+    tooltip: {
+        shared: true
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'left',
+        x: 80,
+        verticalAlign: 'top',
+        y: 55,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+    },
+    series: [{
+        type: 'spline',
+        yAxis: 2,
+        tooltip: {
+            valueSuffix: ''
+        }
+
+    }, {
+        type: 'spline',
+        yAxis: 1,
+        marker: {
+            enabled: false
+        },
+        dashStyle: 'shortdot',
+        tooltip: {
+            valueSuffix: ''
+        }
+
+    }, {
+        type: 'spline',
+        yAxis: 2,
+        tooltip: {
+            valueSuffix: ''
+        }
+    }, {
+        type: 'spline',
+        yAxis: 1,
+        tooltip: {
+            valueSuffix: ''
+        }
+    }]
+});
+
