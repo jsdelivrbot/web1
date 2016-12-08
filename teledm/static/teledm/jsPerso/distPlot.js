@@ -57,7 +57,6 @@ $("#moyenne").on('submit', function(e){
         url: '',
         dataType: 'json',
         data: $("#moyenne").serialize(),
-        //csrfmiddlewaretoken: '{{ csrf_token }}',
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
             $("#mapcontainer").highcharts().showLoading();

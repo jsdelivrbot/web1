@@ -12,10 +12,10 @@ import numpy as np
 
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
-from scatter_plot import scatter_plot
+from scatterPlots import scatterSatStation, scatter2Sat
 
 tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'teledm/tmp')
-
+ddir = "/home/sebastien/Bureau/teledm/donnees/"
 
 def home(request):
     print request.POST
@@ -108,7 +108,6 @@ def mapDist(request):
 
 def calval(request):
     if request.is_ajax():
-        print 'ok'
         print request.POST
         if request.POST['ulx']:
             ulx = float(request.POST['ulx'])
@@ -122,7 +121,7 @@ def calval(request):
             uly = request.POST['uly']
             lrx = request.POST['lrx']
             lry = request.POST['lry']
-        pas_de_temps = request.POST['pasdetemps']
+        pas_de_temps1 = request.POST['pasdetemps1']
         datedebut = request.POST['datedebut']
         datefin = request.POST['datefin']
         type1 = request.POST['type1']
@@ -131,43 +130,41 @@ def calval(request):
         res_sat1 = request.POST['resospatiale1'][3:]
         variable_sat1 = request.POST['variable1']
         level_sat1 = request.POST['level1']
+        if request.POST['level1'] == 'Layer':
+            level_sat1 = ''
+        else:
+            level_sat1 = np.float(request.POST['level1'])
         if 'type2' in request.POST:
             type2 = request.POST['type2']
             sat2 = request.POST['capteur2']
             prd_sat2 = request.POST['produit2']
             res_sat2 = request.POST['resospatiale2'][3:]
             variable_sat2 = request.POST['variable2']
-            level_sat2 = request.POST['level2']
+            if request.POST['level2'] == 'Layer':
+                level_sat2 = ''
+            else:
+                level_sat2 = np.float(request.POST['level2'])
+            df = scatter2Sat(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
+                             type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
+                             type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2
+                             )
         else:
-            type2 = ""
-            sat2 = ""
-            prd_sat2 = ""
-            res_sat2 = ""
-            variable_sat2 = ""
-            level_sat2 = ""
-        nom_station1 = request.POST['stationsaeronet']
-        variable_station1 = request.POST['variablesaeronet']
-        niveau = request.POST['niveau']
-        nom_station2 = request.POST['stationsteom']
-        variable_station2 = request.POST['variablesteom']
-        periode = request.POST['integration']
-        if request.POST['pays'] == "Pays":
-            pays = ""
-            district = ""
-            variable_meningite = ""
-        else:
-            pays = request.POST['pays']
-            district = request.POST['district']
-            variable_meningite = request.POST['variablesepidemio']
-        df = scatter_plot(ulx,uly,lrx,lry,z_buffer,
-                     pas_de_temps,periode,datedebut, datefin,
-                     type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
-                     type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
-                     nom_station1,variable_station1,niveau,
-                     nom_station2,variable_station2,
-                     pays,district,variable_meningite)
-        jsdatas = json.dumps(df, cls=DjangoJSONEncoder)
-        
-        return HttpResponse({'jsdatas': jsdatas}, context_type='teledm/calval.html')
+            periode = request.POST['integration']
+            if 'stationsaeronet' in request.POST:
+                inSitu = "aeronet"
+                station = request.POST['stationsaeronet']
+                varStation = request.POST['variablesaeronet']
+                niveau = request.POST['niveau']
+            else:
+                inSitu = 'Teom'
+                station = request.POST['stationsteom']
+                varStation = request.POST['variablesteom']
+                niveau = ''
+            df = scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,
+                                   type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
+                                   inSitu, station, varStation, niveau
+                                   )
+        dictDatas = {'datas': df}
+        return HttpResponse(json.dumps(dictDatas, cls=DjangoJSONEncoder), content_type='teledm/calval.html')
     else:
         return render_to_response('teledm/calval.html',{},context_instance=RequestContext(request))

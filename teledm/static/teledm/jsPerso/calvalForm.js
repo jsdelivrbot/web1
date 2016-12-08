@@ -1,11 +1,5 @@
 const ROOT = "http://localhost:8080/thredds";
-var selectPays = {"Benin":["tanguita", "Nikki"],
-                              "Burkina":["Diapaga","Bogande", "Sapouy"],
-                              "Mali":["San", "Koro"],
-                              "Senegal":["Dakar", "Saint-Louis"],
-                            };
 
-var variablesEpidemio = ["incidence"];
 var stationsAeronet = ["Banizoumbou", "Cinzana", "Dakar"];
 var variablesAeronet = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_340', '%TripletVar_380', '%TripletVar_412', '%TripletVar_440',
                          '%TripletVar_443', '%TripletVar_490', '%TripletVar_500', '%TripletVar_531', '%TripletVar_532', '%TripletVar_551',
@@ -42,9 +36,10 @@ var variablesAeronet = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_340
                          'Total_NO2[DobsonUnits]', 'Total_O3[DobsonUnits]', 'Water(cm)', 'Water(cm)-ExactWavelength(nm)', 'dAE/dln(wavelength)-Fine_Mode_500nm[alphap_f]',
                          'dAE/dln(wavelength)-Total_500nm[alphap]']
 //var variablesAeronet = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom", "FineModeFraction_500nm[eta]"];
+var niveau = ['1_5','2'];
 var stationsTeom = ["Banizoumbou", "Cinzana", "MBour", "Dedougou"];
 var variablesTeom = ["concentration"];
-
+var integration = ['+-1h','+-5h'];
 var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
 var map;
 var fond;
@@ -78,9 +73,6 @@ var lstInfos = {
     stTeom:"",
     varTeom:"",
     integr:"",
-    pays:"",
-    district:"",
-    varEpidemio:""
 };
 
 
@@ -241,31 +233,6 @@ function setForm(){
         //dates debut/fin     
     };
 
-    //chargement liste des pays
-    for (var ps in selectPays) {
-        pays.options[pays.options.length] = new Option(ps, ps);
-    }
-
-    $('#pays').on('change', function(){
-        var dist = selectPays[this.value];
-        var slct = $("#district");
-        resetSelect(slct, 0);
-        for (var tp in dist) {
-        		district.options[district.options.length] = new Option(dist[tp], dist[tp]);
-        }
-    });
-    for (var v in stationsAeronet){
-        stationsaeronet.options[stationsaeronet.options.length] = new Option(stationsAeronet[v], stationsAeronet[v]);
-    }
-    for (var v in variablesAeronet){
-        variablesaeronet.options[variablesaeronet.options.length] = new Option(variablesAeronet[v], variablesAeronet[v]);
-    }
-    for (var v in stationsTeom){
-        stationsteom.options[stationsteom.options.length] = new Option(stationsTeom[v], stationsTeom[v]);
-    }
-    for (var v in variablesTeom){
-        variablesteom.options[variablesteom.options.length] = new Option(variablesTeom[v], variablesTeom[v]);
-    }
     $('.input-small').keypress(function(event) {
 
         if(event.which == 8 || event.keyCode == 9 || event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 46) 
@@ -318,7 +285,7 @@ function setFormS2(){
     //type capteur produit variable resospatiale level
     var selectSource = $("[id$='S2']");
     createURL('', selectSource[0], selectSource); //chargement du type1
-    if(document.getElementById('checkbox').checked){
+    if(document.getElementById('checkboxSr2').checked){
         for (i = 0; i < selectSource.length; i++){
             selectSource[i].disabled=false;
         }
@@ -392,6 +359,66 @@ function setFormS2(){
     }
 }
 
+
+function setFormS3(){
+    if ($("#checkboxS3").prop("checked") == true){
+        $("[id$='Aeronet']").prop("disabled", false);       
+        $.each(stationsAeronet, function(i, item){
+            $("#stationsAeronet").append($("<option></option>").attr("value", item).text(item));
+        });
+        $.each(variablesAeronet, function(i, item){
+            $("#variablesAeronet").append($("<option></option>").attr("value", item).text(item));
+        });
+        $.each(niveau, function(i, item){
+            $("#niveauAeronet").append($("<option></option>").attr("value", item).text(item));
+        });
+        $("#niveauAeronet").prop('selectedIndex', 1);
+    }else{
+        $("[id$='Aeronet']").find("option:gt(0)").remove();
+        $("#integration").find("option:gt(0)").remove();
+        $("[id$='Aeronet']").prop("disabled", true);
+    }
+}
+
+
+function setFormS4(){
+    if ($("#checkboxS4").prop("checked") == true){
+        $("[id$='Teom']").prop("disabled", false);
+        $.each(stationsAeronet, function(i, item){
+            $("#stationsTeom").append($("<option></option>").attr("value", item).text(item));
+        });
+        $.each(variablesTeom, function(i, item){
+            $("#variablesTeom").append($("<option></option>").attr("value", item).text(item));
+        });
+        $("#variablesTeom").prop('selectedIndex', 1);
+    }else{
+        $("[id$='Teom']").find("option:gt(0)").remove(); 
+        $("[id$='Teom']").prop("disabled", true);        
+    }
+}
+
+
+function setFormIntg(){
+    if ($("#checkboxS3").prop("checked") == true || $("#checkboxS4").prop("checked") == true){
+        $("#integration").prop("disabled", false);
+        $.each(integration, function(i, item){
+            $("#integration").append($("<option></option>").attr("value", item).text(item));
+        });
+        $("#integration").prop('selectedIndex', 1);
+    }else{
+        $("#integration").find("option:gt(0)").remove();
+        $("#integration").prop("disabled", true);
+    }
+}
+
+$("[id^='checkbox']").on('change', function() {
+    $("[id^='checkbox']").not(this).prop('checked', false);
+    setFormS2();
+    setFormS3();
+    setFormS4();
+    setFormIntg(); 
+});
+
 function getDateRange(url){
     var lstvariables = [];
     $.ajax({
@@ -452,7 +479,7 @@ function changeDates2(start,end,period){
 // #######################################################################################
 
 
-// ################## info layer selected ################################################
+// ################## verification form ##################################################
 
 function verifForm(){   
     if( $('#typeS1').val() =='Type de données'){        
@@ -472,11 +499,11 @@ function verifForm(){
         throw new Exception();
     }
     if($('#pasdetempsS1').val() == 'Résolution temporelle'){
-        alert("Erreur ! Aucun type de données sélectionné !");
+        alert("Erreur ! Aucun pas de temps sélectionné !");
         throw new Exception();
     }
     if($('#variableS1').val() == 'Variable'){
-        alert("Erreur ! Aucun niveau de couche sélectionné !");
+        alert("Erreur ! Aucune couche sélectionnée !");
         throw new Exception();
     }
     if($('#levelS1').val() == 'layer'){
@@ -501,6 +528,55 @@ function verifForm(){
         }
         $("input[id='date']").val(lstInfos.date);
     }
+
+    if ($("#checkboxSr2").prop("checked") == true){
+        if( $('#typeS2').val() =='Type de données'){        
+            alert("Erreur ! Aucun type de données sélectionné !");
+            throw new Exception();
+        }
+        if($('#capteurS2').val() == 'Capteur/Source'){
+            alert("Erreur ! Aucune source de données sélectionnée !");
+            throw new Exception();
+        }
+        if($('#produitS2').val() == 'Produit'){
+            alert("Erreur ! Aucun produit sélectionné !");
+            throw new Exception();
+        }
+        if($('#resospatialeS2').val() == 'Résolution spatiale'){
+            alert("Erreur ! Aucune résolution spatiale sélectionnée !");
+            throw new Exception();
+        }
+        if($('#pasdetempsS2').val() == 'Résolution temporelle'){
+            alert("Erreur ! Aucun pas de temps sélectionné !");
+            throw new Exception();
+        }
+        if($('#variableS2').val() == 'Variable'){
+            alert("Erreur ! Aucune couche sélectionnée !");
+            throw new Exception();
+        }
+        if($('#levelS2').val() == 'layer'){
+            alert("Erreur ! Aucun niveau de couche sélectionné !");
+            throw new Exception();
+        }
+    }
+
+
+    if ($("#checkboxS3").prop("checked") == true){
+        if($('#stationsAeronet').val() == 'Station'){
+            alert("Erreur ! Aucune station Aeronet sélectionnée !");
+            throw new Exception();
+        }
+        if($('#variablesAeronet').val() == 'Variable'){
+            alert("Erreur ! Aucune variable Aeronet sélectionnée !");
+            throw new Exception();
+        }
+    }
+    if ($("#checkboxS4").prop("checked") == true){
+        if($('#stationsTeom').val() == 'Station'){
+            alert("Erreur ! Aucune station Aeronet sélectionnée !");
+            throw new Exception();
+        }
+    }
 }
 
 
@@ -512,16 +588,17 @@ window.onload = function(){
 
 $("#scatter").on('submit',  function(e){
     e.preventDefault(); 
-    console.log("send");
-    //verifForm();
-    console.log('send2');
+    verifForm();
+    var datas = [];
+    $(":checked").each(function(){
+        datas.push($(this).val());
+    });
     $.ajax({
         async: false,
         type: "POST",
         url: '',
         dataType: 'json',
         data: $("#scatter").serialize(),
-        //csrfmiddlewaretoken: '{{ csrf_token }}',
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
             $("[id^='plot']").each(function(){
@@ -534,7 +611,7 @@ $("#scatter").on('submit',  function(e){
             });
         },
         success: function(data){
-            console.log('succes');
+            console.log(data.datas.SatVar);
         }
     });
 });
@@ -590,54 +667,6 @@ $('#plot1').highcharts({
 
 
 $('#plot2').highcharts({
-    xAxis: {
-        title: {
-            enabled: true,
-            text: ''
-        },
-    },
-    yAxis: {
-        title: {
-            text: ''
-        }
-    },
-    title: {
-        text: 'Scatter Plot'
-    },
-    subtitle: {
-        text: 'Source: CRCT'
-    },
-    legend: {
-        layout: 'vertical',
-        align: 'left',
-        x: 80,
-        verticalAlign: 'top',
-        y: 55,
-        floating: true,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#F5F5F5'
-    },
-    series: [{
-        type: 'line',
-        color: 'rgb(255, 102, 102)',
-        marker: {
-            enabled: false
-        },
-        states: {
-            hover: {
-                lineWidth: 0
-            }
-        },
-        enableMouseTracking: false
-    }, {
-        type: 'scatter',
-        color: 'rgb(80,80,80)',
-        marker: {
-            radius: 2,
-        }
-    }]
-});
-
-$('#plot3').highcharts({
     chart: {
         zoomType: 'xy'
     },
@@ -740,18 +769,7 @@ $('#plot3').highcharts({
             valueSuffix: ''
         }
 
-    }, {
-        type: 'spline',
-        yAxis: 2,
-        tooltip: {
-            valueSuffix: ''
-        }
-    }, {
-        type: 'spline',
-        yAxis: 1,
-        tooltip: {
-            valueSuffix: ''
-        }
-    }]
+    },
+    ]
 });
 

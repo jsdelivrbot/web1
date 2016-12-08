@@ -18,7 +18,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="checkbox">
-                    <label><input type="checkbox" id="checkbox" value="any" onclick="setFormS2();" ><em>Source 2</em></label>
+                    <label><input type="checkbox" id="checkboxSr2" value="S2" onclick="setFormS2();" ><em>Source 2</em></label>
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@
                 <select class="form-control" name="resospatiale1" id="resospatialeS1" >
                     <option data-hidden="true">Résolution spatiale</option>
                 </select>
-                <select class="form-control" name="pasdetemps" id="pasdetempsS1" >
+                <select class="form-control" name="pasdetemps1" id="pasdetempsS1" >
                     <option data-hidden="true">Pas de Temps</option>
                 </select>
                 <select class="form-control" name="variable1" id="variableS1" >
@@ -59,7 +59,7 @@
                 <select class="form-control" name="resospatiale2" id="resospatialeS2" disabled="true" >
                     <option data-hidden="true">Résolution spatiale</option>
                 </select>
-                <select class="form-control" name="pasdetemps" id="pasdetempsS2" disabled="true">
+                <select class="form-control" name="pasdetemps2" id="pasdetempsS2" disabled="true">
                     <option data-hidden="true">Pas de Temps</option>
                 </select>
                 <select class="form-control" name="variable2" id="variableS2" disabled="true" >
@@ -104,20 +104,6 @@
         <div class="row">
             <div class="col-lg-6">
                 <div class="row">
-                    <input type="text" class="input-small" name="ulx" id="ulx" placeholder="West"/>
-                </div>
-                <div class="row">
-                    <input type="text" class="input-small" name="uly" id="uly" placeholder="North"/>
-                </div>
-                <div class="row">
-                    <input type="text" class="input-small" name="lrx" id="lrx" placeholder="East"/>
-                </div>
-                <div class="row">
-                    <input type="text" class="input-small" name="lry" id="lry" placeholder="South"/>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="row">
                     <select class="form-control" name="buffer" id="buffer" >
                         <option data-hidden="true">Buffer</option>
                         <option value="9">9</option>
@@ -125,6 +111,24 @@
                         <option value="15">49</option>
                     </select>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="row">
+                    <input type="text" class="input-small" name="ulx" id="ulx" placeholder="West"/>
+                </div>                
+                <div class="row">
+                    <input type="text" class="input-small" name="lrx" id="lrx" placeholder="East"/>
+                </div>                                
+            </div>
+            <div class="col-lg-6">
+                <div class="row">
+                    <input type="text" class="input-small" name="uly" id="uly" placeholder="North"/>
+                </div>
+                <div class="row">
+                    <input type="text" class="input-small" name="lry" id="lry" placeholder="South"/>
+                </div>                   
             </div>
         </div>
     </div>
@@ -136,30 +140,32 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="row">
-                        <h5><em>Aeronet</em></h5>
-                        <select class="form-control" name="stationsaeronet" id="stationsaeronet" >
+                        <div class="checkbox">
+                            <label><input type="checkbox" id="checkboxS3" value="S3" onclick="setFormS3();" ><em>Aeronet</em></label>
+                        </div>
+                        <select class="form-control" name="stationsaeronet" id="stationsAeronet" disabled="true">
                             <option data-hidden="true">Station</option>
                         </select>
-                        <select class="form-control" name="variablesaeronet" id="variablesaeronet" >
+                        <select class="form-control" name="variablesaeronet" id="variablesAeronet" disabled="true">
                             <option data-hidden="true">Variable</option>
                         </select>
                     </div>
                     <div class="row">
-                        <select class="form-control" name="niveau" id="niveau" >
+                        <select class="form-control" name="niveau" id="niveauAeronet" disabled="true">
                             <option data-hidden="true">niveau de traitement</option>
-                            <option value="1_5">1.5</option>
-                            <option value="2">2</option>
                         </select>
                     </div>
                     <br/>
                 </div>
                 <div class="col-lg-6">
                     <div class="row">
-                        <h5><em>TEOM</em></h5>
-                        <select class="form-control" name="stationsteom" id="stationsteom" >
+                        <div class="checkbox">
+                            <label><input type="checkbox" id="checkboxS4" value="S4" onclick="setFormS4();" ><em>Teom</em></label>
+                        </div>
+                        <select class="form-control" name="stationsteom" id="stationsTeom" disabled="true">
                             <option data-hidden="true">Station</option>
                         </select>
-                        <select class="form-control" name="variablesteom" id="variablesteom" >
+                        <select class="form-control" name="variablesteom" id="variablesTeom" disabled="true">
                             <option data-hidden="true">Variable</option>
                         </select>
                     </div>
@@ -171,32 +177,8 @@
                     <h6>(Aeronet/Teom)</h6>
                 </div>
                 <div class="col-lg-6">
-                    <select class="form-control" name="integration" id="integration" >
+                    <select class="form-control" name="integration" id="integration" disabled="true" >
                         <option data-hidden="true"></option>
-                        <option value="+-1h">+-1h</option>
-                        <option value="+-5h">+-5h</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row" id="Epidemio">
-        <div class="col-lg-6">
-            <div class="row">
-                <div>
-                <label>Données épidémiologiques<label>
-                </div>
-                </br>
-                <div class="row">
-                    <select class="form-control" name="pays" id="pays" >
-                        <option data-hidden="true">Pays</option>
-                    </select>
-                    <select class="form-control" name="district" id="district" >
-                        <option data-hidden="true">District</option>
-                    </select>
-                    <select class="form-control" name="variablesepidemio" id="variablesepidemio" >
-                        <option data-hidden="true">Variable</option>
-                        <option value="incidence">incidence</option>
                     </select>
                 </div>
             </div>
@@ -212,7 +194,6 @@
 {% block content1 %}
         <div class="row" id="plot1"></div>
         <div class="row" id="plot2"></div>
-        <div class="row" id="plot3"></div>
         <div class="row" id="container"></div>
 {% endblock %}
 
@@ -222,5 +203,4 @@
     <script type="text/javascript" src="//rawgithub.com/phpepe/highcharts-regression/master/highcharts-regression.js"> </script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="{% static 'teledm/jsPerso/calvalForm.js' %}"></script>
-    <script type="text/javascript" src="{% static 'teledm/jsPerso/scatterPlots.js' %}"></script> 
 {% endblock %}
