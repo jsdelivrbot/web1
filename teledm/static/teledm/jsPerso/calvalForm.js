@@ -586,19 +586,21 @@ window.onload = function(){
     setFormS2;
 }
 
+
 $("#scatter").on('submit',  function(e){
     e.preventDefault(); 
     verifForm();
-    var datas = [];
-    $(":checked").each(function(){
-        datas.push($(this).val());
-    });
+    $("[id^='plot']").each(function(){
+        while($(this).highcharts().series.length > 0){
+            $(this).highcharts().series[0].remove(true);
+        }
+    });    
     $.ajax({
         async: false,
         type: "POST",
         url: '',
-        dataType: 'json',
-        data: $("#scatter").serialize(),
+        //dataType: 'json',
+        data: $("#scatter").serialize()+"&action=scatter",
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
             $("[id^='plot']").each(function(){
@@ -611,7 +613,48 @@ $("#scatter").on('submit',  function(e){
             });
         },
         success: function(data){
-            console.log(data.datas.SatVar);
+            $("#plot1").highcharts().addSeries({
+                name: 'y=' +data.a.toFixed(4) + 'x+' + data.b.toFixed(2) + ', r2=' + data.rCarre.toFixed(2),
+                data: data.line,
+                type: 'line',
+                color: 'rgb(255, 102, 102)',
+                marker: {
+                    enabled: false
+                },
+                states: {
+                    hover: {
+                        lineWidth: 0
+                    }
+                },
+                enableMouseTracking: false
+            });
+            $("#plot1").highcharts().addSeries({
+                name: 'Observations',
+                data: data.scatterValues,
+                type: 'scatter',
+                color: 'rgb(80,80,80)',
+                marker: {
+                    radius: 2,
+                }
+            });
+            $("#plot1").highcharts().setTitle({text: data.prd + "-" + data.sat}, {text: data.dates[0]+' - '+data.dates[data.dates.length-1]+'\nSource CRC'});
+            $("#plot1").highcharts().xAxis[0].setTitle({text: data.prdVar});
+            $("#plot1").highcharts().yAxis[0].setTitle({text: data.satVar});
+            $("#plot2").highcharts().addSeries({
+                yAxis: 0,                
+                name: data.satVar,
+                data: data['moy_'+data.sat],
+            });
+            $("#plot2").highcharts().addSeries({
+                yAxis: 1,
+                name: data.prdVar,
+                data: data['moy_'+data.prd],
+            });
+            $("#plot2").highcharts().xAxis[0].setCategories(data.dates);
+        },
+        error : function(xhr,errmsg,err) {
+            console.log('erreur: '+errmsg);
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
         }
     });
 });
@@ -644,25 +687,10 @@ $('#plot1').highcharts({
         floating: true,
         backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#F5F5F5'
     },
-    series: [{
-        type: 'line',
-        color: 'rgb(255, 102, 102)',
-        marker: {
-            enabled: false
-        },
-        states: {
-            hover: {
-                lineWidth: 0
-            }
-        },
-        enableMouseTracking: false
-    }, {
-        type: 'scatter',
-        color: 'rgb(80,80,80)',
-        marker: {
-            radius: 2,
-        }
-    }]
+    series: [],
+    credits:{
+        enabled: false
+    }
 });
 
 
@@ -684,13 +712,13 @@ $('#plot2').highcharts({
         labels: {
             format: '{value}',
             style: {
-                color: Highcharts.getOptions().colors[0]
+                color: Highcharts.getOptions().colors[1]
             }
         },
         title: {
             text: '',
             style: {
-                color: Highcharts.getOptions().colors[0]
+                color: Highcharts.getOptions().colors[1]
             }
         },
         opposite: true
@@ -699,45 +727,16 @@ $('#plot2').highcharts({
         title: {
             text: '',
             style: {
-                color: Highcharts.getOptions().colors[1]
+                color: Highcharts.getOptions().colors[0]
             }
         },
         labels: {
             format: '{value}',
             style: {
-                color: Highcharts.getOptions().colors[1]
+                color: Highcharts.getOptions().colors[0]
             }
         }
 
-    }, { // Tertiary yAxis
-        gridLineWidth: 0,
-        title: {
-            text: '',
-            style: {
-                color: Highcharts.getOptions().colors[2]
-            }
-        },
-        labels: {
-            format: '{value}',
-            style: {
-                color: Highcharts.getOptions().colors[2]
-            }
-        },
-        opposite: true
-    }, { // 4th yAxis
-        gridLineWidth: 0,
-        title: {
-            text: '',
-            style: {
-                color: Highcharts.getOptions().colors[3]
-            }
-        },
-        labels: {
-            format: '{value}',
-            style: {
-                color: Highcharts.getOptions().colors[3]
-            }
-        },
     }],
     tooltip: {
         shared: true
@@ -751,25 +750,8 @@ $('#plot2').highcharts({
         floating: true,
         backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
     },
-    series: [{
-        type: 'spline',
-        yAxis: 2,
-        tooltip: {
-            valueSuffix: ''
-        }
-
-    }, {
-        type: 'spline',
-        yAxis: 1,
-        marker: {
-            enabled: false
-        },
-        dashStyle: 'shortdot',
-        tooltip: {
-            valueSuffix: ''
-        }
-
-    },
-    ]
+    series:[],
+    credits:{
+        enabled: false
+    }
 });
-

@@ -219,26 +219,26 @@ def scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, dat
     line_station1, rCarre_1, a1,b1, scatterValues1 = scatter_stats(dfout,prd_sat1, inSitu)
 
     mat = {}
-    mat['sat'] = prd_sat1
-    mat['satVar'] = variable_sat1
-    mat['satVar_units'] = sat1_units
+    mat["sat"] = prd_sat1
+    mat["satVar"] = variable_sat1
+    mat["satVar_units"] = sat1_units
     if z_buffer:
-        mat['zone'] = "buffer %d px" % z_buffer
+        mat["zone"] = "buffer %d px" % z_buffer
     else:
-        mat['zone'] = "zone %.2f, %.2f, %.2f, %.2f " % (ulx, uly, lrx, lry)
-    mat['prd'] = inSitu
-    mat['station'] = station
-    mat['prdVar'] = variable_station
-    mat['prdVar_units'] = ""
-    mat['dates'] = [d.date() for d in dfout.index[:].to_datetime()]
-    mat['periode'] = pas_de_temps
+        mat["zone"] = "zone %.2f, %.2f, %.2f, %.2f " % (ulx, uly, lrx, lry)
+    mat["prd"] = inSitu
+    mat["station"] = station
+    mat["prdVar"] = variable_station
+    mat["prdVar_units"] = ""
+    mat["dates"] = [str(d.date()) for d in dfout.index[:].to_datetime()]
+    mat["periode"] = pas_de_temps
     for c in dfout.columns:
         mat[c] = dfout[c].values.tolist()
-    mat['scatterValues'] = scatterValues1      # liste des valeurs sat1/aeronet
-    mat['line'] = line_station1                # droite de regression sat1/aeronet
-    mat['rCarre'] = rCarre_1                   # rCarre scatterplot sat1/aeronet
-    mat['a'] = a1                              # pente de la droite de regr
-    mat['b'] = b1                              # intersection
+    mat["scatterValues"] = scatterValues1      # liste des valeurs sat1/aeronet
+    mat["line"] = line_station1                # droite de regression sat1/aeronet
+    mat["rCarre"] = rCarre_1                   # rCarre scatterplot sat1/aeronet
+    mat["a"] = a1                              # pente de la droite de regr
+    mat["b"] = b1                              # intersection
     return mat
 
 
@@ -283,21 +283,21 @@ def scatter2Sat(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
         dfout = tempo(pas_de_temps,start,end,df_sat1_2,prd_sat1, '' , prd_sat2)
     line_sat, rCarre_sat,a1,b1, scatterValues = scatter_stats(dfout,prd_sat1, prd_sat2)
     mat = {}
-    mat['sat'] = prd_sat1
-    mat['satVar'] = variable_sat1
-    mat['satVar_units'] = sat1_units
-    mat['zone'] = "zone %.2f, %.2f, %.2f, %.2f " % (ulx, uly, lrx, lry)
-    mat['prd'] = prd_sat2
-    mat['prdVar'] = variable_sat2
-    mat['prdVar_units'] = sat2_units
-    mat['dates'] = [d.date() for d in dfout.index[:].to_datetime()]
+    mat["sat"] = prd_sat1
+    mat["satVar"] = variable_sat1
+    mat["satVar_units"] = sat1_units
+    mat["zone"] = "zone %.2f, %.2f, %.2f, %.2f " % (ulx, uly, lrx, lry)
+    mat["prd"] = prd_sat2
+    mat["prdVar"] = variable_sat2
+    mat["prdVar_units"] = sat2_units
+    mat["dates"] = [str(d.date()) for d in dfout.index[:].to_datetime()]
     for c in dfout.columns:
         mat[c] = dfout[c].values.tolist()
-    mat['scatterValues'] = scatterValues          # liste des valeurs sat1 (nan enleves) / sat2
-    mat['line'] = line_sat                        # droite de regression sat1/sat2
-    mat['rCarre'] = rCarre_sat                    # rCarre scatterplot sat1/sat2
-    mat['a'] = a1                                 # pente de la droite de regr
-    mat['b'] = b1                                 # intersection
+    mat["scatterValues"] = scatterValues          # liste des valeurs sat1 (nan enleves) / sat2
+    mat["line"] = line_sat                        # droite de regression sat1/sat2
+    mat["rCarre"] = rCarre_sat                    # rCarre scatterplot sat1/sat2
+    mat["a"] = a1                                 # pente de la droite de regr
+    mat["b"] = b1                                 # intersection
     return mat
 
 if __name__ == '__main__':
