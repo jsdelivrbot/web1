@@ -23,28 +23,35 @@
 
 #date1, #date2, #date {
     height: 30px;
-    width: 100px;
+    width: 90px;
     font-size: 1.0em;
     padding: 0px;
 }
 
-.select2-container, .select2-results, .select2-choice {
+.select2-container, .select2-results, .select2-choice .select2-search-field {
     color: #000000;
     /*background-color: #C0C0C0;*/
-    font-size: 0.9em;
+    font-size: 0.8em;
     padding: 2px;
 }
 
 
+.select2-container.select2-dropdown-open {
+    min-width: 100px !important;
+    margin-left: 0px;
+}
+
 input.input-small::-moz-placeholder {
     font-style: italic;
+    font-size: 0.9em;
     color: darkgrey;
 }
 
 input.input-small{
     height: 25px;
-    width: 150px;
+    width: 90px;
 }
+
 
 #Sat,#Periode,#Zone,#InSitu,#Epidemio,#theme {
     background:  #F8F8FF;

@@ -154,7 +154,7 @@ def calval(request):
                     varStation = request.POST['variablesaeronet']
                     niveau = request.POST['niveau']
                 else:
-                    inSitu = 'Teom'
+                    inSitu = 'teom'
                     station = request.POST['stationsteom']
                     varStation = request.POST['variablesteom']
                     niveau = ''

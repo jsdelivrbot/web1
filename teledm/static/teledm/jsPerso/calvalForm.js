@@ -275,8 +275,11 @@ function setForm(){
     });
 
     $('.input-small').on('click', function(){
-        $("#buffer.select2-offscreen").empty();
-        $("#buffer").append(new Option());
+        //$('#buffer option').removeAttr('selected');
+        //$("#buffer").find("option:gt(0)").remove();
+        $("#buffer").prop('selectedIndex', 0).change();
+        //$("#buffer.select2-offscreen").empty();
+        //$("#buffer").append(new Option());
     });
 }
 
@@ -579,7 +582,6 @@ function verifForm(){
     }
 }
 
-
 window.onload = function(){
     $('select').select2();
     setForm();
@@ -613,21 +615,26 @@ $("#scatter").on('submit',  function(e){
             });
         },
         success: function(data){
-            $("#plot1").highcharts().addSeries({
-                name: 'y=' +data.a.toFixed(4) + 'x+' + data.b.toFixed(2) + ', r2=' + data.rCarre.toFixed(2),
-                data: data.line,
-                type: 'line',
-                color: 'rgb(255, 102, 102)',
-                marker: {
-                    enabled: false
-                },
-                states: {
-                    hover: {
-                        lineWidth: 0
-                    }
-                },
-                enableMouseTracking: false
-            });
+            if (data.a){
+                $("#plot1").highcharts().addSeries({
+                    name: 'y=' +data.a.toFixed(4) + 'x+' + data.b.toFixed(2) + ', r2=' + data.rCarre.toFixed(2),
+                    data: data.line,
+                    type: 'line',
+                    color: 'rgb(255, 102, 102)',
+                    marker: {
+                        enabled: false
+                    },
+                    states: {
+                        hover: {
+                            lineWidth: 0
+                        }
+                    },
+                    enableMouseTracking: false
+                });
+            $("#plot1").highcharts().xAxis[0].setTitle({text: data.prdVar});
+            }else{
+                $("#plot1").highcharts().xAxis[0].setTitle({text: data.prdVar+'(Absence de données)'});
+            }
             $("#plot1").highcharts().addSeries({
                 name: 'Observations',
                 data: data.scatterValues,
@@ -637,18 +644,20 @@ $("#scatter").on('submit',  function(e){
                     radius: 2,
                 }
             });
-            $("#plot1").highcharts().setTitle({text: data.prd + "-" + data.sat}, {text: data.dates[0]+' - '+data.dates[data.dates.length-1]+'\nSource CRC'});
-            $("#plot1").highcharts().xAxis[0].setTitle({text: data.prdVar});
+            $("#plot1").highcharts().setTitle({text: data.prd + "-" + data.sat}, {text: data.dates[0]+' - '+data.dates[data.dates.length-1]+'<br>(Source CRC)'});
+            
             $("#plot1").highcharts().yAxis[0].setTitle({text: data.satVar});
             $("#plot2").highcharts().addSeries({
                 yAxis: 0,                
                 name: data.satVar,
                 data: data['moy_'+data.sat],
+                color: 'rgb(80,80,80)',
             });
             $("#plot2").highcharts().addSeries({
                 yAxis: 1,
                 name: data.prdVar,
                 data: data['moy_'+data.prd],
+                color: 'rgb(116,223,0)',
             });
             $("#plot2").highcharts().xAxis[0].setCategories(data.dates);
         },

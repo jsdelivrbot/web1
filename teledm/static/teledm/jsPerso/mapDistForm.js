@@ -9,26 +9,6 @@ var map;
 var fond;
 var mapPanel;
 
-var lstInfos = {
-    date:"",
-    param:"",
-    unit:"",
-    nomDataset:"",
-    capteur:"",
-    produit:"",
-    resspatiale:"",
-    restempo:"",
-    layer:"",
-    nomFichier:"",
-    bbox:"",
-    colorbar:"",
-    scaleMin:"",
-    scaleMax:"",
-    bbox:'',
-    colorbarBand:'',
-    opacity:''
-};
-
 
 var varInfos = {
     variables:[],
@@ -192,7 +172,9 @@ function changeDates1(start,end,period){
         minDate: new Date(start),
         maxDate: new Date (end),
         onSelect: function( selectedDate ) {
-            $( "#date2" ).datepicker( "option", "minDate", selectedDate );
+            var d = $("#date1").datepicker('getDate', '+1d');
+            d.setDate(d.getDate() + 1);
+            $( "#date2" ).datepicker( "option", "minDate", d );
         },
     });
 }
@@ -209,7 +191,9 @@ function changeDates2(start,end,period){
         minDate: new Date(start),
         maxDate: new Date (end),
         onSelect: function( selectedDate ) {
-            $( "#date1" ).datepicker( "option", "maxDate", selectedDate );
+            var d = $("#date2").datepicker('getDate', '-1d');
+            d.setDate(d.getDate() + 1);
+            $( "#date1" ).datepicker( "option", "maxDate", d );
         },
     });
 }
@@ -267,128 +251,7 @@ function createURL(valueSelected, selector){
 
 // ################## info layer selected ################################################
 
-function getInfos()
-{
-        //vide objet info précédente
-    lstInfos.date="";
-    lstInfos.param="";
-    lstInfos.nomDataset="";
-    lstInfos.capteur="";
-    lstInfos.produit="";
-    lstInfos.resspatiale="";
-    lstInfos.restempo="";
-    lstInfos.layer="";
-    lstInfos.nomFichier="";
-    
-        //Datasets
-    var type = $('#typeSel').val();
-    if(type=='Type de données')
-    {
-        
-        alert("Erreur ! Aucun type de données sélectionné !");
-        throw new Exception();
-    }
-    else
-    {
-        lstInfos.nomDataset = type;
-    }
-    
-    var capteur = $('#capteurSel').val();
-    if(capteur=='Capteur/Source')
-    {
-        
-        alert("Erreur ! Aucune source de données sélectionnée !");
-        throw new Exception();
-    }
-    else
-    {
-        lstInfos.capteur = capteur;
-    }
 
-    var produit = $('#produitSel').val();
-    if(produit=='Produit')
-    {
-        
-        alert("Erreur ! Aucun produit sélectionné !");
-        throw new Exception();
-    }
-    else
-    {
-        lstInfos.produit = produit;
-    }
-
-    var resospatiale = $('#resospatialeSel').val();
-    if(resospatiale=='Résolution spatiale')
-    {
-        
-        alert("Erreur ! Aucune résolution spatiale sélectionnée !");
-        throw new Exception();
-    }
-    else
-    {
-        lstInfos.resspatiale = resospatiale;
-    }
-
-    var restempo = $('#pasdetempsSel').val();
-    if(restempo=='Résolution temoprelle')
-    {
-        
-        alert("Erreur ! Aucun type de données sélectionné !");
-        throw new Exception();
-    }
-    else
-    {
-        lstInfos.restempo = restempo;
-    }
-
-    var level = $('#levelSel').val();
-    if(level=='layer')
-    {
-        
-        alert("Erreur ! Aucun niveau de couche sélectionné !");
-        throw new Exception();
-    }
-    else
-    {
-        lstInfos.level = level;
-    }
-    
-        //Date
-    var dateForm= $("input[id='date']").val();
-    if(dateForm=='')
-    {
-        alert("Erreur ! Aucune date saisie !");
-        throw new Exception();
-    }
-    else
-    {
-        if (lstInfos.restempo == 'w'){
-            lstInfos.date = moment(dateForm).startOf('isoWeek').format('YYYY-MM-DD');
-        }else if (lstInfos.restempo == 'm'){
-            lstInfos.date = moment(dateForm).startOf('Month').format('YYYY-MM-DD');
-        }else if (lstInfos.restempo == 't'){
-            lstInfos.date = moment(dateForm).startOf('quarter').format('YYYY-MM-DD');
-        }else{
-            lstInfos.date=dateForm;
-        }
-        $("input[id='date']").val(lstInfos.date);
-    }
-    if (lstInfos.produit == 'seviri_aerus'){
-        var nomFichier = "seviri_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
-    }else{
-        var nomFichier = produit + "_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
-    }
-    lstInfos.nomFichier = nomFichier;
-    
-        //Paramètres
-    var paramForm = $("#variableS1 option:selected").text();
-    if(lstInfos.paramForm==''){
-        alert("Erreur ! Aucun paramètre selectionné !");
-        throw new Exception();
-    };
-    lstInfos.param = paramForm;
-    
-}
 
 
 window.onload = function(){

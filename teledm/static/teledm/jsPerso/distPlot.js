@@ -8,6 +8,106 @@ var dataset = {
 };
 
 
+var lstInfos = {
+    date:"",
+    param:"",
+    unit:"",
+    nomDataset:"",
+    capteur:"",
+    produit:"",
+    resspatiale:"",
+    restempo:"",
+    layer:"",
+    nomFichier:"",
+    bbox:"",
+    colorbar:"",
+    scaleMin:"",
+    scaleMax:"",
+    bbox:'',
+    colorbarBand:'',
+    opacity:''
+};
+
+
+
+function verifForm()
+{
+        //Datasets
+    if($('#typeSel').val() == 'Type de données'){
+        alert("Erreur ! Aucun type de données sélectionné !");
+        throw new Exception();
+    }
+    if($('#capteurSel').val() == 'Capteur/Source')
+    {
+        alert("Erreur ! Aucune source de données sélectionnée !");
+        throw new Exception();
+    }
+    if($('#produitSel').val() == 'Produit'){    
+        alert("Erreur ! Aucun produit sélectionné !");
+        throw new Exception();
+    }
+    if($('#resospatialeSel').val() == 'Résolution spatiale'){     
+        alert("Erreur ! Aucune résolution spatiale sélectionnée !");
+        throw new Exception();
+    }
+    var restempo = $('#pasdetempsSel').val();
+    if(restempo == 'Résolution temporelle')
+    {
+        alert("Erreur ! Aucun type de données sélectionné !");
+        throw new Exception();
+    }
+    if($("#variableSel option:selected").text() == 'Variable'){
+        alert("Erreur ! Aucune variable selectionnée !");
+        throw new Exception();
+    }
+    if($('#levelSel').val() == 'layer'){
+        alert("Erreur ! Aucun niveau de couche sélectionné !");
+        throw new Exception();
+    }
+    var date1 = $("#date1").val();
+    if(date1 == '' || isNaN(Date.parse(date1)) == true){
+        alert("Erreur ! Aucune saisie date debut!");
+        throw new Exception();
+    }else{
+        if (restempo == 'w'){
+            var deb = moment(date1).startOf('isoWeek').format('YYYY-MM-DD');
+        }else if (restempo == 'm'){
+            var deb = moment(date1).startOf('Month').format('YYYY-MM-DD');
+        }else if (restempo == 't'){
+            var deb = moment(date1).startOf('quarter').format('YYYY-MM-DD');
+        }else{
+            var deb = date1;
+        }
+        $("#date1").val(deb);
+    }
+    var date2 = $("#date2").val();
+    if( date2 == '' || isNaN(Date.parse(date2)) == true){
+        alert("Erreur ! Aucune saisie date de fin!");
+        throw new Exception();
+    }else{
+        if (restempo == 'w'){
+            var deb = moment(date2).startOf('isoWeek').format('YYYY-MM-DD');
+        }else if (restempo == 'm'){
+            var deb = moment(date2).startOf('Month').format('YYYY-MM-DD');
+        }else if (restempo == 't'){
+            var deb = moment(date2).startOf('quarter').format('YYYY-MM-DD');
+        }else{
+            var deb = date1;
+        }
+        $("#date2").val(deb);
+    }    
+    if($("#pays").val() == 'Pays'){
+       alert("Erreur ! Aucune zone d'extraction selectionnée !");
+        throw new Exception(); 
+    }
+    if($("#decoupage").val() == 'Echelle de découpage'){
+       alert("Erreur ! Aucun découpage géographique selectionné !");
+        throw new Exception(); 
+    }
+        
+}
+
+
 function updateDate(dates){
     var option = '';
     for (var i=0;i<dates.length;i++){
@@ -43,7 +143,8 @@ function updateMap(datas, url){
 
 
 $("#moyenne").on('submit', function(e){
-    e.preventDefault();    
+    e.preventDefault();
+    verifForm();
     console.log("form submitted!");
     while($("#mapcontainer").highcharts().series.length > 0){
         $("#mapcontainer").highcharts().series[0].remove(true);

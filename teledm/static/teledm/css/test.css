@@ -1,0 +1,35 @@
+.accordion-toggle:hover {
+    text-decoration: none;
+}
+
+.panel-body {
+    background-color: #BDBDBD;
+}
+#type {
+   padding-left: 10px; 
+}
+
+#capteur {
+    padding-left: 30px;
+}
+
+#A, #B, #C, #D, #E {
+    padding-left: 50px;
+}
+
+
+.panel-heading .accordion-toggle:after {
+    /* symbol for "opening" panels */
+    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
+    content: "\e114";    /* adjust as needed, taken from bootstrap.css */
+    float: right;        /* adjust as needed */
+    color: grey;         /* adjust as needed */
+}
+.panel-heading .accordion-toggle.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
+}
+
+input[type="checkbox"] {
+    font-size: 10px;
+}

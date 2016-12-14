@@ -196,6 +196,9 @@ def scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, dat
     elif prd_sat1 in ["chimere01","chimere02"]:
         fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
         path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
+    elif prd_sat1 == 'seviri_aerus':
+        fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
+        path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
     else:
         fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
         path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
@@ -242,7 +245,7 @@ def scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, dat
     return mat
 
 
-def scatter2Sat(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
+def scatter2Sat(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1, 
                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
                  ):
@@ -258,6 +261,9 @@ def scatter2Sat(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
     elif prd_sat1 in ["chimere01","chimere02"]:
         fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
         path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
+    elif prd_sat1 == 'seviri_aerus':
+        fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
+        path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
     else:
         fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
         path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
@@ -268,6 +274,9 @@ def scatter2Sat(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
     elif prd_sat2 in ["chimere01","chimere02"]:
         fichier_sat2 = prd_sat2+'_r'+res_sat2+'_d.nc'
         path_sat1 = ddir+type2+'/'+sat2+'/'+prd_sat2[:-2]+'/'+'res'+res_sat2+'/'+fichier_sat2
+    elif prd_sat2 == 'seviri_aerus':
+        fichier_sat2 = 'seviri_r'+res_sat2+'_d.nc'
+        path_sat2 = ddir+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
     else:
         fichier_sat2 = prd_sat2+'_r'+res_sat2+'_d.nc'
         path_sat2 = ddir+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2

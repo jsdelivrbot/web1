@@ -1,404 +1,91 @@
 const ROOT = "http://localhost:8080/thredds";
-var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
-
-var lstInfos = {
-    date:"",
-    param:"",
-    unit:"",
-    nomDataset:"",
-    capteur:"",
-    produit:"",
-    resspatiale:"",
-    restempo:"",
-    layer:"",
-    nomFichier:"",
-    bbox:"",
-    colorbar:"",
-    scaleMin:"",
-    scaleMax:"",
-    bbox:'',
-    colorbarBand:'',
-    opacity:''
-};
 
 
-var dataset = {
-    dates: [],
-    datas: []
-};
+var tabCatalog=[];
 
-function setSelect(array, bx){
-    for (var tp in array) {
-            bx.options[bx.options.length] = new Option(array[tp], array[tp]);
-    }
-}
+function getCatData()
+{
+	var tree = $('#listeCat').jstree({
+		'plugins': ["state"],   //Permet de selectionner le noeud
+		'core': 
+		{
+			'check_callback': true
+		}
+	});
+	$('#listeCat').on('ready.jstree', function (e, data) {  //quand le JSTree est chargé
 
-function resetSelect(listSelect, id){
-    resetDate();
-    for (var i = id; i < listSelect.length; i++){
-        listSelect[i].length = 1;
-        listSelect[i].removeAttribute("selected");
-    }
-    listSelect.slice(id,listSelect.length).select2().select2('');
-}
-
-
-function resetDate(){
-    $('#date1').datepicker('destroy');
-    $('#date2').datepicker('destroy');
-    $('#date1').val("");
-    $('#date2').val("");
-}
-
-
-function setForm(){
-    //type capteur produit variable resospatiale level
-    var selectSource1 = $("[id$='S1']");
-
-    //chargement du type1
-    createURL('', selectSource1[0]);
-
-    //choix du type
-    selectSource1[0].onchange =  function(){
-        //reinitialise les menus deroulants
-        resetSelect(selectSource1, 1);
-        
-        if (this.selectedIndex < 1)
-            return; // absence de choix
-        //charge les choix de capteur
-        createURL(this.value, selectSource1[1]);
-        };
-    // choix du capteur
-    selectSource1[1].onchange =  function(){
-        //reinitialise les menus deroulants
-        resetSelect(selectSource1, 2);
-        if (this.selectedIndex < 1)
-            return; // absence de choix
-        //charge les choix de produit
-        createURL(this.value, selectSource1[2]);
-        };
-    // choix du produit
-    selectSource1[2].onchange =  function(){
-        //reinitialise les menus deroulants
-        resetSelect(selectSource1, 3);
-        if (this.selectedIndex < 1)
-            return; // absence de choix
-        //charge les choix de variables
-        createURL(this.value, selectSource1[3]);
-        };
-    // choix de la resolution spatiale
-    selectSource1[3].onchange =  function(){
-        //reinitialise les menus deroulants
-        resetSelect(selectSource1, 4);
-        if (this.selectedIndex < 1)
-            return; // absence de choix
-        //charge les choix de variables
-        createURL(this.value, '');
-        for (var i=0; i<resoTemp.length; ++i) {
-            selectSource1[4].options[selectSource1[4].options.length] = new Option(resoTemp[i][1], resoTemp[i][0]);
-            }
-        };
-    // choix reso temporelle
-    selectSource1[4].onchange =  function(){
-        //reinitialise les menus deroulants
-        resetSelect(selectSource1, 5);
-        if (this.selectedIndex < 1)
-            return; // absence de choix
-        //charge les choix de variables
-        var listSelected = [];
-        $.each(selectSource1, function(value){
-            if (this.selectedIndex != 0){
-                listSelected.push(this.value);
-            }
-        });
-        var ind = listSelected.indexOf(this.value);
-        var reso = listSelected[3];
-        if (listSelected[2]=="seviri_aerus"){
-            var fileName = "seviri_r" + reso.replace('res','') +'_'+this.value;
-        }else{
-            var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
-        }
-        var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
-        console.log(urlInfo);
-        var listVariables = [];
-        var dictVarDate = [];
-        var debut = [];
-        var fin = [];
-        //$.each(urlPath, function(value){
-        $.ajax({
-            type: "GET",
-            url: urlInfo,
-            dataType: "xml",
-            async: false,
-            success: function(xml) {
-                $(xml).find('Layer[queryable="1"]').each(function(){
-                    listVariables.push($(this).find("Name").first().text());
-                    var times = $(this).find('Dimension[name="time"]').text();
-                    var ldates = times.split(',');
-                    debut = ldates[1];
-                    fin = ldates[ldates.length-1];
-                })
-            }
-        })
-        setSelect(listVariables, selectSource1[5]);
-        console.log(debut);
-        console.log(fin);
-        changeDates1(debut,fin,this.value);
-        changeDates2(debut,fin,this.value);
-        //dates debut/fin     
-    };
-}
-
-function changeDates1(start,end,period){
-    $('#date1').datepicker('destroy');
-    $( "#date1" ).datepicker({
-        beforeShowDay: function(date){
-            if (period == 'w'){
-                return [date.getDay() == 1, ""];
-            }else if (period == 'm'){
-                return [date.getDate() == 1, ""];
-            }else if (period == 't'){
-                if ($.isArray(date.getMonth(), [1,2,4,5,7,8,10,11])!=-1){
-                    return [false];
-                }else{
-                    return[true];
-                }
-            }
-        },
-        yearRange: '1979:2025',
-        dateFormat: 'yy-mm-dd',
-        changeMonth: true,
-        changeYear: true,
-        showMonthAfterYear: true,
-        defaultDate: new Date(start),
-        minDate: new Date(start),
-        maxDate: new Date (end),
-        //daysOfWeekDisabled: [0,2,3,4,5,6],
-        onSelect: function( selectedDate ) {
-            $( "#date2" ).datepicker( "option", "minDate", selectedDate );
-        },
-    });
-}
-
-
-function changeDates2(start,end,period){
-    $('#date2').datepicker('destroy');
-    $( "#date2" ).datepicker({
-        beforeShowDay: function(date){
-            if (period == 'w'){
-                alert(date.getDay());
-                return [date.getDay() == 1, ""];
-            }else if (period == 'm'){
-                return [date.getDate() == 1, ""];
-            }
-        },
-        yearRange: '1979:2025',
-        dateFormat: 'yy-mm-dd',
-        changeMonth: true,
-        changeYear: true,
-        showMonthAfterYear: true,
-        defaultDate: new Date(start),
-        minDate: new Date(start),
-        maxDate: new Date (end),
-        //daysOfWeekDisabled: [0,2,3,4,5,6],
-        onSelect: function( selectedDate ) {
-            $( "#date1" ).datepicker( "option", "maxDate", selectedDate );
-        },
-    });
-}
-
-
-var urlPath = [];
-
-function createURL(valueSelected, selector){
-    var selectSource1 = $("[id$='S1']");
-    var listSelected = [];
-    var titre = [];
-    
-    $.each(selectSource1, function(value){
-        if (this.selectedIndex != 0){
-            listSelected.push(this.value);
-        }
-    });
-    var ind = listSelected.indexOf(valueSelected);
-    var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
-    if (URL == "/catalog.xml"){
-        var URLCat = ROOT + "/catalog.xml";
-    }
-    else {
-        var URLCat = ROOT + '/' + URL;
-    }
-    
-    $.ajax( {
+	//Fonction récursive, parse l'URL
+	//-Si data ajoute dans tree
+	//-Si catalogue ajoute dans tree + parse le catalogue
+	function parseRec(URL,cat)
+	{
+		$.ajax( {
 				type: "GET",
-				url: URLCat,
+				url: URL,
 				dataType: "xml",
 				async: false,
 				success: function(xml) {
         				if($(xml).find('catalogRef')!=0)  //Si catalogue(s) présent
         				{
         					$(xml).find('catalogRef').each( function(){  //Pour tout les catalogues
-        						titre.push($(this).attr('xlink:title'));   //Titre du catalogue
+        						titre= $(this).attr('xlink:title');   //Titre du catalogue
+        						var href= $(this).attr('xlink:href');   //Lien du catalogue
+        						tabCatalog.push(titre);  //Ajout du catalogue dans le tableau global
+        						href=href.replace("thredds","");  //Modification du string servant de lien
+        						var URLCat = ROOT+ '/' + $(this).attr('ID') + '/catalog.xml';   //Création de l'URL du catalogue
+        						createNode(cat, titre, titre, "first");  //Création du noeud dans le tree
+        						$("#listeCat").jstree('disable_node', titre);
+        						parseRec(URLCat,"#"+titre);  //Parse le catalogue
         					})
         				}
-                            if($(xml).find('dataset')!=0)   //Si data(s) présente(s)
-                            {
+        				if($(xml).find('dataset')!=0)   //Si data(s) présente(s)
+        				{
         					$(xml).find('dataset').each( function(){  //Pour toutes les datas
-                                      if ($(this).attr('urlPath')){
-            						urlPath.push($(this).attr('urlPath'));  //URL du dataset
-                                      }
+        						var datasetName= $(this).attr('name');  //Nom du dataset
+        						var urlDataset= $(this).attr('urlPath');  //URL du dataset
+        						createNode(cat, datasetName, datasetName, "last");  //Création du noeud
         					}) //Fin each
         				}//Fin if
 				}//Fin success AJAX
 			})//Fin AJAX
-    console.log(urlPath);
-    if (selector != ''){
-        setSelect(titre, selector);
-    }
-}
+	};//Fin fonction récursive
 
-function test(){
-    alert($(this).serialize());
-}
+    //Execution de la méthode récursive sur le catalogue du TDS avec id du JSTree en argument
+    parseRec(urlCat + "conf.xml", "#listeCat");
 
-
-function test(){
-    //event.preventDefault();
-      // sanity check
-    createPost();
-}
-
-$("#test").on('submit', function(e){
-    e.preventDefault();    
-    console.log("form submitted!");
-    $.ajax({
-        async: false,
-        type: "POST",
-        url: '',
-        dataType: 'json',
-        data: $("#test").serialize(),
-        //csrfmiddlewaretoken: '{{ csrf_token }}',
-        beforeSend: function(xhr, settings) {
-            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
-        },
-        success: function(data){
-            console.log("success");
-            dataset.dates = data.dates;
-            dataset.datas = data.datas;      
-        },
-        error : function(xhr,errmsg,err) {
-            console.log('erreur: '+errmsg);
-            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-        }
-
-    })
-    if($("#container").highcharts().series.length !=0){
-        $("#container").highcharts().series[0].remove(true);
-    }
-    $("#container").highcharts().addSeries({
-        name: 'test',
-        data: dataset.datas
+    //Evenement onChange -> Affiche les parametres du catalogue dans la liste déroulante
+	$('#listeCat')
+	.on('changed.jstree', function (e, data) {
+		var i, j, r = [];
+		for(i = 0, j = data.selected.length; i < j; i++) {
+			r.push(data.instance.get_node(data.selected[i]).text);
+		}
+		try
+		{
+			//getCapCat(r);
+		}
+		catch(err)
+		{
+			console.log(err);
+		}
+	  })
+	  // create the instance
+	  .jstree();
     });
-});
+}
 
 
-
-//Création du chart dans le div #container
-$('#container').highcharts({
-    chart:{
-        type: 'spline',
-        zoomType: 'xy',
-    },
-    credits:{
-        enabled: false
-    },
-    title: {
-        text: 'Profil temporel'
-    },
-    subtitle: {
-        text: 'Longitude: '
-    },
-    legend: {
-        enabled: true,
-    },
-    rangeSelector : {
-        selected : 1
-    },
-    plotOptions: {
-        series:{  
-            pointInterval: 24*3600*1000
-        },
-    },        
-    tooltip: {
-        xDateFormat: '%d-%m-%Y',
-        valueDecimals: 9
-    },
-    xAxis: {
-        type: 'datetime',
-    },
-    yAxis: {
-        title: {
-            text: dataset.header
-        }
-    },
-    exporting:{
-        enabled: true
-    },
-});
+//JSTree - Fonction créer Node
+function createNode(parent_node, new_node_id, new_node_text, position) {
+	$('#listeCat').jstree(
+		'create_node', 
+		$(parent_node), 
+		{ "text":new_node_text, "id":new_node_id }, 
+		position, false, false);	
+}
 
 
-$("#container").hide();
-$('#btn').click(function() {
-    $(this).toggleClass("active");
-    if($(this).hasClass('active')){
-        if($("#container").highcharts().series.length !=0){
-            $("#container").highcharts().series[0].remove(true);
-        }
-        $("#container").show();
-    }else{
-        $("#container").hide();
-    }
-});
-
-
-
-
-var data = [
-    {
-        name: 'node1', id: 1,
-        children: [
-            { name: 'child1', id: 2 },
-            { name: 'child2', id: 3 }
-        ]
-    },
-    {
-        name: 'node2', id: 4,
-        children: [
-            { name: 'child3', id: 5,
-                children: [
-                    { name: 'child4', id: 6,
-                        children: [
-                            { name: 'child5', id: 7}
-                        ]
-                    }    
-                ]
-             }
-        ]
-    }
-];
-$('#tree1').tree({
-    data: data,
-    autoOpen: true,
-    dragAndDrop: true
-});
-$(function() {
-    $('#tree1').tree({
-        data: data
-    });
-});
-
-
+getCatData();
 window.onload = function(){
     $('select').select2();
-    setForm();
 }

@@ -114,8 +114,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
     
     ddirin = "/home/sebastien/Bureau/teledm/donnees/"+types+"/"+sat+"/"+prod+"/"+res
     os.chdir(ddirin)
-    
-    files = sorted(glob.glob(prod+'*'+res_temp+'.nc'))#liste des fichiers .nc
+    files = sorted(glob.glob('*'+res_temp+'.nc'))#liste des fichiers .nc
     
     print "\n#########################################################################################################################"
     print "############################################## PERIODE "+deb+" "+fin+" ############################################"
@@ -156,6 +155,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
         varname1 = "AOT"
     else:
         varname1 = varname
+    print files[:]
     output = varname1+'_'+files[0][:-5]+'_'+niveau+'_'+shape+'_'+pays+'_'+ deb.replace('-','') + fin.replace('-','')  + res_temp + '.nc'
 #    ncnew = Dataset(ddirout+ '/' + output, 'w')
 #    # dimensions#####
@@ -212,6 +212,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
 #        idfin = len(dates[:])-1
     # extraction du bloc de dates et ajout à la variable time(tp) du newnc
     serie_dates = dates[iddeb:idfin+1]
+
     print "date de debut: ",num2date(serie_dates[0], dates.units)
     print "date de fin: ",num2date(serie_dates[-1], dates.units)
 
@@ -283,16 +284,16 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
 if __name__ == "__main__":
     
     ddirout = "/home/sebastien/dev/web1/teledm/tmp"
-    deb = "2007-01-01"     #"1979" a ...
-    fin = "2007-05-31"
+    deb = "2014-12-17"     #"1979" a ...
+    fin = "2014-12-17"
     pays = "burkina"       #"burkina","mali","niger","senegal"
     niveau = "district"    #"pays","district","aire"
     types = "satellite"    #"satellite","re_analyse"
-    sat = "modis"          #"modis","aura_omi","ecmwf","msg"
-    prod = "MYD04"         #"MYD04","MYD05","MYD07","omaeruv","seviri_aerus","macc","era_interim"
-    res_temp = "w"         #"d","w","m","t"
-    res = "res009"            #"003","005","009","025","075","125"
-    varname = 'Deep_Blue_Surface_Reflectance_Land_412_nm'
+    sat = "msg"          #"modis","aura_omi","ecmwf","msg"
+    prod = "seviri_aerus"         #"MYD04","MYD05","MYD07","omaeruv","seviri_aerus","macc","era_interim"
+    res_temp = "d"         #"d","w","m","t"
+    res = "res003"            #"003","005","009","025","075","125"
+    varname = 'AOD_VIS06'
     shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
     
     ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)

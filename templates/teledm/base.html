@@ -26,7 +26,7 @@
         <title>TELEDM/TELEPAF</title>
     </head>
     <body>
-        <nav id="navbar" class="navbar navbar-fixed-top navbar-light bg-faded">
+        <nav id="navbar" class="navbar navbar-fixed-top navbar-light bg-faded" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-inner">
                     <ul class="nav navbar-nav" id="left">
@@ -42,6 +42,7 @@
                 </div>
             </div>
         </nav>
+        <div data-spy="scroll" data-target="#navbar"   data-offset="0" class="Demo">
         <div class="container-fluid">
             <header class="row">
                 <div class="col-lg-2" id="themes">
@@ -92,6 +93,7 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.0/moment.min.js"></script>
         <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <!--<script type="text/javascript" src="{% static 'teledm/jsPerso/base.js' %}"></script>-->
         {% block js %}{% endblock %}

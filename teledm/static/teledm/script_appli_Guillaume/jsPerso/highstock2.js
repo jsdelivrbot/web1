@@ -108,7 +108,7 @@ function getCatData()
 						titre= $(this).attr('xlink:title');
 						var href= $(this).attr('xlink:href');
 						tabCatalog.push(titre);
-						href=href.replace("/thredds/","");
+						href=href.replace("/thredds","");
 						var URLCat = ROOT+href;				
 						createNode(cat, titre, titre, "first");
 						parseRec(URLCat,"#"+titre);
