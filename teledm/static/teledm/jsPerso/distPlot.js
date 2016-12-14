@@ -8,31 +8,8 @@ var dataset = {
 };
 
 
-var lstInfos = {
-    date:"",
-    param:"",
-    unit:"",
-    nomDataset:"",
-    capteur:"",
-    produit:"",
-    resspatiale:"",
-    restempo:"",
-    layer:"",
-    nomFichier:"",
-    bbox:"",
-    colorbar:"",
-    scaleMin:"",
-    scaleMax:"",
-    bbox:'',
-    colorbarBand:'',
-    opacity:''
-};
 
-
-
-function verifForm()
-{
-        //Datasets
+function verifForm(){
     if($('#typeSel').val() == 'Type de données'){
         alert("Erreur ! Aucun type de données sélectionné !");
         throw new Exception();
@@ -86,15 +63,15 @@ function verifForm()
         throw new Exception();
     }else{
         if (restempo == 'w'){
-            var deb = moment(date2).startOf('isoWeek').format('YYYY-MM-DD');
+            var fin = moment(date2).startOf('isoWeek').format('YYYY-MM-DD');
         }else if (restempo == 'm'){
-            var deb = moment(date2).startOf('Month').format('YYYY-MM-DD');
+            var fin = moment(date2).startOf('Month').format('YYYY-MM-DD');
         }else if (restempo == 't'){
-            var deb = moment(date2).startOf('quarter').format('YYYY-MM-DD');
+            var fin = moment(date2).startOf('quarter').format('YYYY-MM-DD');
         }else{
-            var deb = date1;
+            var fin = date2;
         }
-        $("#date2").val(deb);
+        $("#date2").val(fin);
     }    
     if($("#pays").val() == 'Pays'){
        alert("Erreur ! Aucune zone d'extraction selectionnée !");
@@ -116,30 +93,48 @@ function updateDate(dates){
     $("#dates").empty().append(option);
 }
 
-function updateMap(datas, date, url){
-    $.getJSON(url, function(geojson){
+
+
+
+$("#dates").on('change', function(){
+    console.log($(this).val());
+    var idates = $(this).val();
+    while($("#mapcontainer").highcharts().series.length > 0){
+        $("#mapcontainer").highcharts().series[0].remove(true);
+    }
+    while($("#plotcontainer").highcharts().series.length > 0){
+        $("#plotcontainer").highcharts().series[0].remove(true);
+    }
+    $.getJSON(dataset.urlShape, idates, function(geojson){
         $("#mapcontainer").highcharts().addSeries({
             mapData: geojson,
-            data: datas,
+            data: dataset.datas[$("#calcul").val()].all_dist[idates],
             joinBy: ['name','code']
         });
+        $("#mapcontainer").highcharts().setTitle({ text: dataset.pays + ": Stats mean" }, { text:   "decoupage geographique: "+dataset.decoupage});
     });
-    $("#mapcontainer").highcharts().setTitle({ text: dataset.pays + ": Stats mean" }, { text:   date});
-}
+});
 
-function updateMap(datas, url){
-    $("#dates").on('change', function(){
-        console.log(datas[this.values]);
-        $.getJSON(url, function(geojson){
-            $("#mapcontainer").highcharts().addSeries({
-                mapData: geojson,
-                data: datas[this.value],
-                joinBy: ['name','code']
-            });
+
+$("#calcul").on('change', function(){
+    console.log($(this).val());
+    var icalcul = $(this).val();
+    while($("#mapcontainer").highcharts().series.length > 0){
+        $("#mapcontainer").highcharts().series[0].remove(true);
+    }
+    while($("#plotcontainer").highcharts().series.length > 0){
+        $("#plotcontainer").highcharts().series[0].remove(true);
+    }
+    $.getJSON(dataset.urlShape, function(geojson){
+        $("#mapcontainer").highcharts().addSeries({
+            mapData: geojson,
+            data: dataset.datas[$("#calcul").val()].all_dist[$("#dates").val()],
+            joinBy: ['name','code']
         });
-        //updateMap(dataset.data.lvmean[this.value], $("#dates option:selected").text(), dataset.urlShape);
+        $("#mapcontainer").highcharts().setTitle({ text: dataset.pays + ": Stats mean" }, { text:   "decoupage geographique: "+dataset.decoupage});
     });
-}
+    //updateMap(dataset.data.lvmean[this.value], $("#dates option:selected").text(), dataset.urlShape);
+});
 
 
 $("#moyenne").on('submit', function(e){
@@ -186,9 +181,6 @@ $("#moyenne").on('submit', function(e){
             dataset.decoupage = shape.split('_')[1];
             dataset.urlShape = addr + shape;
             updateDate(dataset.dates);
-            if($("#mapcontainer").highcharts().series.length !=0){
-                $("#mapcontainer").highcharts().series[0].remove(true);
-            }
             $.getJSON(dataset.urlShape, function(geojson){
                 $("#mapcontainer").highcharts().addSeries({
                     mapData: geojson,
@@ -198,7 +190,7 @@ $("#moyenne").on('submit', function(e){
                 $("#mapcontainer").highcharts().setTitle({ text: dataset.pays + ": Stats mean" }, { text:   "decoupage geographique: "+dataset.decoupage});
             });
             console.log(dataset.datas.lvmean.all_dist[1]);
-            updateMap(dataset.datas.lvmean.all_dist, dataset.urlShape);
+            //updateMap(dataset.datas.lvmean.all_dist, dataset.urlShape);
                     
         },
         error : function(xhr,errmsg,err) {
@@ -233,7 +225,7 @@ $('#mapcontainer').highcharts('Map', {
                 	events:{
                     	click: function(){
                             console.log(dataset.dates);
-                            var newserie = dataset.datas.lvmean.series_temporelles[this.name];
+                            var newserie = dataset.datas[$("#calcul").val()].series_temporelles[this.name];
                             newserie.data = $.map(newserie.data, function (value) {
                                 return isNaN(value) ? { y: null } : value;
                             });
