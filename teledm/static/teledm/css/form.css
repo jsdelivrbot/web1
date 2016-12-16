@@ -109,3 +109,10 @@ input.input-small{
   overflow-y: scroll;
   user-select: none;
 }
+
+#shapeChoice { 
+    border:2px solid #ccc;
+    width:300px;
+    height: 100px;
+    overflow-y: scroll;
+}

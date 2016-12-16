@@ -135,6 +135,28 @@
                 </div>
             </form>
         </div>
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                     <h5 class="panel-title">
+                          <a class="accordion-toggle" data-toggle="collapse" href="#collapseOne">
+                            <b>Fonds carto</b>
+                          </a>
+                    </h5>                          
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <div class="container" id="shapeChoice">
+                            <input type="checkbox" />Afrique <br />
+                            <input type="checkbox" />Benin <br />
+                            <input type="checkbox" />Burkina Faso <br />
+                            <input type="checkbox" />Niger<br />
+                            <input type="checkbox" />Senegal <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 {% endblock %}
 
 {% block content1 %}
@@ -145,6 +167,7 @@
 {% block content2 %}
     <div class="row">
         <input type="button" id="btn" value="Profil"/>
+        <input type="button" id="shp" value="Shapes"/>
     </div>
     <div id="container" ></div>
 {% endblock %}
@@ -157,6 +180,7 @@
     <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
     <!--<script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>-->
     <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+    <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.3.2"></script>
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
     <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
     <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>-->

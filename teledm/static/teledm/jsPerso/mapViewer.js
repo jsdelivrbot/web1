@@ -653,7 +653,7 @@ function updatePlot(datas){
 }
 
 
-function getInfosMap(e){
+function getInfosMap2(e){
     var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
     if(typeof map.layers[1] =='undefined')  //si pas de layers
     {
@@ -802,12 +802,14 @@ $("#container").hide();
 $('#btn').click(function() {
     $(this).toggleClass("active");
     if($(this).hasClass('active')){
+        var getInfosMap = getInfosMap1;
         if($("#container").highcharts().series.length !=0){
             $("#container").highcharts().series[0].remove(true);
         }
         $("#container").show();
     }else{
         $("#container").hide();
+        var getInfosMap = getInfosMap2;
     }
 });
 
@@ -818,42 +820,25 @@ $('#btn').click(function() {
 
 
 
-function initMap()
-{
-    map = new OpenLayers.Map('map',
-    {
+function initMap(){
+    map = new OpenLayers.Map('map',{
         projection: new OpenLayers.Projection("EPSG:4326"),
-        resolutions: [0.03, 0.09, 0.15, 0.4],
+        //resolutions: [0.03, 0.09, 0.15, 0.4],
         restrictedExtent: [-180, -90, 180, 90],
-        maxResolution: 0.5,
-        minResolution: 0.01
-    }
-    );
+        maxResolution: 0.4,
+        minResolution: 0.001
+    });
+    //fond = new OpenLayers.Layer.Stamen("terrain",{layers:"basic"}, {isBaseLayer: true});
     fond = new OpenLayers.Layer.WMS(
         "OpenLayers WMS",
         "http://vmap0.tiles.osgeo.org/wms/vmap0",
-        {
-            layers: 'basic',
-        },
+        {layers: 'basic'},
         {isBaseLayer: true}
     );
     map.addLayer(fond);
 
-    shp = new OpenLayers.Layer.Vector("GeoJSON", {
-        strategies: [new OpenLayers.Strategy.Fixed()],
-        protocol: new OpenLayers.Protocol.HTTP({
-            url: urlShp + "/benin_district_sante.geojson",
-            format: new OpenLayers.Format.GeoJSON()
-        })
-    });
-    map.addLayer(shp);
-
     map.zoomToMaxExtent();
-    //if ($("#container").is(":visible")){
     map.events.register('click', map, getInfosMap1);
-    //}else{
-        //map.events.register('click', map, getInfosMap);
-    //}
     map.addControl(
         new OpenLayers.Control.MousePosition({
             prefix: 'Lon/Lat: ',
@@ -863,7 +848,6 @@ function initMap()
         })
     );
 }
-
 
 
 function majLayer()
@@ -896,17 +880,16 @@ function majLayer()
        
         csr = lstInfos.scaleMin+","+lstInfos.scaleMax;
         style = "boxfill/"+lstInfos.colorbar;
-    if(typeof map.layers[1] !=='undefined')    //si il existe déja un layer
-    {   
-        map.removeLayer(map.layers[1]);         //supprimer ce layer
-    }
+    $.each(map.layers, function(i,l){
+        console.log(i+' '+l.name);
+        if(l.name == "wms"){map.removeLayer(map.layers[i])}
+    });
     
     if($("#container").highcharts().series.length !=0){
         $("#container").highcharts().series[0].remove(true);
     }
-    alert(URL);
-    var layer = new OpenLayers.Layer.WMS(
-        "Layer Test",
+    var wms = new OpenLayers.Layer.WMS(
+        "wms",
         URL,
         {
             layers: "Deep_Blue_Aerosol_Optical_Depth_550_Land",
@@ -920,8 +903,8 @@ function majLayer()
             },
         {isBaseLayer: false}
     );
-    
-    map.addLayer(layer);    
+    map.addLayer(wms);
+       
 }
 
 
@@ -930,6 +913,30 @@ function updateMap()
     majLayer();
 }
 
+$("#shp").on('click', function(){
+    var shp = new OpenLayers.Layer.Vector("shape", {
+        strategies: [new OpenLayers.Strategy.Fixed()],
+        protocol: new OpenLayers.Protocol.HTTP({
+            url: urlShp + "/benin_district_sante.geojson",
+            format: new OpenLayers.Format.GeoJSON()
+        }),
+        style: {
+            strokeColor: '#DF0101',
+            strokeOpacity: 1,
+            strokeWidth: 1,
+            fillOpacity: 0.
+        }
+    });
+    $(this).toggleClass("active");
+    if($(this).hasClass('active')){
+        map.addLayer(shp);
+    }else{
+        $.each(map.layers, function(i,v){
+            if(v.name=='shape'){map.removeLayer(v)}
+        });
+    }
+    
+});
 
 // #############################################################################################################
 
@@ -987,32 +994,28 @@ function setColorbar()
     var src_img = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
     var img = "<img height='200px' width='50px' src='http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
     $("#colorbar").html(img);
-
-    if(typeof map.layers[2] !=='undefined')    //si il existe déja un layer
+    var layers = map.layers;
+    if(typeof map.layers[1] !== 'undefined' && map.layers[1].name == 'wms')    //si il existe déja un layer
     {   
-        map.layers[2].params.STYLES = "boxfill/"+nomColorbar;         //modifier la colorbar
-        map.layers[2].redraw(true);
+        map.layers[1].params.STYLES = "boxfill/"+nomColorbar;         //modifier la colorbar
+        map.layers[1].redraw(true);
     }
 }
 
-function setColorband()
-{
+function setColorband(){
     var nomColorbar = $("#Colorbar").val();
     var nbColorband = $("select[name='colorbandNum']").val();
     var src_img = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
     var img = "<img height='200px' width='50px' marging='100px' padding='0px' src='http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
     $("#colorbar").html(img);
-    if(typeof map.layers[1] !=='undefined')    //si il existe déja un layer
-    {   
+    if(typeof map.layers[1] !== 'undefined' && map.layers[1] == 'wms'){    //si il existe déja un layer
         map.layers[1].params.NUMCOLORBANDS = nbColorband;
         map.layers[1].redraw(true);   //actualise la map
     }	
 }
 
-function setMinMax()
-{
-	if(lstInfos.unit=='K')
-	{
+function setMinMax(){
+	if(lstInfos.unit=='K'){
         	lstInfos.scaleMin -=272,15;
 		lstInfos.scaleMax -=272,15;
 	}

@@ -109,21 +109,23 @@ function initMap(){
                             format: new ol.format.GeoJSON()
                         })
     });
-    map.addLayer(layer);
-    stations = new ol.layer.Vector({
+    //map.addLayer(layer);
+    var stations = new ol.layer.Vector({
                 source: new ol.source.Vector({
                             url: urlShp + '/stations.geojson',
                             format: new ol.format.GeoJSON()
                         })
     });
-    wms = new ol.layer.Tile({
+    var wms = new ol.layer.Tile({
         //extent: extent,
         source: new ol.source.TileWMS(/** @type {olx.source.TileWMSOptions} */ ({
         url: urlWMS, //"http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap", //'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r-t.cgi',
         params: {'LAYERS': 'Surface_Temperature'}
         }))
     });
-    map.addLayer([wms,layer]);
+    map.addLayer(wms);
+    map.addLayer(layer);
+    map.addLayer(stations);
     
 }
 
