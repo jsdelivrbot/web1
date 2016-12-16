@@ -150,6 +150,9 @@
 {% endblock %}
 
 {% block js %}
+    <script>
+        var urlShp = "{% static 'teledm/shapes/' %}";
+    </script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
     <!--<script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>-->

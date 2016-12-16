@@ -284,16 +284,16 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
 if __name__ == "__main__":
     
     ddirout = "/home/sebastien/dev/web1/teledm/tmp"
-    deb = "2014-12-17"     #"1979" a ...
-    fin = "2014-12-17"
+    deb = "2007-01-01"     #"1979" a ...
+    fin = "2007-01-15"
     pays = "burkina"       #"burkina","mali","niger","senegal"
     niveau = "district"    #"pays","district","aire"
     types = "satellite"    #"satellite","re_analyse"
-    sat = "msg"          #"modis","aura_omi","ecmwf","msg"
-    prod = "seviri_aerus"         #"MYD04","MYD05","MYD07","omaeruv","seviri_aerus","macc","era_interim"
-    res_temp = "d"         #"d","w","m","t"
-    res = "res003"            #"003","005","009","025","075","125"
-    varname = 'AOD_VIS06'
+    sat = "modis"          #"modis","aura_omi","ecmwf","msg"
+    prod = "MYD07"         #"MYD04","MYD05","MYD07","omaeruv","seviri_aerus","macc","era_interim"
+    res_temp = "w"         #"d","w","m","t"
+    res = "res009"            #"003","005","009","025","075","125"
+    varname = 'Total_Ozone'
     shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
     
     ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)

@@ -837,9 +837,17 @@ function initMap()
         },
         {isBaseLayer: true}
     );
-    
     map.addLayer(fond);
-    
+
+    shp = new OpenLayers.Layer.Vector("GeoJSON", {
+        strategies: [new OpenLayers.Strategy.Fixed()],
+        protocol: new OpenLayers.Protocol.HTTP({
+            url: urlShp + "/benin_district_sante.geojson",
+            format: new OpenLayers.Format.GeoJSON()
+        })
+    });
+    map.addLayer(shp);
+
     map.zoomToMaxExtent();
     //if ($("#container").is(":visible")){
     map.events.register('click', map, getInfosMap1);
@@ -869,6 +877,8 @@ function majLayer()
     {
         return null;
     }
+    autoScale();
+    setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
     //setDescLayer();  //mise a jour description du layer
     //pour tout les dataset selectionnés : générer l'URL à parser
     var URL = ROOT+ "/wms/" +
@@ -894,7 +904,7 @@ function majLayer()
     if($("#container").highcharts().series.length !=0){
         $("#container").highcharts().series[0].remove(true);
     }
-
+    alert(URL);
     var layer = new OpenLayers.Layer.WMS(
         "Layer Test",
         URL,
@@ -910,8 +920,7 @@ function majLayer()
             },
         {isBaseLayer: false}
     );
-    autoScale();
-    setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
+    
     map.addLayer(layer);    
 }
 
@@ -979,10 +988,10 @@ function setColorbar()
     var img = "<img height='200px' width='50px' src='http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
     $("#colorbar").html(img);
 
-    if(typeof map.layers[1] !=='undefined')    //si il existe déja un layer
+    if(typeof map.layers[2] !=='undefined')    //si il existe déja un layer
     {   
-        map.layers[1].params.STYLES = "boxfill/"+nomColorbar;         //modifier la colorbar
-        map.layers[1].redraw(true);
+        map.layers[2].params.STYLES = "boxfill/"+nomColorbar;         //modifier la colorbar
+        map.layers[2].redraw(true);
     }
 }
 

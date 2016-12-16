@@ -81,7 +81,6 @@ function verifForm(){
        alert("Erreur ! Aucun découpage géographique selectionné !");
         throw new Exception(); 
     }
-        
 }
 
 
@@ -102,45 +101,46 @@ $("#dates").on('change', function(){
     while($("#mapcontainer").highcharts().series.length > 0){
         $("#mapcontainer").highcharts().series[0].remove(true);
     }
-    while($("#plotcontainer").highcharts().series.length > 0){
-        $("#plotcontainer").highcharts().series[0].remove(true);
-    }
-    $.getJSON(dataset.urlShape, idates, function(geojson){
+    //while($("#plotcontainer").highcharts().series.length > 0){
+        //$("#plotcontainer").highcharts().series[0].remove(true);
+    //}
+    $.getJSON(dataset.urlShape, function(geojson){
         $("#mapcontainer").highcharts().addSeries({
             mapData: geojson,
-            data: dataset.datas[$("#calcul").val()].all_dist[idates],
-            joinBy: ['name','code']
+            data: dataset.datas[$("#calcul").val()].all_dist[$("#dates").val()],
+            joinBy: ['name','code'],
+            nullColor: 'white'
         });
-        $("#mapcontainer").highcharts().setTitle({ text: dataset.pays + ": Stats mean" }, { text:   "decoupage geographique: "+dataset.decoupage});
+        $("#mapcontainer").highcharts().setTitle({ text: $("#dates option:selected").text() + ' ' + dataset.pays + ": Stats mean" }, { text:   "decoupage geographique: "+dataset.decoupage});
     });
 });
 
 
 $("#calcul").on('change', function(){
-    console.log($(this).val());
+    console.log($(this).val().substr(2, $(this).val().length));
     var icalcul = $(this).val();
+    var idates = $("#dates").val();
     while($("#mapcontainer").highcharts().series.length > 0){
         $("#mapcontainer").highcharts().series[0].remove(true);
     }
-    while($("#plotcontainer").highcharts().series.length > 0){
-        $("#plotcontainer").highcharts().series[0].remove(true);
-    }
+    //while($("#plotcontainer").highcharts().series.length > 0){
+        //$("#plotcontainer").highcharts().series[0].remove(true);
+    //}
     $.getJSON(dataset.urlShape, function(geojson){
         $("#mapcontainer").highcharts().addSeries({
             mapData: geojson,
             data: dataset.datas[$("#calcul").val()].all_dist[$("#dates").val()],
-            joinBy: ['name','code']
+            joinBy: ['name','code'],
+            nullColor: 'white'
         });
-        $("#mapcontainer").highcharts().setTitle({ text: dataset.pays + ": Stats mean" }, { text:   "decoupage geographique: "+dataset.decoupage});
+        $("#mapcontainer").highcharts().setTitle({ text: $("#dates option:selected").text() + ' ' + dataset.pays +": "+ $("#variableSel").val() + "(" + $("#calcul").val().substr(2, $("#calcul").val().length) + ")"}, { text:   "decoupage geographique: "+dataset.decoupage});
     });
-    //updateMap(dataset.data.lvmean[this.value], $("#dates option:selected").text(), dataset.urlShape);
 });
 
 
 $("#moyenne").on('submit', function(e){
     e.preventDefault();
     verifForm();
-    console.log("form submitted!");
     while($("#mapcontainer").highcharts().series.length > 0){
         $("#mapcontainer").highcharts().series[0].remove(true);
     }
@@ -185,21 +185,17 @@ $("#moyenne").on('submit', function(e){
                 $("#mapcontainer").highcharts().addSeries({
                     mapData: geojson,
                     data: dataset.datas.lvmean.all_dist[0],
-                    joinBy: ['name','code']
+                    joinBy: ['name','code'],
                 });
-                $("#mapcontainer").highcharts().setTitle({ text: dataset.pays + ": Stats mean" }, { text:   "decoupage geographique: "+dataset.decoupage});
-            });
-            console.log(dataset.datas.lvmean.all_dist[1]);
-            //updateMap(dataset.datas.lvmean.all_dist, dataset.urlShape);
-                    
+                $("#mapcontainer").highcharts().setTitle({ text: $("#dates option:selected").text() + ' ' + dataset.pays +": "+ $("#variableSel").val() + "(" + $("#calcul").val().substr(2, $("#calcul").val().length) + ")"}, { text:   "decoupage geographique: "+dataset.decoupage});
+                $("#plotcontainer").highcharts().setTitle({ text: "Profil temporel"}, { text: $("#variableSel").val()});
+            });                    
         },
         error : function(xhr,errmsg,err) {
             console.log('erreur: '+errmsg);
             console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
         }
-
     })
-    console.log(dataset.dates);
 });
 
 
@@ -208,7 +204,7 @@ $('#mapcontainer').highcharts('Map', {
         text : 'Statistiques',
     },
     subtitle: {
-        text: 'Periode' ,
+        text: '' ,
         x: -10
     },
     mapNavigation: {
@@ -218,22 +214,23 @@ $('#mapcontainer').highcharts('Map', {
         }
     },
     colorAxis: {
+        nullColor: 'white',
     },
     plotOptions:{
     	series:{
         	point:{
                 	events:{
                     	click: function(){
-                            console.log(dataset.dates);
                             var newserie = dataset.datas[$("#calcul").val()].series_temporelles[this.name];
                             newserie.data = $.map(newserie.data, function (value) {
                                 return isNaN(value) ? { y: null } : value;
                             });
                             $("#plotcontainer").highcharts().addSeries({
-                                name: newserie.name,
+                                name: newserie.name+' '+$("#calcul").val().substr(2, $("#calcul").val().length),
                                 data: newserie.data
                             });
-                            $("#plotcontainer").highcharts().xAxis[0].setCategories(dataset.dates);           
+                            $("#plotcontainer").highcharts().xAxis[0].setCategories(dataset.dates);
+                            $("#plotcontainer").highcharts().setTitle({ text: "Profil temporel"}, { text: $("#variableSel").val()});          
                         }
                     }
             }
