@@ -2,8 +2,9 @@
 {% load staticfiles %}
 
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="http://openlayers.org/en/v3.18.2/css/ol.css" type="text/css">
-    <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/form.css' %}" >
+    <link rel="stylesheet" type="text/css" href="http://openlayers.org/en/v3.18.2/css/ol.css" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/form.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/mapViewer.css' %}"/>
 {% endblock %}
 
 {% block form %}
@@ -167,7 +168,6 @@
 {% block content2 %}
     <div class="row">
         <input type="button" id="btn" value="Profil"/>
-        <input type="button" id="shp" value="Shapes"/>
     </div>
     <div id="container" ></div>
 {% endblock %}

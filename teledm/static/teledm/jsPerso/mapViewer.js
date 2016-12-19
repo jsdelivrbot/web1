@@ -1,5 +1,6 @@
 const ROOT = "http://localhost:8080/thredds";
 var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
+var geoDist = ['niger_district_sante', 'mali_district_sante','burkina_aire_sante', 'burkina_district_sante','benin_district_sante', ];
 var map;
 var fond;
 var mapPanel;
@@ -486,11 +487,9 @@ function stopAnim(e)
 
 // ########################## get infoMap ######################################################################
 
-function getInfosMap1(e)
-{
+function getInfosMap1(e){
     var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
-    if(typeof map.layers[1] =='undefined')  //si pas de layers
-    {
+    if(map.layers[1].name !== 'wms'){ //si pas de layers wms
         var errorPopup = new OpenLayers.Popup (
             "error",
             lonLat,
@@ -654,8 +653,9 @@ function updatePlot(datas){
 
 
 function getInfosMap2(e){
+    console.log('ok');
     var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
-    if(typeof map.layers[1] =='undefined')  //si pas de layers
+    if(map.layers[1].name !== 'wms')  //si pas de layers
     {
         var errorPopup = new OpenLayers.Popup (
             "error",
@@ -670,6 +670,7 @@ function getInfosMap2(e){
     }
     else
     {
+        console.log('ok');
         if(map.maxExtent.containsLonLat(lonLat))
         {
             var tempPopup = new OpenLayers.Popup (
@@ -809,7 +810,7 @@ $('#btn').click(function() {
         $("#container").show();
     }else{
         $("#container").hide();
-        var getInfosMap = getInfosMap2;
+        //var getInfosMap = getInfosMap2;
     }
 });
 
@@ -817,41 +818,106 @@ $('#btn').click(function() {
 // #############################################################################################################
 
 // ################################################ map init update ############################################
-
-
+function layerInfo(l){
+        alert(l.geometry.getBounds());
+    }
 
 function initMap(){
+
     map = new OpenLayers.Map('map',{
         projection: new OpenLayers.Projection("EPSG:4326"),
         //resolutions: [0.03, 0.09, 0.15, 0.4],
         restrictedExtent: [-180, -90, 180, 90],
         maxResolution: 0.4,
-        minResolution: 0.001
+        minResolution: 0.001,
+        controls: []
     });
+    var panel = new OpenLayers.Control.Panel({displayClass: 'panel'});
+    map.addControl(panel);
+    var controls = [
+            new OpenLayers.Control.Navigation(),
+            new OpenLayers.Control.PanZoomBar(),
+            new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+            new OpenLayers.Control.ScaleLine(),
+            new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
+            new OpenLayers.Control.OverviewMap(),
+            new OpenLayers.Control.KeyboardDefaults(),];
+    panel.addControls(controls);
+    
+
     //fond = new OpenLayers.Layer.Stamen("terrain",{layers:"basic"}, {isBaseLayer: true});
     fond = new OpenLayers.Layer.WMS(
-        "OpenLayers WMS",
+        "OSM",
         "http://vmap0.tiles.osgeo.org/wms/vmap0",
-        {layers: 'basic'},
-        {isBaseLayer: true}
+        {layers: 'basic',
+        isBaseLayer: true}
     );
     map.addLayer(fond);
+    $.each(geoDist, function(i,g){
+        var shp = new OpenLayers.Layer.Vector(g, {
+            strategies: [new OpenLayers.Strategy.Fixed()],
+            protocol: new OpenLayers.Protocol.HTTP({
+                url: urlShp + "/" + g + ".geojson",
+                format: new OpenLayers.Format.GeoJSON()
+            }),
+            style: {
+                strokeColor: '#000000',
+                strokeOpacity: 1,
+                strokeWidth: 1,
+                fillOpacity: 0.
+            }
+        });
+        shp.setVisibility(false);
+        map.addLayer(shp);
+    });
 
+    var stt = new OpenLayers.Layer.Vector("stations", {
+        strategies: [new OpenLayers.Strategy.Fixed()],
+        protocol: new OpenLayers.Protocol.HTTP({
+            url: urlShp + "/stations.geojson",
+            format: new OpenLayers.Format.GeoJSON()
+        }),
+        style: {
+            'pointRadius': 2,
+        }
+    });
+    stt.setVisibility(false);
+    map.addLayer(stt);
+
+    var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
+    polygon.setVisibility(true);
+    map.addLayer(polygon);
+    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {callbacks: {done: function(){console.log('ok')}}, handlerOptions: {persist: true}, featureAdded: layerInfo});
+    polygonEditor.events.register('FeatureAdded', polygonEditor);
+    polygonEditor.events.register('refresh', polygonEditor, function(){polygon.removeAllFeatures()});
+    map.addControl(polygonEditor);
+    polygonEditor.events.on({
+        featuresadded: function(l){console.log(l.geometry.getBounds());}
+    });
+    var _draw = new OpenLayers.Control.Button({
+        displayClass: 'draw',
+        type: OpenLayers.Control.TYPE_TOGGLE,
+        eventListeners: {'activate': function(){
+                            polygonEditor.activate();
+                            },
+                        'deactivate': function(){
+                            polygonEditor.deactivate();
+                            polygon.removeAllFeatures();
+                            }
+        },
+    });
+    panel.addControls(_draw);
+    
+
+    
+    // Activate the control.
+    //
     map.zoomToMaxExtent();
     map.events.register('click', map, getInfosMap1);
-    map.addControl(
-        new OpenLayers.Control.MousePosition({
-            prefix: 'Lon/Lat: ',
-            separator: ', ',
-            numDigits: 2,
-            emptyString: ''
-        })
-    );
 }
 
 
-function majLayer()
-{
+function majLayer(){
     //Récupère les infos saisies par l'utilisateur
     try
     {
@@ -880,11 +946,11 @@ function majLayer()
        
         csr = lstInfos.scaleMin+","+lstInfos.scaleMax;
         style = "boxfill/"+lstInfos.colorbar;
-    $.each(map.layers, function(i,l){
-        console.log(i+' '+l.name);
-        if(l.name == "wms"){map.removeLayer(map.layers[i])}
-    });
-    
+    if (typeof map.layers[1] !== 'undefined'){
+        if (map.layers[1].name == 'wms'){
+            map.removeLayer(map.layers[1])
+        }
+    }
     if($("#container").highcharts().series.length !=0){
         $("#container").highcharts().series[0].remove(true);
     }
@@ -904,6 +970,7 @@ function majLayer()
         {isBaseLayer: false}
     );
     map.addLayer(wms);
+    map.setLayerIndex(wms, 1);
        
 }
 
@@ -913,30 +980,7 @@ function updateMap()
     majLayer();
 }
 
-$("#shp").on('click', function(){
-    var shp = new OpenLayers.Layer.Vector("shape", {
-        strategies: [new OpenLayers.Strategy.Fixed()],
-        protocol: new OpenLayers.Protocol.HTTP({
-            url: urlShp + "/benin_district_sante.geojson",
-            format: new OpenLayers.Format.GeoJSON()
-        }),
-        style: {
-            strokeColor: '#DF0101',
-            strokeOpacity: 1,
-            strokeWidth: 1,
-            fillOpacity: 0.
-        }
-    });
-    $(this).toggleClass("active");
-    if($(this).hasClass('active')){
-        map.addLayer(shp);
-    }else{
-        $.each(map.layers, function(i,v){
-            if(v.name=='shape'){map.removeLayer(v)}
-        });
-    }
-    
-});
+
 
 // #############################################################################################################
 
