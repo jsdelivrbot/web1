@@ -1,0 +1,23 @@
+.Panel {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    left: 10px;
+    bottom: 100px;
+}
+
+
+.drawItemInactive {
+    background: #30d5c8;
+    border: 2px solid #075f67;
+    width: 18px;
+    height: 18px;
+}
+
+.drawItemActive {
+    background: #dddddd;
+    border: 2px solid #dddddd;
+    width: 18px;
+    height: 18px;
+}
+

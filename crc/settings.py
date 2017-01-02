@@ -4,7 +4,7 @@ settings for crc project.
 """
 
 import os
-from django.core.urlresolvers import reverse_lazy
+#from django.core.urlresolvers import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -22,27 +22,27 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
-    'django.contrib.gis',
-   # 'django_ftpserver',
+    #'django_extensions',
+    #'django.contrib.gis',
+    #'django_ftpserver',
     'admin_reorder',
     'usermanagement',
-    'bootstrap3',
-    'bootstrap3_datetime',
-    'djangojs',
-    'wms',
+    #'bootstrap3',
+    #'bootstrap3_datetime',
+    #'djangojs',
+    #'wms',
     'sendfile',
-    'leaflet',
-    'djgeojson',
+    #'leaflet',
+    #'djgeojson',
     'teledm',
     'portailCRC',
 ]
 
-LEAFLET_CONFIG = {
-        'SPATIAL_EXTEND': [-15.0,0,57,52],
-        'DEFAULT_CENTER': [20.0, 15.0],
-        'DEFAULT_ZOOM': 4,
-}
+#LEAFLET_CONFIG = {
+#        'SPATIAL_EXTEND': [-15.0,0,57,52],
+#        'DEFAULT_CENTER': [20.0, 15.0],
+#        'DEFAULT_ZOOM': 4,
+#}
 
 
 
@@ -52,8 +52,8 @@ DEFAULT_FROM_EMAIL = 'test@gmail.com'
 SERVER_EMAIL = 'test@gmail.com'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'merletsebastien1@gmail.com'
-EMAIL_HOST_PASSWORD = 'Indig0lite1'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
@@ -86,7 +86,7 @@ LOGIN_REDIRECT_URL = '/crc/teledm'
 
 ADMIN_REORDER = (
     'crc',
-    {'app': 'teledm', 'models': ('teledm.Country','teledm.Station','teledm.MeteoData')},
+    #{'app': 'teledm', 'models': ('teledm.Country','teledm.Station','teledm.MeteoData')},
     {'app': 'auth', 'models': ('auth.User',)},
 )
 
@@ -112,18 +112,13 @@ WSGI_APPLICATION = 'crc.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'web1',
-        'USER': 'sebastien',
-        'PASSWORD': 'emeraude',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-SERIALIZATION_MODULES = {
-    'geojson': 'djgeojson.serializers'
-}
+#SERIALIZATION_MODULES = {
+#    'geojson': 'djgeojson.serializers'
+#}
 
 #FTPSERVER_AUTHORIZER = 'django_ftpserver.authorizers.FTPAccountAuthorizer'
 #FTPSERVER_HANDLER = 'pyftpdlib.handlers.FTPHandler'

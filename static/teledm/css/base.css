@@ -1,6 +1,7 @@
 .leaflet-container {  /* all maps */
-        width:  800px;
-        height: 600px;
+    width:  800px;
+    height: 600px;
+     margin: 10px 10px; 
     }
 
 .row {
@@ -23,17 +24,11 @@ h4 {
 main {
 	background-color:#FFFFFF;
 	}
-.leaflet-container{
-    margin: 10px 10px; 
-    }
 
 footer {
     height: 65px;
 }
 
-.aside_left {
-	background-color:Silver;
-	}
 
 li a {
     color: white;
@@ -78,12 +73,12 @@ li a {
     padding-left: 300px;
 }
 
-.navbar-custom {
+.navbar-fixed-top {
     background-color:#002233;
 }
 
 #left {
-    padding-right: 250px;
+    padding-right: 470px;
 }
 
 #fr,#eng {

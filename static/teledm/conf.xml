@@ -1,0 +1,12 @@
+<catalog xmlns="http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0" xmlns:xlink="http://www.w3.org/1999/xlink" name="THREDDS Server Default Catalog : You must change this to fit your server!" version="1.0.1">
+<service name="all" serviceType="Compound" base="">
+<service name="odap" serviceType="OPENDAP" base="/thredds/dodsC/"/>
+<service name="http" serviceType="HTTPServer" base="/thredds/fileServer/"/>
+<service name="wcs" serviceType="WCS" base="/thredds/wcs/"/>
+<service name="wms" serviceType="WMS" base="/thredds/wms/"/>
+<service name="ncss" serviceType="NetcdfSubset" base="/thredds/ncss/grid/"/>
+</service>
+<catalogRef name="" xlink:href="/thredds/catalog/satellite/catalog.xml" xlink:title="satellite" ID="satellite"></catalogRef>
+<catalogRef name="" xlink:href="/thredds/catalog/modele/catalog.xml" xlink:title="modele" ID="modele"></catalogRef>
+<catalogRef name="" xlink:href="/thredds/catalog/re_analyse/catalog.xml" xlink:title="re_analyse" ID="re_analyse"></catalogRef>
+</catalog>
