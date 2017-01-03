@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from django.shortcuts import render_to_response, HttpResponse
-#from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
 from sendfile import sendfile
@@ -28,7 +28,8 @@ def home(request):
     else:
         return render_to_response('teledm/home.html', context_instance=RequestContext(request))
     
-
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapViewer(request):
     if request.method == "POST":
         deb = request.POST['datedebut']
@@ -47,8 +48,9 @@ def mapViewer(request):
         info = json.dumps({"date": "2007-01-01"}, cls=DjangoJSONEncoder)
         return render_to_response('teledm/mapViewer.html',{'deb': info},context_instance=RequestContext(request))
 
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapDist(request):
-    
 #    if request.method == 'POST':
 #        if request.POST.get('submit') == "SUBMIT":
 #            ddirout = "/home/dev/web1/teledm/protected"
@@ -103,6 +105,8 @@ def mapDist(request):
         jsdatas = json.dumps({'form':''}, cls=DjangoJSONEncoder)
         return render_to_response('teledm/mapDist.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
 
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def calval(request):
     if request.is_ajax():
         print request.POST
