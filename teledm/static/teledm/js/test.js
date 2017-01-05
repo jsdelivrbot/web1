@@ -120,7 +120,10 @@ function initMap(){
         //extent: extent,
         source: new ol.source.TileWMS(/** @type {olx.source.TileWMSOptions} */ ({
         url: urlWMS, //"http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap", //'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r-t.cgi',
-        params: {'LAYERS': 'Surface_Temperature'}
+        params: {layers: 'Surface_Temperature',
+                colorscalerange: "280,340",
+                styles: "boxfill/rainbow",
+                }
         }))
     });
     map.addLayer(wms);

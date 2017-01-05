@@ -9,7 +9,7 @@ import subprocess
 import warnings
 warnings.filterwarnings("ignore")
 
-ddir = "/home/sebastien/Bureau/teledm/donnees/"
+ddirDB = "/home/sebastien/Bureau/teledm/donnees/"
 
 
 def skipRows(debut,fin, filename):
@@ -168,7 +168,7 @@ def tempo(freq,debut,fin,df_in,prdsat1, insitu, prdsat2):
 
 def heure_passage(station_aeronet):
     # calcul de l'heure de passage du satellite en fonction de la staton aeronet étudiée
-    coord_st=pd.read_csv(ddir+'in_situ/aeronet/carto_aeronet/coord_aeronet.csv')
+    coord_st=pd.read_csv(ddirDB+'in_situ/aeronet/carto_aeronet/coord_aeronet.csv')
     latst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lat)
     lonst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lon)
     if np.round(lonst[0]) in np.arange(-25.,-8.):
@@ -192,22 +192,22 @@ def scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, dat
     #############################image satellite 1 ####################################
     if sat1 == "toms":
         fichier_sat1 = sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddir+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
     elif prd_sat1 in ["chimere01","chimere02"]:
         fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
+        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
     elif prd_sat1 == 'seviri_aerus':
         fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
-        path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
     else:
         fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
 
     ########################### donnees in situ 1 ######################################
     if niveau:
-        path_station = ddir+'in_situ/'+inSitu+'/niveau_'+niveau+'/'+station+'_'+inSitu+'_'+niveau+'_h24_15min.csv'
+        path_station = ddirDB+'in_situ/'+inSitu+'/niveau_'+niveau+'/'+station+'_'+inSitu+'_'+niveau+'_h24_15min.csv'
     else:
-        path_station = ddir+'in_situ/'+inSitu+'/'+station+'_'+inSitu+'_h24_h.csv'
+        path_station = ddirDB+'in_situ/'+inSitu+'/'+station+'_'+inSitu+'_h24_h.csv'
     ####################################################################################
 
     hours1,long_st1, lat_st1 = heure_passage(station)
@@ -257,29 +257,29 @@ def scatter2Sat(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
     #############################image satellite 1 ####################################
     if sat1 == "toms":
         fichier_sat1 = sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddir+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
     elif prd_sat1 in ["chimere01","chimere02"]:
         fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
+        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
     elif prd_sat1 == 'seviri_aerus':
         fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
-        path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
     else:
         fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddir+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
     ############################ image satellite 2 ####################################
     if sat2 == "toms":
         fichier_sat2 = sat2+'_r'+res_sat2+'_d.nc'
-        path_sat2 = ddir+type2+'/'+sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+        path_sat2 = ddirDB+type2+'/'+sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
     elif prd_sat2 in ["chimere01","chimere02"]:
         fichier_sat2 = prd_sat2+'_r'+res_sat2+'_d.nc'
-        path_sat1 = ddir+type2+'/'+sat2+'/'+prd_sat2[:-2]+'/'+'res'+res_sat2+'/'+fichier_sat2
+        path_sat1 = ddirDB+type2+'/'+sat2+'/'+prd_sat2[:-2]+'/'+'res'+res_sat2+'/'+fichier_sat2
     elif prd_sat2 == 'seviri_aerus':
         fichier_sat2 = 'seviri_r'+res_sat2+'_d.nc'
-        path_sat2 = ddir+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
     else:
         fichier_sat2 = prd_sat2+'_r'+res_sat2+'_d.nc'
-        path_sat2 = ddir+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
     ###################################################################################
         
         
@@ -314,7 +314,7 @@ if __name__ == '__main__':
 ###################### test #########################################################
 #####################################################################################
 
-    ddir = "/home/sebastien/Bureau/teledm/donnees/"
+    ddirDB = "/home/sebastien/Bureau/teledm/donnees/"
     ddirout = "/home/sebastien/Bureau/"
     ulx = 0.5
     uly = 20

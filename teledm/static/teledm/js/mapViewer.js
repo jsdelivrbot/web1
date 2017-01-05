@@ -1,6 +1,6 @@
 const ROOT = "http://localhost:8080/thredds";
 var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
-var geoDist = ['niger_district_sante', 'mali_district_sante','burkina_aire_sante', 'burkina_district_sante','benin_district_sante', ];
+var geoDist = ['niger_district_sante', 'mali_district_sante','burkina_aire_sante', 'burkina_district_sante',];
 var map;
 var fond;
 var mapPanel;
@@ -826,22 +826,22 @@ function initMap(){
 
     map = new OpenLayers.Map('map',{
         projection: new OpenLayers.Projection("EPSG:4326"),
-        //resolutions: [0.03, 0.09, 0.15, 0.4],
+        //resolutions: [0.001, 0.005, 0.01, 0.02, 0.03, 0.09, 0.15, 0.4],
         restrictedExtent: [-180, -90, 180, 90],
         maxResolution: 0.4,
         minResolution: 0.001,
-        controls: []
     });
     var panel = new OpenLayers.Control.Panel({displayClass: 'panel'});
     map.addControl(panel);
     var controls = [
-            new OpenLayers.Control.Navigation(),
-            new OpenLayers.Control.PanZoomBar(),
+            //new OpenLayers.Control.Attribution(),
             new OpenLayers.Control.LayerSwitcher({'ascending':false}),
-            new OpenLayers.Control.ScaleLine(),
+            //new OpenLayers.Control.ScaleLine(),
             new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
-            new OpenLayers.Control.OverviewMap(),
-            new OpenLayers.Control.KeyboardDefaults(),];
+            //new OpenLayers.Control.OverviewMap(),
+            new OpenLayers.Control.KeyboardDefaults(),
+            new OpenLayers.Control.SelectFeature(),
+    ];
     panel.addControls(controls);
     
 
@@ -853,6 +853,7 @@ function initMap(){
         isBaseLayer: true}
     );
     map.addLayer(fond);
+    var shapes = [];
     $.each(geoDist, function(i,g){
         var shp = new OpenLayers.Layer.Vector(g, {
             strategies: [new OpenLayers.Strategy.Fixed()],
@@ -869,8 +870,35 @@ function initMap(){
         });
         shp.setVisibility(false);
         map.addLayer(shp);
+        shapes.push(shp);
     });
-
+    var geojs = [];
+    $.ajax({
+        url: urlShp + "benin_district_sante.geojson",
+        dataType: 'application/json',
+        success: function(data){
+            geojs.push(data);
+            //console.log(data);
+        }
+    });
+    console.log(geojs);
+    var shape = new OpenLayers.Layer.Vector('benin_district_sante', {
+        strategies: [new OpenLayers.Strategy.Fixed()],
+        protocol: new OpenLayers.Protocol.HTTP({
+            url: urlShp + "benin_district_sante.geojson",
+            format: new OpenLayers.Format.GeoJSON()
+        }),
+        style: {
+            strokeColor: '#000000',
+            strokeOpacity: 1,
+            strokeWidth: 1,
+            fillOpacity: 0.
+        }
+    });
+    shape.setVisibility(true);
+    map.addLayer(shape);
+    selectControl = new OpenLayers.Control.SelectFeature(shape);
+    map.addControl(selectControl);
     var stt = new OpenLayers.Layer.Vector("stations", {
         strategies: [new OpenLayers.Strategy.Fixed()],
         protocol: new OpenLayers.Protocol.HTTP({
@@ -897,13 +925,14 @@ function initMap(){
     var _draw = new OpenLayers.Control.Button({
         displayClass: 'draw',
         type: OpenLayers.Control.TYPE_TOGGLE,
-        eventListeners: {'activate': function(){
-                            polygonEditor.activate();
-                            },
-                        'deactivate': function(){
-                            polygonEditor.deactivate();
-                            polygon.removeAllFeatures();
-                            }
+        eventListeners: {
+            'activate': function(){
+                polygonEditor.activate();
+            },
+            'deactivate': function(){
+                polygonEditor.deactivate();
+                polygon.removeAllFeatures();
+            }
         },
     });
     panel.addControls(_draw);
@@ -913,7 +942,17 @@ function initMap(){
     // Activate the control.
     //
     map.zoomToMaxExtent();
-    map.events.register('click', map, getInfosMap1);
+    map.events.register('click', map, function(e){
+        selectControl.deactivate();
+        var pos = this.getLonLatFromPixel(e.xy);        
+        var point =  new OpenLayers.Geometry.Point(pos.lon, pos.lat);
+        //var closest =_.min(shape.features, function(feature) {
+            //return feature.geometry.distanceTo(point);
+        //});
+        selectControl.activate();
+        //selectControl.select(closest); 
+    });
+    //map.events.register('click', map, getInfosMap1);
 }
 
 
@@ -971,7 +1010,6 @@ function majLayer(){
     );
     map.addLayer(wms);
     map.setLayerIndex(wms, 1);
-       
 }
 
 

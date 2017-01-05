@@ -16,7 +16,7 @@ from scatterPlots import scatterSatStation, scatter2Sat
 from Util import *
 
 tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'teledm/tmp')
-ddir = "/home/sebastien/Bureau/teledm/donnees/"
+#ddirDB = "/home/sebastien/Bureau/teledm/donnees/"
 
 def home(request):
     print request.POST
