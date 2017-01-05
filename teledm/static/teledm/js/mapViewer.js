@@ -751,6 +751,22 @@ function getInfosMap2(e){
 }
 
 
+function getInfosMap(e){
+    var lonLat = map.getLonLatFromViewPortPx(e.xy);
+    res = lonLat //"Lon: "+ lon.toFixed(6) + " </br>Lat: " + lat.toFixed(6) + " </br>Value: " + truncVal;
+    var popup = new OpenLayers.Popup (
+        "id", // TODO: does this need to be unique?
+        lonLat,
+        new OpenLayers.Size(100, 50),
+        res,
+        true, //bouton fermer
+        null  //action additionnel du bouton fermer
+    );
+    popup.autoSize = true;
+    map.addPopup(popup);
+}
+
+
 //Création du chart dans le div #container
 $('#container').highcharts({
     chart:{
@@ -853,7 +869,6 @@ function initMap(){
         isBaseLayer: true}
     );
     map.addLayer(fond);
-    var shapes = [];
     $.each(geoDist, function(i,g){
         var shp = new OpenLayers.Layer.Vector(g, {
             strategies: [new OpenLayers.Strategy.Fixed()],
@@ -870,7 +885,6 @@ function initMap(){
         });
         shp.setVisibility(false);
         map.addLayer(shp);
-        shapes.push(shp);
     });
     var geojs = [];
     $.ajax({
@@ -882,10 +896,10 @@ function initMap(){
         }
     });
     console.log(geojs);
-    var shape = new OpenLayers.Layer.Vector('benin_district_sante', {
+    var shape = new OpenLayers.Layer.Vector('mali_district_sante', {
         strategies: [new OpenLayers.Strategy.Fixed()],
         protocol: new OpenLayers.Protocol.HTTP({
-            url: urlShp + "benin_district_sante.geojson",
+            url: urlShp + "mali_district_sante.geojson",
             format: new OpenLayers.Format.GeoJSON()
         }),
         style: {
@@ -897,6 +911,10 @@ function initMap(){
     });
     shape.setVisibility(true);
     map.addLayer(shape);
+    alert(shape.properties);
+    for(var i=0; i < shape.features.length; i++){
+        console.log(shape.features[i].properties.name);
+    };
     selectControl = new OpenLayers.Control.SelectFeature(shape);
     map.addControl(selectControl);
     var stt = new OpenLayers.Layer.Vector("stations", {
@@ -952,7 +970,7 @@ function initMap(){
         selectControl.activate();
         //selectControl.select(closest); 
     });
-    //map.events.register('click', map, getInfosMap1);
+    map.events.register('click', map, getInfosMap);
 }
 
 
