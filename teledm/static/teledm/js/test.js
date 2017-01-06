@@ -1,7 +1,16 @@
-const ROOT = "http://localhost:8080/thredds";
-
-
 var tabCatalog=[];
+var catalogue={
+    'satellite':{
+        'modis':['MYD04', 'MYD05', 'MYD07'],
+        'aura_omi':['omaeruv'],
+        'msg':['seviri_aerus']
+    },
+    're_analyse':{
+        'ecmwf':['era_interim', 'macc']
+    },
+    'modele':
+};
+
 
 function getCatData()
 {

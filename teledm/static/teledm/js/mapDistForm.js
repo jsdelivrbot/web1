@@ -1,4 +1,3 @@
-const ROOT = "http://localhost:8080/thredds";
 var selection_geographique = {"benin":["district","pays"],
                               "burkina":["aire","district","pays"],
                               "mali":["district","pays"],

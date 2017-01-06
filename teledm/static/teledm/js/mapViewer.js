@@ -1,10 +1,11 @@
-const ROOT = "http://localhost:8080/thredds";
 var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
 var geoDist = ['niger_district_sante', 'mali_district_sante','burkina_aire_sante', 'burkina_district_sante',];
 var map;
 var fond;
 var mapPanel;
-
+var geojs = {
+    mali:'',
+};
 var lstInfos = {
     date:"",
     param:"",
@@ -751,22 +752,6 @@ function getInfosMap2(e){
 }
 
 
-function getInfosMap(e){
-    var lonLat = map.getLonLatFromViewPortPx(e.xy);
-    res = lonLat //"Lon: "+ lon.toFixed(6) + " </br>Lat: " + lat.toFixed(6) + " </br>Value: " + truncVal;
-    var popup = new OpenLayers.Popup (
-        "id", // TODO: does this need to be unique?
-        lonLat,
-        new OpenLayers.Size(100, 50),
-        res,
-        true, //bouton fermer
-        null  //action additionnel du bouton fermer
-    );
-    popup.autoSize = true;
-    map.addPopup(popup);
-}
-
-
 //Création du chart dans le div #container
 $('#container').highcharts({
     chart:{
@@ -838,102 +823,15 @@ function layerInfo(l){
         alert(l.geometry.getBounds());
     }
 
-function initMap(){
 
-    map = new OpenLayers.Map('map',{
-        projection: new OpenLayers.Projection("EPSG:4326"),
-        //resolutions: [0.001, 0.005, 0.01, 0.02, 0.03, 0.09, 0.15, 0.4],
-        restrictedExtent: [-180, -90, 180, 90],
-        maxResolution: 0.4,
-        minResolution: 0.001,
-    });
-    var panel = new OpenLayers.Control.Panel({displayClass: 'panel'});
-    map.addControl(panel);
-    var controls = [
-            //new OpenLayers.Control.Attribution(),
-            new OpenLayers.Control.LayerSwitcher({'ascending':false}),
-            //new OpenLayers.Control.ScaleLine(),
-            new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
-            //new OpenLayers.Control.OverviewMap(),
-            new OpenLayers.Control.KeyboardDefaults(),
-            new OpenLayers.Control.SelectFeature(),
-    ];
-    panel.addControls(controls);
-    
-
-    //fond = new OpenLayers.Layer.Stamen("terrain",{layers:"basic"}, {isBaseLayer: true});
-    fond = new OpenLayers.Layer.WMS(
-        "OSM",
-        "http://vmap0.tiles.osgeo.org/wms/vmap0",
-        {layers: 'basic',
-        isBaseLayer: true}
-    );
-    map.addLayer(fond);
-    $.each(geoDist, function(i,g){
-        var shp = new OpenLayers.Layer.Vector(g, {
-            strategies: [new OpenLayers.Strategy.Fixed()],
-            protocol: new OpenLayers.Protocol.HTTP({
-                url: urlShp + "/" + g + ".geojson",
-                format: new OpenLayers.Format.GeoJSON()
-            }),
-            style: {
-                strokeColor: '#000000',
-                strokeOpacity: 1,
-                strokeWidth: 1,
-                fillOpacity: 0.
-            }
-        });
-        shp.setVisibility(false);
-        map.addLayer(shp);
-    });
-    var geojs = [];
-    $.ajax({
-        url: urlShp + "benin_district_sante.geojson",
-        dataType: 'application/json',
-        success: function(data){
-            geojs.push(data);
-            //console.log(data);
-        }
-    });
-    console.log(geojs);
-    var shape = new OpenLayers.Layer.Vector('mali_district_sante', {
-        strategies: [new OpenLayers.Strategy.Fixed()],
-        protocol: new OpenLayers.Protocol.HTTP({
-            url: urlShp + "mali_district_sante.geojson",
-            format: new OpenLayers.Format.GeoJSON()
-        }),
-        style: {
-            strokeColor: '#000000',
-            strokeOpacity: 1,
-            strokeWidth: 1,
-            fillOpacity: 0.
-        }
-    });
-    shape.setVisibility(true);
-    map.addLayer(shape);
-    alert(shape.properties);
-    for(var i=0; i < shape.features.length; i++){
-        console.log(shape.features[i].properties.name);
-    };
-    selectControl = new OpenLayers.Control.SelectFeature(shape);
-    map.addControl(selectControl);
-    var stt = new OpenLayers.Layer.Vector("stations", {
-        strategies: [new OpenLayers.Strategy.Fixed()],
-        protocol: new OpenLayers.Protocol.HTTP({
-            url: urlShp + "/stations.geojson",
-            format: new OpenLayers.Format.GeoJSON()
-        }),
-        style: {
-            'pointRadius': 2,
-        }
-    });
-    stt.setVisibility(false);
-    map.addLayer(stt);
-
+function drawPolygon(){
     var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
     polygon.setVisibility(true);
     map.addLayer(polygon);
-    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {callbacks: {done: function(){console.log('ok')}}, handlerOptions: {persist: true}, featureAdded: layerInfo});
+    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {callbacks: {done: function(){console.log('ok')}},
+                                                                                                        handlerOptions: {persist: true},
+                                                                                                        featureAdded: layerInfo,
+                                                                                                        });
     polygonEditor.events.register('FeatureAdded', polygonEditor);
     polygonEditor.events.register('refresh', polygonEditor, function(){polygon.removeAllFeatures()});
     map.addControl(polygonEditor);
@@ -953,26 +851,118 @@ function initMap(){
             }
         },
     });
-    panel.addControls(_draw);
+    return(_draw);
+}
+
+
+function initMap(){
+
+    map = new OpenLayers.Map('map',{
+        projection: new OpenLayers.Projection("EPSG:4326"),
+        //resolutions: [0.001, 0.005, 0.01, 0.02, 0.03, 0.09, 0.15, 0.4],
+        restrictedExtent: [-180, -90, 180, 90],
+        maxResolution: 0.4,
+        minResolution: 0.001,
+    });
+    var panel = new OpenLayers.Control.Panel({displayClass: 'panel'});
+    map.addControl(panel);
+    var controls = [
+            //new OpenLayers.Control.Attribution(),
+            new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+            //new OpenLayers.Control.ScaleLine(),
+            //new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
+            //new OpenLayers.Control.OverviewMap(),
+            new OpenLayers.Control.KeyboardDefaults(),
+            new OpenLayers.Control.SelectFeature(),
+    ];
+    panel.addControls(controls);
+    
+
+    //fond = new OpenLayers.Layer.Stamen("terrain",{layers:"basic"}, {isBaseLayer: true});
+    fond = new OpenLayers.Layer.WMS(
+        "OSM",
+        "http://vmap0.tiles.osgeo.org/wms/vmap0",
+        {layers: 'basic',
+        isBaseLayer: true}
+    );
+    map.addLayer(fond);
+
+
+    // ajout des layers districts,aires de santé pour chaque pays
+    $.each(geoDist, function(i,g){
+        var shp = new OpenLayers.Layer.Vector(g, {
+            strategies: [new OpenLayers.Strategy.Fixed()],
+            protocol: new OpenLayers.Protocol.HTTP({
+                url: urlShp + "/" + g + ".geojson",
+                format: new OpenLayers.Format.GeoJSON()
+            }),
+            style: {
+                strokeColor: '#000000',
+                strokeOpacity: 1,
+                strokeWidth: 1,
+                fillOpacity: 0.,
+            }
+        });
+        shp.setVisibility(false);
+        map.addLayer(shp);
+    });
+
+    var stt = new OpenLayers.Layer.Vector("stations", {
+        strategies: [new OpenLayers.Strategy.Fixed()],
+        protocol: new OpenLayers.Protocol.HTTP({
+            url: urlShp + "/stations.geojson",
+            format: new OpenLayers.Format.GeoJSON()
+        }),
+        style: {
+            'pointRadius': 2,
+        }
+    });
+    stt.setVisibility(false);
+    map.addLayer(stt);
+
+    selectControl = new OpenLayers.Control.SelectFeature([map.layers[1],map.layers[2],map.layers[3],map.layers[4],map.layers[5]], {
+        onSelect: onFeatureSelect,
+        onUnselect: onFeatureUnselect,
+    });
+    map.addControl(selectControl);
+    selectControl.activate();
+    
+
+    // dessin carré pour coordonnees
+    var draw = drawPolygon();
+    panel.addControls(draw);
     
 
     
     // Activate the control.
     //
     map.zoomToMaxExtent();
-    map.events.register('click', map, function(e){
-        selectControl.deactivate();
-        var pos = this.getLonLatFromPixel(e.xy);        
-        var point =  new OpenLayers.Geometry.Point(pos.lon, pos.lat);
-        //var closest =_.min(shape.features, function(feature) {
-            //return feature.geometry.distanceTo(point);
-        //});
-        selectControl.activate();
-        //selectControl.select(closest); 
-    });
-    map.events.register('click', map, getInfosMap);
+    //map.events.register('click', map, getInfosMap1);
 }
 
+function onPopupClose(evt) {
+    selectControl.unselect(selectedFeature);
+}
+
+function onFeatureSelect(feature) {
+    selectedFeature = feature;
+    popup = new OpenLayers.Popup.FramedCloud("chicken",
+    feature.geometry.getBounds().getCenterLonLat(),
+    new OpenLayers.Size(100, 100),
+        "<h5>" + feature.attributes.name + "</h5>",
+    null, true, onPopupClose);
+
+    feature.popup = popup;
+    //map.addPopup(popup);
+    map.addPopup(popup, true);
+
+}
+
+function onFeatureUnselect(feature) {
+    map.removePopup(feature.popup);
+    feature.popup.destroy();
+    feature.popup = null;
+}
 
 function majLayer(){
     //Récupère les infos saisies par l'utilisateur
