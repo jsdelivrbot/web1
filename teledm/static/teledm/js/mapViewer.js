@@ -587,10 +587,10 @@ function getInfosMap1(e){
                         dataType: "text",
                         async: true,
                         beforeSend: function(){
-                            $("#container").highcharts().showLoading();
+                            $("#plot").highcharts().showLoading();
                         },
                         complete: function(){
-                            $("#container").highcharts().hideLoading();
+                            $("#plot").highcharts().hideLoading();
                         },
                         success: function(text) {
                             var lines = text.split('\n');
@@ -635,23 +635,6 @@ function getInfosMap1(e){
         }
     }//fin else
 }
-
-
-function updatePlot(datas){
-    if($("#container").highcharts().series.length !=0){
-        $("#container").highcharts().series[0].remove(true);
-    }
-    $("#container").highcharts().setTitle({ text: "Periode du: "+datas.dates[0]+" au :"+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
-    $("#container").highcharts().addSeries({
-        name: datas.header,
-        data: datas.datas,
-        lineWidth: 1,
-        color: "#000000",
-        marker: { fillColor: '#000000', radius: 2 }
-    });
-    $("#container").highcharts().redraw();
-}
-
 
 function getInfosMap2(e){
     console.log('ok');
@@ -753,7 +736,7 @@ function getInfosMap2(e){
 
 
 //Création du chart dans le div #container
-$('#container').highcharts({
+$('#plot').highcharts({
     chart:{
         type: 'spline',
         zoomType: 'xy',
@@ -801,12 +784,11 @@ $('#container').highcharts({
 
 
 $("#container").hide();
-$('#btn').click(function() {
+$('#profil').click(function() {
     $(this).toggleClass("active");
     if($(this).hasClass('active')){
-        var getInfosMap = getInfosMap1;
-        if($("#container").highcharts().series.length !=0){
-            $("#container").highcharts().series[0].remove(true);
+        if($("#plot").highcharts().series.length !=0){
+            $("#plot").highcharts().series[0].remove(true);
         }
         $("#container").show();
     }else{
@@ -816,12 +798,28 @@ $('#btn').click(function() {
 });
 
 
+function updatePlot(datas){
+    if($("#plot").highcharts().series.length !=0){
+        $("#plot").highcharts().series[0].remove(true);
+    }
+    $("#plot").highcharts().setTitle({ text: "Periode du: "+datas.dates[0]+" au :"+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
+    $("#plot").highcharts().addSeries({
+        name: datas.header,
+        data: datas.datas,
+        lineWidth: 1,
+        color: "#000000",
+        marker: { fillColor: '#000000', radius: 2 }
+    });
+    $("#plot").highcharts().redraw();
+}
+
+
 // #############################################################################################################
 
 // ################################################ map init update ############################################
 function layerInfo(l){
-        alert(l.geometry.getBounds());
-    }
+    alert(l.geometry.getBounds());
+}
 
 
 function drawPolygon(){
@@ -937,7 +935,7 @@ function initMap(){
     // Activate the control.
     //
     map.zoomToMaxExtent();
-    //map.events.register('click', map, getInfosMap1);
+    map.events.register('click', map, getInfosMap1);
 }
 
 function onPopupClose(evt) {
@@ -998,8 +996,8 @@ function majLayer(){
             map.removeLayer(map.layers[1])
         }
     }
-    if($("#container").highcharts().series.length !=0){
-        $("#container").highcharts().series[0].remove(true);
+    if($("#plot").highcharts().series.length !=0){
+        $("#plot").highcharts().series[0].remove(true);
     }
     var wms = new OpenLayers.Layer.WMS(
         "wms",
