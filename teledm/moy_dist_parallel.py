@@ -15,7 +15,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-ddirDB = "/home/sebastien/Bureau/teledm/donnees/"
+ddirDB = "/home/mers/Bureau/teledm/"
 
 
 ######################################################################################################################
@@ -117,7 +117,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
     anfin = datetime.strptime(fin,"%Y-%m-%d").strftime("%Y")
     
     
-    ddirin = ddirDB+types+"/"+sat+"/"+prod+"/"+res
+    ddirin = ddirDB+'/donnees/'+types+"/"+sat+"/"+prod+"/"+res
     os.chdir(ddirin)
     files = sorted(glob.glob('*'+res_temp+'.nc'))#liste des fichiers .nc
     
@@ -129,21 +129,21 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
         if shape == "all_fs":
     		try:
     			#fshape = '/work/crct/se5780me/carto/fs_par_annee/'+shape+'/150409_BF_FS_2015.shp'
-    			fshape = '/home/sebastien/Bureau/teledm/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+anfin+'.shp'
+    			fshape = ddirDB + '/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+anfin+'.shp'
     			geodf = gpd.GeoDataFrame.from_file(fshape)
     		except:
-    			fshape = '/home/sebastien/Bureau/teledm/carto/fs_par_annee/all_fs/150409_BF_FS_2015.shp'
+    			fshape = ddirDB + '/carto/fs_par_annee/all_fs/150409_BF_FS_2015.shp'
     			geodf = gpd.GeoDataFrame.from_file(fshape)
         else:
     		try:
-    			fshape = '/home/sebastien/Bureau/teledm/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+shape+'_'+anfin+'.shp'
+    			fshape = ddirDB + '/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+shape+'_'+anfin+'.shp'
     			#fshape = '/work/crct/se5780me/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+shape+'2015.shp'
     			geodf = gpd.GeoDataFrame.from_file(fshape)
     		except:
-    			fshape = '/home/sebastien/Bureau/teledm/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+shape+'_2015.shp'
+    			fshape = ddirDB + '/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+shape+'_2015.shp'
     			geodf = gpd.GeoDataFrame.from_file(fshape)  
     else:
-        fshape = '/home/sebastien/Bureau/teledm/carto/'+niveau+'/'+pays+'_'+niveau+'_sante.shp'
+        fshape = ddirDB + '/carto/'+niveau+'/'+pays+'_'+niveau+'_sante.shp'
         geodf = gpd.GeoDataFrame.from_file(fshape)
     
     nbdist = len(geodf[geodf.columns[1]]) # nombre de districts/aires
@@ -288,7 +288,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
 
 if __name__ == "__main__":
     
-    ddirout = "/home/sebastien/dev/web1/teledm/tmp"
+    ddirout = "/home/mers/dev/crc/teledm/tmp"
     deb = "2007-01-01"     #"1979" a ...
     fin = "2007-01-15"
     pays = "burkina"       #"burkina","mali","niger","senegal"

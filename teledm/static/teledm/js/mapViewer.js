@@ -1,3 +1,50 @@
+var mesures = ["aeronet", "teom", "meteo"];
+var epidemio = ["meningite"];
+var meningites = ["cas", "deces", "incidence", "population"];
+var geoEpidemio = ["pays", "district"];
+var stationsAeronet = ["Banizoumbou", "Cinzana", "Dakar"];
+var variablesAeronet = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_340', '%TripletVar_380', '%TripletVar_412', '%TripletVar_440',
+                         '%TripletVar_443', '%TripletVar_490', '%TripletVar_500', '%TripletVar_531', '%TripletVar_532', '%TripletVar_551',
+                         '%TripletVar_555', '%TripletVar_667', '%TripletVar_675', '%TripletVar_870', '%WaterError', '2nd_Order_Reg_Fit_Error-Total_AOD_500nm[regression_dtau_a]',
+                         '340-440Angstrom', '380-500Angstrom', '380nm_Input_AOD', '412nm_Input_AOD', '440-675Angstrom', '440-675Angstrom(Polar)',
+                         '440-870Angstrom', '440nm_Input_AOD', '443nm_Input_AOD', '490nm_Input_AOD', '500-870Angstrom', '500nm_Input_AOD',
+                         '531nm_Input_AOD', '532nm_Input_AOD', '551nm_Input_AOD', '555nm_Input_AOD', '667nm_Input_AOD', '675nm_Input_AOD',
+                         '870nm_Input_AOD', 'AE-Fine_Mode_500nm[alpha_f]', 'AOT_1020', 'AOT_1020-AOT', 'AOT_1020-CH4', 'AOT_1020-CO2',
+                         'AOT_1020-ExactWavelength(nm)', 'AOT_1020-NO2', 'AOT_1020-O3', 'AOT_1020-Rayleigh', 'AOT_1020-Total',
+                         'AOT_1020-Water', 'AOT_1640', 'AOT_1640-AOT', 'AOT_1640-CH4', 'AOT_1640-CO2', 'AOT_1640-ExactWavelength(nm)',
+                         'AOT_1640-NO2', 'AOT_1640-O3', 'AOT_1640-Rayleigh', 'AOT_1640-Total', 'AOT_1640-Water', 'AOT_340', 'AOT_340-AOT',
+                         'AOT_340-CH4', 'AOT_340-CO2', 'AOT_340-ExactWavelength(nm)', 'AOT_340-NO2', 'AOT_340-O3', 'AOT_340-Rayleigh', 'AOT_340-Total',
+                         'AOT_340-Water', 'AOT_380', 'AOT_380-AOT', 'AOT_380-CH4', 'AOT_380-CO2', 'AOT_380-ExactWavelength(nm)', 'AOT_380-NO2',
+                         'AOT_380-O3', 'AOT_380-Rayleigh', 'AOT_380-Total', 'AOT_380-Water', 'AOT_412', 'AOT_412-AOT', 'AOT_412-CH4', 'AOT_412-CO2',
+                         'AOT_412-ExactWavelength(nm)', 'AOT_412-NO2', 'AOT_412-O3', 'AOT_412-Rayleigh', 'AOT_412-Total', 'AOT_412-Water', 'AOT_440',
+                         'AOT_440-AOT', 'AOT_440-CH4', 'AOT_440-CO2', 'AOT_440-ExactWavelength(nm)', 'AOT_440-NO2', 'AOT_440-O3', 'AOT_440-Rayleigh',
+                         'AOT_440-Total', 'AOT_440-Water', 'AOT_443', 'AOT_443-AOT', 'AOT_443-CH4', 'AOT_443-CO2', 'AOT_443-ExactWavelength(nm)', 'AOT_443-NO2',
+                         'AOT_443-O3', 'AOT_443-Rayleigh', 'AOT_443-Total', 'AOT_443-Water', 'AOT_490', 'AOT_490-AOT', 'AOT_490-CH4', 'AOT_490-CO2', 'AOT_490-ExactWavelength(nm)',
+                         'AOT_490-NO2', 'AOT_490-O3', 'AOT_490-Rayleigh', 'AOT_490-Total', 'AOT_490-Water', 'AOT_500', 'AOT_500-AOT', 'AOT_500-CH4', 'AOT_500-CO2',
+                         'AOT_500-ExactWavelength(nm)', 'AOT_500-NO2', 'AOT_500-O3', 'AOT_500-Rayleigh', 'AOT_500-Total', 'AOT_500-Water', 'AOT_531', 'AOT_531-AOT',
+                         'AOT_531-CH4', 'AOT_531-CO2', 'AOT_531-ExactWavelength(nm)', 'AOT_531-NO2', 'AOT_531-O3', 'AOT_531-Rayleigh', 'AOT_531-Total',
+                         'AOT_531-Water', 'AOT_532', 'AOT_532-AOT', 'AOT_532-CH4', 'AOT_532-CO2', 'AOT_532-ExactWavelength(nm)', 'AOT_532-NO2',
+                         'AOT_532-O3', 'AOT_532-Rayleigh', 'AOT_532-Total', 'AOT_532-Water', 'AOT_551', 'AOT_551-AOT', 'AOT_551-CH4', 'AOT_551-CO2',
+                         'AOT_551-ExactWavelength(nm)', 'AOT_551-NO2', 'AOT_551-O3', 'AOT_551-Rayleigh', 'AOT_551-Total', 'AOT_551-Water', 'AOT_555',
+                         'AOT_555-AOT', 'AOT_555-CH4', 'AOT_555-CO2', 'AOT_555-ExactWavelength(nm)', 'AOT_555-NO2', 'AOT_555-O3', 'AOT_555-Rayleigh',
+                         'AOT_555-Total', 'AOT_555-Water', 'AOT_667', 'AOT_667-AOT', 'AOT_667-CH4', 'AOT_667-CO2', 'AOT_667-ExactWavelength(nm)',
+                         'AOT_667-NO2', 'AOT_667-O3', 'AOT_667-Rayleigh', 'AOT_667-Total', 'AOT_667-Water', 'AOT_675', 'AOT_675-AOT',
+                         'AOT_675-CH4', 'AOT_675-CO2', 'AOT_675-ExactWavelength(nm)', 'AOT_675-NO2', 'AOT_675-O3', 'AOT_675-Rayleigh',
+                         'AOT_675-Total', 'AOT_675-Water', 'AOT_870', 'AOT_870-AOT', 'AOT_870-CH4', 'AOT_870-CO2', 'AOT_870-ExactWavelength(nm)',
+                         'AOT_870-NO2', 'AOT_870-O3', 'AOT_870-Rayleigh', 'AOT_870-Total', 'AOT_870-Water', 'Air_Mass', 'Angstrom_Exponent(AE)-Total_500nm[alpha]',
+                         'Coarse_Mode_AOD_500nm[tau_c]', 'Exact_Wavelengths_for_Input_AOD', 'FineModeFraction_500nm[eta]', 'Fine_Mode_AOD_500nm[tau_f]',
+                         'Number_of_Wavelengths', 'Pressure[hPa]', 'RMSE_Coarse_Mode_AOD_500nm[Dtau_c]', 'RMSE_FineModeFraction_500nm[Deta]',
+                         'RMSE_Fine_Mode_AOD_500nm[Dtau_f]', 'Solar_Zenith_Angle', 'SunphotometerNumber', 'Total_AOD_500nm[tau_a]',
+                         'Total_NO2[DobsonUnits]', 'Total_O3[DobsonUnits]', 'Water(cm)', 'Water(cm)-ExactWavelength(nm)', 'dAE/dln(wavelength)-Fine_Mode_500nm[alphap_f]',
+                         'dAE/dln(wavelength)-Total_500nm[alphap]']
+//var variablesAeronet = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom", "FineModeFraction_500nm[eta]"];
+var niveau = ['1_5','2'];
+var resoTempoAeronet = ["diurne_15min", "diurne_h", "diurne_d", "diurne_w", "diurne_m", "diurne_t",
+                        "h24_15min", "h24_h", "h24_d", "h24_w", "h24_m", "h24_t"]
+var stationsTeom = ["Banizoumbou", "Cinzana", "MBour", "Dedougou"];
+var variablesTeom = ["concentration"];
+var stationsMeteo = ["Banizoumbou", "Cinzana", "MBour", "Dedougou"];
+var variablesMeteo = ["wind", "wind_dir", "temp", "relh", "rain"];
 var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
 var geoDist = ['niger_district_sante', 'mali_district_sante','burkina_aire_sante', 'burkina_district_sante',];
 var map;
@@ -140,6 +187,50 @@ function setForm(){
     };
 }
 
+
+function setFormInSitu(){
+    $.each(mesures, function(i, item){
+        $("#mesureIS").append($("<option></option>").attr("value", item).text(item));
+    });
+}
+
+$("#mesureIS").on('change', function(){
+    //$("#stationsIS").val('');
+    $("#stationsIS").find("option:gt(0)").remove();
+    $("#variablesIS").find("option:gt(0)").remove();
+    $("#resoTempoIS").find("option:gt(0)").remove();
+    if($(this).val() == 'aeronet'){
+        $.each(stationsAeronet, function(i, item){
+            $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+        });
+        $.each(variablesAeronet, function(i, item){
+            $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+        });
+        $.each(resoTempoAeronet, function(i, item){
+            $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+        });
+    }else if($(this).val() == 'teom'){
+        $.each(stationsTeom, function(i, item){
+            $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+        });
+        $.each(variablesTeom, function(i, item){
+            $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+        });
+        $.each(resoTempoAeronet, function(i, item){
+            $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+        });
+    }else{
+       $.each(stationsMeteo, function(i, item){
+            $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+        });
+        $.each(variablesMeteo, function(i, item){
+            $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+        });
+        $.each(resoTempoAeronet, function(i, item){
+            $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+        });
+    }
+});
 
 function getDateRange(url){
     var lstvariables = [];
@@ -618,10 +709,8 @@ function getInfosMap1(e){
                                     dataset.header = items[3];
                                 }
                             });
-                            console.log(dataset.dates);
-                            console.log(dataset.lon);
-                            console.log(dataset.header);
                             updatePlot(dataset);
+                            console.log(dataset.datas);
                         },
                         error: function(res,statut,erreur){
                         }
@@ -635,6 +724,59 @@ function getInfosMap1(e){
         }
     }//fin else
 }
+
+
+
+// ########################## add plots ########################################################################
+
+$("#add").on('click', function(e){
+    e.preventDefault();
+    //alert($("#stations").val());
+    var dictdata = $("#mesureIS,#stationsIS,#variablesIS,#resoTempoIS").serialize();
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: dictdata,
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            $("#plot").highcharts().showLoading();
+        },
+        complete: function(){
+            $("#plot").highcharts().hideLoading();
+        },
+        success: function(data){
+            console.log(data.dates[0]);
+            dataset.header = Object.keys(data)[0];
+            dataset.lon = '';
+            dataset.lat = '';
+            dataset.datas = [];
+            dataset.dates = [];
+            $.each(data.dates, function(dateNo, date){
+                var tmp=[];
+                var dateISO = date.replace(/\D/g, " ");
+                var dateCompo = dateISO.split(" ");
+                dateCompo[1]--;
+                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2],dateCompo[3], dateCompo[4], dateCompo[5]);
+                tmp.push(dateUTC, parseFloat(data[dataset.header][dateNo]));
+                dataset.datas.push(tmp);
+            });
+            $("#plot").highcharts().addSeries({
+                name: dataset.header,
+                data: dataset.datas,
+                lineWidth: 1,
+                //color: "#000000",
+                marker: { fillColor: '#000000', radius: 2 }
+            });
+        },
+        error : function(xhr,errmsg,err) {
+            console.log('erreur: '+errmsg);
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+})
+
 
 function getInfosMap2(e){
     console.log('ok');
@@ -798,10 +940,19 @@ $('#profil').click(function() {
 });
 
 
+$("#export").click(function(){
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?var=Surface_Temperature&north=12&west=0&east=15&south=1&horizStride=1&time_start=2006-07-01T00%3A00%3A00Z&time_end=2007-06-30T00%3A00%3A00Z&timeStride=1&addLatLon=true&accept=netcdf",
+        async: false,
+    });
+});
+
 function updatePlot(datas){
     if($("#plot").highcharts().series.length !=0){
         $("#plot").highcharts().series[0].remove(true);
     }
+    console.log(datas.datas);
     $("#plot").highcharts().setTitle({ text: "Periode du: "+datas.dates[0]+" au :"+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
     $("#plot").highcharts().addSeries({
         name: datas.header,
@@ -1126,10 +1277,12 @@ function setMinMax(){
 // #############################################################################################################
 
 
+
 // #############################################################################################################
 window.onload = function(){
     $('select').select2();
     setForm();
+    setFormInSitu();
     initMap();
     setColorbar();
 }

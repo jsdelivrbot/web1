@@ -133,6 +133,7 @@
                 </div>
                 <div>
                     <input type="button" value="Mise à jour de la carte" onclick="updateMap()">
+                    <input type="button" id="export" value="Export"/>
                 </div>
             </form>
         </div>
@@ -146,25 +147,32 @@
 {% block content2 %}
     <div class="row">
         <input type="button" id="profil" value="Profil"/>
-        <input type="button" id="export" value="Export"/>
     </div>
     <div class="row" id="container">
         <div class="col-lg-4">
-            <select class="form-control" name="type" id="stations" >
-                <option selected hidden>Meteo</option>
-                <option value="banizoumbou">Banizoumbou</option>
-                <option value="cinzana">Cinzana</option>
-                <option value="dakar">Dakar/Mbour</option>
-                <option value="dedougou">Dedougou</option>
-            </select>
-            <select class="form-control" name="type" id="meteo" >
-                <option selected hidden>Meteo</option>
-                <option value="wind">wind</option>
-                <option value="wind_dir">wind direction</option>
-                <option value="temp">Temperature</option>
-                <option value="relh">Relative Humidity</option>
-                <option value="rain">Rain</option>
-            </select>
+            <div class="row">
+                <select class="form-control" name="mesure" id="mesureIS" >
+                    <option selected hidden>inSitu</option>
+                </select>
+                <select class="form-control" name="stations" id="stationsIS" >
+                    <option selected hidden>Station</option>
+                </select>
+                <select class="form-control" name="variables" id="variablesIS" >
+                    <option selected hidden>Variable</option>
+                </select>
+                <select class="form-control" name="resoTempo" id="resoTempoIS" >
+                    <option selected hidden>Resolution Temporelle</option>
+                </select>
+                <input type="button" id="add" value="Plot"/>
+            </div>
+            <div class="row">
+                <select class="form-control" name="epidemio" id="epidemioEP" >
+                    <option selected hidden>Epidemiologie</option>
+                </select>
+                <select class="form-control" name="resoSpa" id="resoSpaEP" >
+                    <option selected hidden>Aire Geographique</option>
+                </select>
+            </div>
         </div>
         <div class="col-lg-8">
             <div id="plot" ></div>

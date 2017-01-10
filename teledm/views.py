@@ -9,6 +9,7 @@ import json, simplejson
 import os
 import pandas as pd
 import numpy as np
+from datetime import datetime
 
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
@@ -16,7 +17,9 @@ from scatterPlots import scatterSatStation, scatter2Sat
 from Util import *
 
 tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'teledm/tmp')
-#ddirDB = "/home/sebastien/Bureau/teledm/donnees/"
+ddirDB = "/home/mers/Bureau/teledm"
+ddir = ddirDB + "/donnees/in_situ/"
+
 
 def home(request):
     print request.POST
@@ -31,58 +34,32 @@ def home(request):
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapViewer(request):
-    if request.method == "POST":
-        deb = request.POST['datedebut']
-        types = request.POST['type'] 
-        sat = request.POST['capteur']  
-        prod = request.POST['produit']
-        res_temp = request.POST['pasdetemps']
-        res = request.POST['resospatiale']
-        varname = request.POST['variable']
-        ncfile = prod + '_r' + res + '_' + res_temp + '.nc'
-        URL = "http://localhost:8080/thredds/wms/" + types + "/" + sat + "/" + prod + "/res" + res + "/"+ ncfile + "?service=ncWMS"
-        dictdatas = {'URL': URL,'ncfile': ncfile, 'variable': varname, 'date': deb}
-        info = json.dumps(dictdatas, cls=DjangoJSONEncoder)
-        return render_to_response('teledm/mapViewer.html',{'Info': info},context_instance=RequestContext(request))
+    print request.POST.keys()
+    if request.is_ajax():
+        mesure = request.POST['mesure']
+        station = request.POST['stations']
+        variable = str(request.POST['variables'])
+        resoTempo = request.POST['resoTempo']
+        if mesure == "aeronet":
+            df = pd.read_csv(ddir + mesure + '/niveau_1_5/'+station+'_aeronet_1_5_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+        else:
+            df = pd.read_csv(ddir + mesure + '/'+station+'_'+mesure+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+#        else:
+#            inSitu = str(request.POST['menigite'])
+#            df = pd.read_csv(ddir + 'meningite/'+station+'_meningite_h24_h.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', inSitu])
+        dictdatas = {variable:df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}        
+        return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='text/json')
     else:
-        info = json.dumps({"date": "2007-01-01"}, cls=DjangoJSONEncoder)
-        return render_to_response('teledm/mapViewer.html',{'deb': info},context_instance=RequestContext(request))
+        return render_to_response('teledm/mapViewer.html',context_instance=RequestContext(request))
 
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapDist(request):
-#    if request.method == 'POST':
-#        if request.POST.get('submit') == "SUBMIT":
-#            ddirout = "/home/dev/web1/teledm/protected"
-#            deb = request.POST['datedebut'] #"2007-01-01"
-#            fin = request.POST['datefin'] #"2007-06-30"
-#            pays = request.POST['pays']  
-#            niveau = request.POST['decoupage'] 
-#            types = request.POST['type'] 
-#            sat = request.POST['capteur']  
-#            prod = request.POST['produit']
-#            res_temp = request.POST['pasdetemps']
-#            res = request.POST['resospatiale']
-#            varname = request.POST['variable'] #'Deep_Blue_Aerosol_Optical_Depth_550_Land'
-#            shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
-#            ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)        
-#            val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
-#            datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
-#            list_dates = ldf['vmean'].index.values.tolist()
-#            geojson = pays+"_"+niveau+"_sante.geojson"
-#            filename = varname + '_' + prod + '_r' + res + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
-#            dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson, 'filename':filename}
-#            jsdatas = json.dumps(dictdatas, cls=DjangoJSONEncoder)
-#            return render_to_response('teledm/mapDist.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
-#        elif request.POST.get('submit') == "Download":
-#            filename = os.path.join(tmpDir, request.POST['filename'])
-#            print filename
-#            return sendfile(request, filename)
     if request.is_ajax():
         print request.POST
-        ddirout = "/home/dev/web1/teledm/protected"
-        deb = request.POST['datedebut'] #"2007-01-01"
-        fin = request.POST['datefin'] #"2007-06-30"
+        ddirout = "/home/dev/crc/teledm/tmp"
+        deb = request.POST['datedebut'] 
+        fin = request.POST['datefin'] 
         pays = request.POST['pays']  
         niveau = request.POST['decoupage'] 
         types = request.POST['type'] 
@@ -90,7 +67,7 @@ def mapDist(request):
         prod = request.POST['produit']
         res_temp = request.POST['pasdetemps']
         res = request.POST['resospatiale']
-        varname = request.POST['variable'] #'Deep_Blue_Aerosol_Optical_Depth_550_Land'
+        varname = request.POST['variable'] 
         shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
         ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)
         val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
@@ -99,7 +76,6 @@ def mapDist(request):
         geojson = pays+"_"+niveau+"_sante.geojson"
         filename = varname + '_' + prod + '_r' + res + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
         dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson, 'filename':filename}
-        print dictdatas
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='application/json')
     else:
         jsdatas = json.dumps({'form':''}, cls=DjangoJSONEncoder)
