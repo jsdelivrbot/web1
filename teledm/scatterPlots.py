@@ -5,11 +5,11 @@ import numpy as np
 from netCDF4 import Dataset, num2date, date2num
 from scipy.stats import linregress
 from datetime import datetime, timedelta
-import subprocess
+import subprocess, os
 import warnings
 warnings.filterwarnings("ignore")
 
-ddirDB = "/home/sebastien/Bureau/teledm/donnees/"
+ddirDB = os.path.expanduser('~') + "/Bureau/teledm/donnees/"
 
 
 def skipRows(debut,fin, filename):

@@ -17,7 +17,7 @@ from scatterPlots import scatterSatStation, scatter2Sat
 from Util import *
 
 tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'teledm/tmp')
-ddirDB = "/home/mers/Bureau/teledm"
+ddirDB = os.path.expanduser('~') + "/Bureau/teledm"
 ddir = ddirDB + "/donnees/in_situ/"
 
 
@@ -36,17 +36,22 @@ def home(request):
 def mapViewer(request):
     print request.POST.keys()
     if request.is_ajax():
-        mesure = request.POST['mesure']
-        station = request.POST['stations']
-        variable = str(request.POST['variables'])
-        resoTempo = request.POST['resoTempo']
-        if mesure == "aeronet":
-            df = pd.read_csv(ddir + mesure + '/niveau_1_5/'+station+'_aeronet_1_5_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+        if 'mesure' in request.POST.keys():
+            mesure = request.POST['mesure']
+            station = request.POST['stations']
+            variable = str(request.POST['variables'])
+            resoTempo = request.POST['resoTempo']
+            if mesure == "aeronet":
+                df = pd.read_csv(ddir + mesure + '/niveau_1_5/'+station+'_aeronet_1_5_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+            else:
+                df = pd.read_csv(ddir + mesure + '/'+station+'_'+mesure+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
         else:
-            df = pd.read_csv(ddir + mesure + '/'+station+'_'+mesure+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-#        else:
-#            inSitu = str(request.POST['menigite'])
-#            df = pd.read_csv(ddir + 'meningite/'+station+'_meningite_h24_h.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', inSitu])
+            epidemio = request.POST['epidemio']
+            pays = request.POST['pays']
+            district = request.POST['district']
+            variable = request.POST['variables']
+            csv = pd.read_csv(ddir + epidemio + '/'+pays+'_meningite.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
+            df = csv[csv.district==district]
         dictdatas = {variable:df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}        
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='text/json')
     else:

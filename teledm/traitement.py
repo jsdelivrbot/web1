@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import os
 from moy_dist_parallel import calc_moy
 
 def traitementDF(ldf,var):
@@ -25,7 +26,7 @@ def traitementDF(ldf,var):
 
 if __name__ == "__main__":
     
-    ddirout = "/home/sebastien/Bureau/"
+    ddirout = os.path.expanduser('~') + "/Bureau/"
     deb = "2007-01-01"     #"1979" a ...
     fin = "2007-06-30"
     pays = "burkina"       #"burkina","mali","niger","senegal"

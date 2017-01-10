@@ -729,9 +729,24 @@ function getInfosMap1(e){
 
 // ########################## add plots ########################################################################
 
-$("#add").on('click', function(e){
+$("#addIS").on('click', function(e){
     e.preventDefault();
-    //alert($("#stations").val());
+    if($("#mesureIS").val()=='inSitu'){
+        alert("Erreur ! Aucun type de mesure sélectionné !");
+        throw new Exception();
+    }
+    if($("#stationIS").val()=='Station'){
+        alert("Erreur ! Aucune station de mesure sélectionnée !");
+        throw new Exception();
+    }
+    if($("#variableIS").val()=='Variable'){
+        alert("Erreur ! Aucune variable sélectionnée !");
+        throw new Exception();
+    }
+    if($("#resoTempoIS").val()=='Resolution Temporelle'){
+        alert("Erreur ! Aucune resolution tempoerlle sélectionnée !");
+        throw new Exception();
+    }
     var dictdata = $("#mesureIS,#stationsIS,#variablesIS,#resoTempoIS").serialize();
     $.ajax({
         async: false,

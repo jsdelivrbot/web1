@@ -15,7 +15,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-ddirDB = "/home/mers/Bureau/teledm/"
+ddirDB = os.path.expanduser('~') + "/Bureau/teledm/"
 
 
 ######################################################################################################################
