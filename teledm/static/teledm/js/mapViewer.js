@@ -3,7 +3,7 @@ var epidemio = ["meningite"];
 var meningites = ["cas", "deces", "incidence", "population"];
 var geoEpidemio = ["pays", "district"];
 var stationsAeronet = ["Banizoumbou", "Cinzana", "Dakar"];
-var variablesAeronet = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_340', '%TripletVar_380', '%TripletVar_412', '%TripletVar_440',
+var variablesAeronet1 = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_340', '%TripletVar_380', '%TripletVar_412', '%TripletVar_440',
                          '%TripletVar_443', '%TripletVar_490', '%TripletVar_500', '%TripletVar_531', '%TripletVar_532', '%TripletVar_551',
                          '%TripletVar_555', '%TripletVar_667', '%TripletVar_675', '%TripletVar_870', '%WaterError', '2nd_Order_Reg_Fit_Error-Total_AOD_500nm[regression_dtau_a]',
                          '340-440Angstrom', '380-500Angstrom', '380nm_Input_AOD', '412nm_Input_AOD', '440-675Angstrom', '440-675Angstrom(Polar)',
@@ -37,7 +37,7 @@ var variablesAeronet = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_340
                          'RMSE_Fine_Mode_AOD_500nm[Dtau_f]', 'Solar_Zenith_Angle', 'SunphotometerNumber', 'Total_AOD_500nm[tau_a]',
                          'Total_NO2[DobsonUnits]', 'Total_O3[DobsonUnits]', 'Water(cm)', 'Water(cm)-ExactWavelength(nm)', 'dAE/dln(wavelength)-Fine_Mode_500nm[alphap_f]',
                          'dAE/dln(wavelength)-Total_500nm[alphap]']
-//var variablesAeronet = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom", "FineModeFraction_500nm[eta]"];
+var variablesAeronet2 = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom", "FineModeFraction_500nm[eta]"];
 var niveau = ['1_5','2'];
 var resoTempoAeronet = ["diurne_15min", "diurne_h", "diurne_d", "diurne_w", "diurne_m", "diurne_t",
                         "h24_15min", "h24_h", "h24_d", "h24_w", "h24_m", "h24_t"]
@@ -197,15 +197,20 @@ function setFormInSitu(){
 $("#mesureIS").on('change', function(){
     //$("#stationsIS").val('');
     $("#stationsIS").find("option:gt(0)").remove();
+    $("#niveauIS").find("option:gt(0)").remove();
     $("#variablesIS").find("option:gt(0)").remove();
     $("#resoTempoIS").find("option:gt(0)").remove();
     if($(this).val() == 'aeronet'){
         $.each(stationsAeronet, function(i, item){
             $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
         });
-        $.each(variablesAeronet, function(i, item){
+        $.each(niveau, function(i, item){
+            $("#niveauIS").append($("<option></option>").attr("value", item).text(item));
+        });
+        $.each(variablesAeronet1, function(i, item){
             $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
         });
+        $("#niveauIS").prop('selectedIndex', 1);
         $.each(resoTempoAeronet, function(i, item){
             $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
         });
@@ -228,6 +233,19 @@ $("#mesureIS").on('change', function(){
         });
         $.each(resoTempoAeronet, function(i, item){
             $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+        });
+    }
+});
+
+$("#niveauIS").on('change', function(){
+    $("#variablesIS").find("option:gt(0)").remove();
+    if($(this).val() == '1_5'){
+        $.each(variablesAeronet1, function(i, item){
+            $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+        });
+    }else{
+        $.each(variablesAeronet2, function(i, item){
+            $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
         });
     }
 });
@@ -731,23 +749,24 @@ function getInfosMap1(e){
 
 $("#addIS").on('click', function(e){
     e.preventDefault();
-    if($("#mesureIS").val()=='inSitu'){
+    if($("#mesureIS").val() == 'Type'){
         alert("Erreur ! Aucun type de mesure sélectionné !");
         throw new Exception();
     }
-    if($("#stationIS").val()=='Station'){
+    if($("#stationIS").val() ==' Station'){
         alert("Erreur ! Aucune station de mesure sélectionnée !");
         throw new Exception();
     }
-    if($("#variableIS").val()=='Variable'){
+    if($("#variableIS").val() == 'Variable'){
         alert("Erreur ! Aucune variable sélectionnée !");
         throw new Exception();
     }
-    if($("#resoTempoIS").val()=='Resolution Temporelle'){
+    if($("#resoTempoIS").val() == 'Resolution Temporelle'){
         alert("Erreur ! Aucune resolution tempoerlle sélectionnée !");
         throw new Exception();
     }
-    var dictdata = $("#mesureIS,#stationsIS,#variablesIS,#resoTempoIS").serialize();
+    alert($("#stationIS").value);
+    var dictdata = $("#mesureIS,#niveauIS,#stationsIS,#variablesIS,#resoTempoIS").serialize();
     $.ajax({
         async: false,
         type: "POST",
@@ -763,7 +782,7 @@ $("#addIS").on('click', function(e){
         },
         success: function(data){
             console.log(data.dates[0]);
-            dataset.header = Object.keys(data)[0];
+            dataset.header = data.varName;
             dataset.lon = '';
             dataset.lat = '';
             dataset.datas = [];
@@ -774,7 +793,7 @@ $("#addIS").on('click', function(e){
                 var dateCompo = dateISO.split(" ");
                 dateCompo[1]--;
                 var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2],dateCompo[3], dateCompo[4], dateCompo[5]);
-                tmp.push(dateUTC, parseFloat(data[dataset.header][dateNo]));
+                tmp.push(dateUTC, parseFloat(data.datas[dateNo]));
                 dataset.datas.push(tmp);
             });
             $("#plot").highcharts().addSeries({
@@ -892,7 +911,7 @@ function getInfosMap2(e){
 }
 
 
-//Création du chart dans le div #container
+//Création du chart dans le div #containerProfil
 $('#plot').highcharts({
     chart:{
         type: 'spline',
@@ -940,16 +959,16 @@ $('#plot').highcharts({
 });
 
 
-$("#container").hide();
+$("#containerProfil").hide();
 $('#profil').click(function() {
     $(this).toggleClass("active");
     if($(this).hasClass('active')){
         if($("#plot").highcharts().series.length !=0){
             $("#plot").highcharts().series[0].remove(true);
         }
-        $("#container").show();
+        $("#containerProfil").show();
     }else{
-        $("#container").hide();
+        $("#containerProfil").hide();
         //var getInfosMap = getInfosMap2;
     }
 });

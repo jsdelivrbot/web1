@@ -34,25 +34,32 @@ def home(request):
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapViewer(request):
-    print request.POST.keys()
+    print request.POST
     if request.is_ajax():
         if 'mesure' in request.POST.keys():
             mesure = request.POST['mesure']
             station = request.POST['stations']
             variable = str(request.POST['variables'])
             resoTempo = request.POST['resoTempo']
+            niveau = request.POST['niveau']
             if mesure == "aeronet":
-                df = pd.read_csv(ddir + mesure + '/niveau_1_5/'+station+'_aeronet_1_5_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+                df = pd.read_csv(ddir + mesure + '/niveau_'+niveau+'/'+station+'_aeronet_'+niveau+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
             else:
                 df = pd.read_csv(ddir + mesure + '/'+station+'_'+mesure+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+            varName = station+'_'+variable
         else:
             epidemio = request.POST['epidemio']
             pays = request.POST['pays']
+            echelle = request.POST['echelle']
             district = request.POST['district']
             variable = request.POST['variables']
-            csv = pd.read_csv(ddir + epidemio + '/'+pays+'_meningite.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
-            df = csv[csv.district==district]
-        dictdatas = {variable:df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}        
+            csv = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
+            if echelle == 'district':
+                df = csv[csv.district==district]
+            else:
+                df = csv[csv.district==pays]
+            varName = district+'_'+variable
+        dictdatas = {'varName':varName, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}        
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='text/json')
     else:
         return render_to_response('teledm/mapViewer.html',context_instance=RequestContext(request))
