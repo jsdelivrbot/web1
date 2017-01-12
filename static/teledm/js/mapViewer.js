@@ -1,10 +1,101 @@
-const ROOT = "http://localhost:8080/thredds";
+var geoDist = ['niger_district_sante', 'mali_district_sante','burkina_aire_sante', 'burkina_district_sante',];
+var mesures = ["aeronet", "teom", "meteo"];
+
+var stationsAeronet = ["Banizoumbou", "Cinzana", "Dakar"];
+var variablesAeronet1 = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_340', '%TripletVar_380', '%TripletVar_412', '%TripletVar_440',
+                         '%TripletVar_443', '%TripletVar_490', '%TripletVar_500', '%TripletVar_531', '%TripletVar_532', '%TripletVar_551',
+                         '%TripletVar_555', '%TripletVar_667', '%TripletVar_675', '%TripletVar_870', '%WaterError', '2nd_Order_Reg_Fit_Error-Total_AOD_500nm[regression_dtau_a]',
+                         '340-440Angstrom', '380-500Angstrom', '380nm_Input_AOD', '412nm_Input_AOD', '440-675Angstrom', '440-675Angstrom(Polar)',
+                         '440-870Angstrom', '440nm_Input_AOD', '443nm_Input_AOD', '490nm_Input_AOD', '500-870Angstrom', '500nm_Input_AOD',
+                         '531nm_Input_AOD', '532nm_Input_AOD', '551nm_Input_AOD', '555nm_Input_AOD', '667nm_Input_AOD', '675nm_Input_AOD',
+                         '870nm_Input_AOD', 'AE-Fine_Mode_500nm[alpha_f]', 'AOT_1020', 'AOT_1020-AOT', 'AOT_1020-CH4', 'AOT_1020-CO2',
+                         'AOT_1020-ExactWavelength(nm)', 'AOT_1020-NO2', 'AOT_1020-O3', 'AOT_1020-Rayleigh', 'AOT_1020-Total',
+                         'AOT_1020-Water', 'AOT_1640', 'AOT_1640-AOT', 'AOT_1640-CH4', 'AOT_1640-CO2', 'AOT_1640-ExactWavelength(nm)',
+                         'AOT_1640-NO2', 'AOT_1640-O3', 'AOT_1640-Rayleigh', 'AOT_1640-Total', 'AOT_1640-Water', 'AOT_340', 'AOT_340-AOT',
+                         'AOT_340-CH4', 'AOT_340-CO2', 'AOT_340-ExactWavelength(nm)', 'AOT_340-NO2', 'AOT_340-O3', 'AOT_340-Rayleigh', 'AOT_340-Total',
+                         'AOT_340-Water', 'AOT_380', 'AOT_380-AOT', 'AOT_380-CH4', 'AOT_380-CO2', 'AOT_380-ExactWavelength(nm)', 'AOT_380-NO2',
+                         'AOT_380-O3', 'AOT_380-Rayleigh', 'AOT_380-Total', 'AOT_380-Water', 'AOT_412', 'AOT_412-AOT', 'AOT_412-CH4', 'AOT_412-CO2',
+                         'AOT_412-ExactWavelength(nm)', 'AOT_412-NO2', 'AOT_412-O3', 'AOT_412-Rayleigh', 'AOT_412-Total', 'AOT_412-Water', 'AOT_440',
+                         'AOT_440-AOT', 'AOT_440-CH4', 'AOT_440-CO2', 'AOT_440-ExactWavelength(nm)', 'AOT_440-NO2', 'AOT_440-O3', 'AOT_440-Rayleigh',
+                         'AOT_440-Total', 'AOT_440-Water', 'AOT_443', 'AOT_443-AOT', 'AOT_443-CH4', 'AOT_443-CO2', 'AOT_443-ExactWavelength(nm)', 'AOT_443-NO2',
+                         'AOT_443-O3', 'AOT_443-Rayleigh', 'AOT_443-Total', 'AOT_443-Water', 'AOT_490', 'AOT_490-AOT', 'AOT_490-CH4', 'AOT_490-CO2', 'AOT_490-ExactWavelength(nm)',
+                         'AOT_490-NO2', 'AOT_490-O3', 'AOT_490-Rayleigh', 'AOT_490-Total', 'AOT_490-Water', 'AOT_500', 'AOT_500-AOT', 'AOT_500-CH4', 'AOT_500-CO2',
+                         'AOT_500-ExactWavelength(nm)', 'AOT_500-NO2', 'AOT_500-O3', 'AOT_500-Rayleigh', 'AOT_500-Total', 'AOT_500-Water', 'AOT_531', 'AOT_531-AOT',
+                         'AOT_531-CH4', 'AOT_531-CO2', 'AOT_531-ExactWavelength(nm)', 'AOT_531-NO2', 'AOT_531-O3', 'AOT_531-Rayleigh', 'AOT_531-Total',
+                         'AOT_531-Water', 'AOT_532', 'AOT_532-AOT', 'AOT_532-CH4', 'AOT_532-CO2', 'AOT_532-ExactWavelength(nm)', 'AOT_532-NO2',
+                         'AOT_532-O3', 'AOT_532-Rayleigh', 'AOT_532-Total', 'AOT_532-Water', 'AOT_551', 'AOT_551-AOT', 'AOT_551-CH4', 'AOT_551-CO2',
+                         'AOT_551-ExactWavelength(nm)', 'AOT_551-NO2', 'AOT_551-O3', 'AOT_551-Rayleigh', 'AOT_551-Total', 'AOT_551-Water', 'AOT_555',
+                         'AOT_555-AOT', 'AOT_555-CH4', 'AOT_555-CO2', 'AOT_555-ExactWavelength(nm)', 'AOT_555-NO2', 'AOT_555-O3', 'AOT_555-Rayleigh',
+                         'AOT_555-Total', 'AOT_555-Water', 'AOT_667', 'AOT_667-AOT', 'AOT_667-CH4', 'AOT_667-CO2', 'AOT_667-ExactWavelength(nm)',
+                         'AOT_667-NO2', 'AOT_667-O3', 'AOT_667-Rayleigh', 'AOT_667-Total', 'AOT_667-Water', 'AOT_675', 'AOT_675-AOT',
+                         'AOT_675-CH4', 'AOT_675-CO2', 'AOT_675-ExactWavelength(nm)', 'AOT_675-NO2', 'AOT_675-O3', 'AOT_675-Rayleigh',
+                         'AOT_675-Total', 'AOT_675-Water', 'AOT_870', 'AOT_870-AOT', 'AOT_870-CH4', 'AOT_870-CO2', 'AOT_870-ExactWavelength(nm)',
+                         'AOT_870-NO2', 'AOT_870-O3', 'AOT_870-Rayleigh', 'AOT_870-Total', 'AOT_870-Water', 'Air_Mass', 'Angstrom_Exponent(AE)-Total_500nm[alpha]',
+                         'Coarse_Mode_AOD_500nm[tau_c]', 'Exact_Wavelengths_for_Input_AOD', 'FineModeFraction_500nm[eta]', 'Fine_Mode_AOD_500nm[tau_f]',
+                         'Number_of_Wavelengths', 'Pressure[hPa]', 'RMSE_Coarse_Mode_AOD_500nm[Dtau_c]', 'RMSE_FineModeFraction_500nm[Deta]',
+                         'RMSE_Fine_Mode_AOD_500nm[Dtau_f]', 'Solar_Zenith_Angle', 'SunphotometerNumber', 'Total_AOD_500nm[tau_a]',
+                         'Total_NO2[DobsonUnits]', 'Total_O3[DobsonUnits]', 'Water(cm)', 'Water(cm)-ExactWavelength(nm)', 'dAE/dln(wavelength)-Fine_Mode_500nm[alphap_f]',
+                         'dAE/dln(wavelength)-Total_500nm[alphap]']
+var variablesAeronet2 = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom", "FineModeFraction_500nm[eta]"];
+var niveau = ['1_5','2'];
+var resoTempo = {
+    "aeronet":["diurne_15min", "diurne_h", "diurne_d", "diurne_w", "diurne_m", "diurne_t",
+                        "h24_15min", "h24_h", "h24_d", "h24_w", "h24_m", "h24_t"],
+    "teom":["diurne_15min", "diurne_h", "diurne_d", "diurne_w", "diurne_m", "diurne_t",
+                        "h24_15min", "h24_h", "h24_d", "h24_w", "h24_m", "h24_t"],
+    "meteo":['3h', '6h', '12h', 'd', 'w', 'm']
+};
+var stationsTeom = ["Banizoumbou", "Cinzana", "MBour", "Dedougou"];
+var variablesTeom = ["concentration"];
+var stationsMeteo = ["Banizoumbou", "Cinzana", "MBour", "Dedougou"];
+var variablesMeteo = ["wind", "wind_dir", "temp", "relh", "rain"];
 var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
-var geoDist = ['niger_district_sante', 'mali_district_sante','burkina_aire_sante', 'burkina_district_sante','benin_district_sante', ];
+
+var epidemio = ["meningite"];
+var meningitePays = {
+    'Burkina':['pays', 'district'],
+    'Mali':['pays', 'district'],
+    'Niger':['pays', 'district'],
+    //'Senegal':['pays']
+};
+var meningiteDist = {
+    'Burkina':['Banfora', 'Barsalogo', 'Batie', 'Bogande', 'Boromo', 'Boulsa', 'Bousse',
+    'Dande', 'Dano', 'Dedougou', 'Diapaga', 'Diebougou', 'Djibo', 'Dori', 'Fada', 'Fadgay',
+    'Gaoua', 'Gayeri', 'Gorom-Gorom', 'Gourcy', 'Hounde', 'Kaya', 'Kombissiri', 'Kongoussi',
+    'Kossodo', 'Koudougou', 'Koupela', 'Leo', 'Leosap', 'Manga', 'Nanoro', 'Nouna', 'Orodara',
+    'Ouagou', 'Ouahigouya', 'Ouargaye', 'Pama', 'Paul6', 'Pissy', 'Po', 'Reo', 'Sapone', 'Sapouy',
+    'Sebba', 'Secteur15', 'Secteur22', 'Secteur30', 'Seguenega', 'Sindou', 'Solenzo', 'Tenkodogo',
+    'Titao', 'Toma', 'Tougan', 'Yako', 'Zabre', 'Ziniare', 'Zorgho'],
+
+    'Mali':['Abeibara', 'Ansongo', 'Bafoulabe', 'Banamba', 'Bandiagara', 'Bankass', 'Baraoueli', 'Bla',
+    'Bougouni', 'Bourem', 'Commune1', 'Commune2', 'Commune3', 'Commune4', 'Commune5', 'Commune6', 'Diema',
+    'Diofan', 'Dioila', 'Dire', 'Djenne', 'Douentza', 'Fana', 'Gao', 'Goundam', 'Gourma-Rharous', 'Kadiolo',
+    'Kangaba', 'Kati', 'Katoue', 'Kayes', 'Kenieba', 'Kidal', 'Kita', 'Kolokani', 'Kolondieba', 'Koro', 'Koulikoro',
+    'Koutiala', 'Macina', 'Markala', 'Menaka', 'Mopti', 'Nara', 'Niafunke', 'Niono', 'Nioro', 'Ouelessebougou', 'San',
+    'Segmar', 'Segou', 'Selingue', 'Sikasso', 'Tenenkou', 'Tessalit', 'Tin-Essako', 'Tombouctou', 'Tominian',
+    'Yanfolila', 'Yansel', 'Yelimane', 'Yorosso', 'Youwarou'],
+
+    'Niger':['Abalak', 'Agadez', 'Agatch', 'Aguie', 'Arlit', 'Bilma', 'Birni-Nkonni',
+    'Boboye', 'Bouza', 'Dakoro', 'Diffa', 'Dogon-Doutchi', 'Dosso', 'Filingue', 'Gaya',
+    'Goure', 'Guidan-Roumdji', 'Illela', 'Keita', 'Kollo', 'Loga', 'Madaoua', 'Madarounfa',
+    'Magaria', 'Maine-Soroa', 'Maradi', 'Matameye', 'Mayahi', 'Mirriah', 'Nguigmi', 'Niamey',
+    'Niamey1', 'Niamey2', 'Niamey3', 'Ouallam', 'Say', 'Tahoua', 'Tanout', 'Tchiab', 'Tchintabaraden',
+    'Tchirozerine', 'Tera', 'Tessaoua', 'Tillaberi', 'Zinder'],
+};
+var meningiteVar = {
+    'pays':['deces', 'population', 'incidence'],
+    'district':['cas', 'incidence', 'population']
+};
+
+
+
+
 var map;
 var fond;
 var mapPanel;
-
+var geojs = {
+    mali:'',
+};
 var lstInfos = {
     date:"",
     param:"",
@@ -35,6 +126,7 @@ var varInfos = {
 
 var dataset = {
     header: "",
+    variable: "",
     lon: "",
     lat: "",
     dates: [],
@@ -139,6 +231,117 @@ function setForm(){
     };
 }
 
+
+function setFormInSitu(){
+    $.each(mesures, function(i, item){
+        $("#mesureIS").append($("<option></option>").attr("value", item).text(item));
+    });
+    $.each(epidemio, function(i, item){
+        $("#epidemioEP").append($("<option></option>").attr("value", item).text(item));
+    });
+
+    $("#mesureIS").on('change', function(){
+        $("#stationsIS").find("option:gt(0)").remove();
+        $("#niveauIS").find("option:gt(0)").remove();
+        $("#variablesIS").find("option:gt(0)").remove();
+        $("#resoTempoIS").find("option:gt(0)").remove();
+        if($(this).val() == 'aeronet'){
+            $.each(stationsAeronet, function(i, item){
+                $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $("#niveauIS").prop("disabled", false);
+            $.each(niveau, function(i, item){
+                $("#niveauIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $.each(variablesAeronet1, function(i, item){
+                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $("#niveauIS").prop('selectedIndex', 1);
+            $.each(resoTempo[$(this).val()], function(i, item){
+                $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+            });
+        }else if($(this).val() == 'teom'){
+            $("#niveauIS").prop("disabled", true);
+            $.each(stationsTeom, function(i, item){
+                $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $.each(variablesTeom, function(i, item){
+                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $.each(resoTempo[$(this).val()], function(i, item){
+                $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+            });
+        }else{
+            $("#niveauIS").prop("disabled", true);
+            $.each(stationsMeteo, function(i, item){
+                $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $.each(variablesMeteo, function(i, item){
+                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $.each(resoTempo[$(this).val()], function(i, item){
+                $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+            });
+        }
+    });
+    
+    $("#niveauIS").on('change', function(){
+        $("#variablesIS").find("option:gt(0)").remove();
+        if($(this).val() == '1_5'){
+            $.each(variablesAeronet1, function(i, item){
+                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+            });
+        }else{
+            $.each(variablesAeronet2, function(i, item){
+                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+            });
+        }
+    });
+    
+    
+    $("#epidemioEP").on('change', function(){
+        $("#paysEP").find("option:gt(0)").remove();
+        $("#echelleEP").find("option:gt(0)").remove();
+        $("#districtEP").find("option:gt(0)").remove();
+        $("#districtEP").prop("disabled", false);
+        $("#variableEP").find("option:gt(0)").remove();
+        if($(this).val() == 'meningite'){
+            $.each(Object.keys(meningitePays), function(i, item){
+                $("#paysEP").append($("<option></option>").attr("value", item).text(item));
+            });
+        }
+    });
+    
+    $("#paysEP").on('change', function(){
+        $("#echelleEP").find("option:gt(0)").remove();
+        $("#districtEP").find("option:gt(0)").remove();
+        $("#districtEP").prop("disabled", false);
+        $("#variableEP").find("option:gt(0)").remove();
+        $.each(meningitePays[$(this).val()], function(i, item){
+            $("#echelleEP").append($("<option></option>").attr("value", item).text(item));
+        });
+    });
+    
+    
+    $("#echelleEP").on('change', function(){
+        $("#districtEP").find("option:gt(0)").remove();
+        $("#variableEP").find("option:gt(0)").remove();
+        if($(this).val() == 'district'){
+            $("#districtEP").prop("disabled", false);
+            $.each(meningiteDist[$("#paysEP").val()], function(i, item){
+                $("#districtEP").append($("<option></option>").attr("value", item).text(item))
+            });
+            $.each(meningiteVar.district, function(i, item){
+                $("#variableEP").append($("<option></option>").attr("value", item).text(item));
+            });
+        }else{
+            $("#districtEP").prop("disabled", true);
+            $.each(meningiteVar.pays, function(i, item){
+                $("#variableEP").append($("<option></option>").attr("value", item).text(item));
+            });
+        }
+    });
+}
 
 function getDateRange(url){
     var lstvariables = [];
@@ -586,14 +789,15 @@ function getInfosMap1(e){
                         dataType: "text",
                         async: true,
                         beforeSend: function(){
-                            $("#container").highcharts().showLoading();
+                            $("#plot").highcharts().showLoading();
                         },
                         complete: function(){
-                            $("#container").highcharts().hideLoading();
+                            $("#plot").highcharts().hideLoading();
                         },
                         success: function(text) {
                             var lines = text.split('\n');
-                            dataset.header = '';
+                            dataset.header = lstInfos.capteur + '_' + lstInfos.produit;
+                            dataset.variable = '';
                             dataset.lon = '';
                             dataset.lat = '';
                             dataset.datas = [];
@@ -614,12 +818,9 @@ function getInfosMap1(e){
                                         dataset.lon = items[2];
                                     }
                                 }else{
-                                    dataset.header = items[3];
+                                    dataset.variable = items[3];
                                 }
                             });
-                            console.log(dataset.dates);
-                            console.log(dataset.lon);
-                            console.log(dataset.header);
                             updatePlot(dataset);
                         },
                         error: function(res,statut,erreur){
@@ -636,123 +837,166 @@ function getInfosMap1(e){
 }
 
 
-function updatePlot(datas){
-    if($("#container").highcharts().series.length !=0){
-        $("#container").highcharts().series[0].remove(true);
+
+// ########################## add plots ########################################################################
+
+$("#addIS").on('click', function(e){
+    e.preventDefault();
+    if($("#mesureIS").val() == 'Type'){
+        alert("Erreur ! Aucun type de mesure sélectionné !");
+        throw new Exception();
     }
-    $("#container").highcharts().setTitle({ text: "Periode du: "+datas.dates[0]+" au :"+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
-    $("#container").highcharts().addSeries({
-        name: datas.header,
-        data: datas.datas,
-        lineWidth: 1,
-        color: "#000000",
-        marker: { fillColor: '#000000', radius: 2 }
-    });
-    $("#container").highcharts().redraw();
-}
-
-
-function getInfosMap2(e){
-    console.log('ok');
-    var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
-    if(map.layers[1].name !== 'wms')  //si pas de layers
-    {
-        var errorPopup = new OpenLayers.Popup (
-            "error",
-            lonLat,
-            new OpenLayers.Size(100, 50),
-            "Pas de couche sélectionnée",
-            true, //ajout un bouton "fermer la fenetre"
-            null  //action apres close
-            );
-        errorPopup.autoSize = true;
-        map.addPopup(errorPopup);
+    if($("#stationIS").val() ==' Station'){
+        alert("Erreur ! Aucune station de mesure sélectionnée !");
+        throw new Exception();
     }
-    else
-    {
-        console.log('ok');
-        if(map.maxExtent.containsLonLat(lonLat))
-        {
-            var tempPopup = new OpenLayers.Popup (
-                "temp",
-                lonLat,
-                new OpenLayers.Size(100, 50),
-                "Loading...",
-                true, //ajout un bouton "fermer la fenetre"
-                null  //action apres close
-			);
-			//tempPopup.autoSize = true;
-			//map.addPopup(tempPopup);
-            var lonlat = map.getLonLatFromViewPortPx(e.xy);
-            //mise a jour date
-            var dateForm= $("input[id='date']").val();
-            lstInfos.date=dateForm;
-            var URLRequest = 
-                ROOT+"/ncss/"
-                + lstInfos.nomDataset
-                + "/" + lstInfos.capteur
-                + "/" + lstInfos.produit
-                + "/" + lstInfos.resspatiale
-                + "/" + lstInfos.nomFichier
-                + "?time_start="+ encodeURIComponent(lstInfos.date)
-                + "&time_end="+ encodeURIComponent(lstInfos.date)
-                + "&var="+ lstInfos.param
-
-                + "&latitude=" + lonlat.lat
-                + "&longitude=" + lonlat.lon
-
-                + "&accept=xml"
-                ;
-            $.ajax({
-                type: "GET",
-                url: URLRequest,
-                dataType: "xml",
-                async: false,
-                success: function(xml) 
-                {
-                    var lon = parseFloat($(xml).find('data[name="lon"]').text());
-                    var lat = parseFloat($(xml).find('data[name="lat"]').text());
-                    var val = parseFloat($(xml).find('data[name="'+lstInfos.param+'"]').text());
-                    var res = "";
-                    if (lon) 
-                    {
-                        // We have a successful result
-                        var truncVal = val.toPrecision(3);
-                        if(truncVal > 200)  //Kelvin -> Celsius
-                        {
-                            truncVal-=273,15
-                        }
-                        res = "Lon: "+ lon.toFixed(6) + 
-                              " </br>Lat: " + lat.toFixed(6) +
-        				   " </br>Value: " + truncVal;
-                    } 
-                    else 
-                    {
-                        res = "Impossible d'obtenir les informations demandées";
-                    }
-                    //map.removePopup(tempPopup);   //supprime le popup temporaire
-                    var popup = new OpenLayers.Popup (
-                        "id", // TODO: does this need to be unique?
-                        lonLat,
-                        new OpenLayers.Size(100, 50),
-                        res,
-                        true, //bouton fermer
-                        null  //action additionnel du bouton fermer
-                    );
-                    popup.autoSize = true;
-                    map.addPopup(popup);
-                },
-                error: function(request, status, error){
-                    console.log(error);
-                }
+    if($("#variableIS").val() == 'Variable'){
+        alert("Erreur ! Aucune variable sélectionnée !");
+        throw new Exception();
+    }
+    if($("#resoTempoIS").val() == 'Resolution Temporelle'){
+        alert("Erreur ! Aucune resolution tempoerlle sélectionnée !");
+        throw new Exception();
+    }
+    var dictdata = $("#mesureIS,#niveauIS,#stationsIS,#variablesIS,#resoTempoIS").serialize();
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: dictdata,
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            $("#plot").highcharts().showLoading();
+        },
+        complete: function(){
+            $("#plot").highcharts().hideLoading();
+        },
+        success: function(data){
+            dataset.header = data.header;
+            dataset.variable = data.varName;
+            dataset.datas = [];
+            dataset.dates = [];
+            $.each(data.dates, function(dateNo, date){
+                var tmp=[];
+                var dateISO = date.replace(/\D/g, " ");
+                var dateCompo = dateISO.split(" ");
+                dateCompo[1]--;
+                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2],dateCompo[3], dateCompo[4], dateCompo[5]);
+                tmp.push(dateUTC, parseFloat(data.datas[dateNo]));
+                dataset.datas.push(tmp);
             });
+            if(typeof $("#plot").highcharts().get(dataset.variable) == 'undefined'){
+                $("#plot").highcharts().addAxis({
+                    id: dataset.variable,
+                    title: {
+                        text: dataset.variable
+                    },
+                    lineWidth: 2,
+                    //lineColor: '#08F',
+                    opposite: true
+                });
+            }
+            $("#plot").highcharts().addSeries({
+                yAxis: dataset.variable,
+                name: dataset.header+'_'+dataset.variable,
+                data: dataset.datas,
+                lineWidth: 1,
+                //color: "#000000",
+                marker: { fillColor: '#000000', radius: 2 }
+            });
+        },
+        error : function(xhr,errmsg,err) {
+            console.log('erreur: '+errmsg);
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
         }
-    }//fin else
-}
+    });
+})
 
 
-//Création du chart dans le div #container
-$('#container').highcharts({
+
+
+$("#addEP").on('click', function(e){
+    e.preventDefault();
+    if($("#epidemioEP").val() == 'Type'){
+        alert("Erreur ! Aucun type de mesure sélectionné !");
+        throw new Exception();
+    }
+    if($("#paysEP").val() ==' Pays'){
+        alert("Erreur ! Aucun pays sélectionné !");
+        throw new Exception();
+    }
+    if($("#echelle").val() == 'Echelle'){
+        alert("Erreur ! Aucune echelle de découpage sélectionnée !");
+        throw new Exception();
+    }
+    if( ($("#districtEP").prop("disabled") == false) & ($("#districtEP").val() == 'District')){
+        alert("Erreur ! Aucun district sélectionné !");
+        throw new Exception();
+    }
+    if($("#variableEP").val() == 'Variable'){
+        alert("Erreur ! Aucune variable sélectionnée !");
+        throw new Exception();
+    }
+    var dictdata = $("[id$='EP']").serialize();
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: dictdata,
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            $("#plot").highcharts().showLoading();
+        },
+        complete: function(){
+            $("#plot").highcharts().hideLoading();
+        },
+        success: function(data){
+            dataset.header = data.header;
+            dataset.variable = data.varName;
+            dataset.datas = [];
+            dataset.dates = [];
+            $.each(data.dates, function(dateNo, date){
+                var tmp=[];
+                var dateISO = date.replace(/\D/g, " ");
+                var dateCompo = dateISO.split(" ");
+                dateCompo[1]--;
+                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2],dateCompo[3], dateCompo[4], dateCompo[5]);
+                tmp.push(dateUTC, parseFloat(data.datas[dateNo]));
+                dataset.datas.push(tmp);
+            });
+            if(typeof $("#plot").highcharts().get(dataset.variable) == 'undefined'){
+                $("#plot").highcharts().addAxis({
+                    id: dataset.variable,
+                    title: {
+                        text: dataset.variable
+                    },
+                    lineWidth: 2,
+                    //lineColor: '#08F',
+                    opposite: true
+                });
+            }
+            $("#plot").highcharts().addSeries({
+                yAxis: dataset.variable,
+                name: dataset.header+'_'+dataset.variable,
+                data: dataset.datas,
+                lineWidth: 1,
+                //color: "#000000",
+                marker: { fillColor: '#000000', radius: 2 }
+            });
+        },
+        error : function(xhr,errmsg,err) {
+            console.log('erreur: '+errmsg);
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+})
+
+
+
+//Création du chart dans le div #containerProfil
+$('#plot').highcharts({
     chart:{
         type: 'spline',
         zoomType: 'xy',
@@ -786,7 +1030,7 @@ $('#container').highcharts({
     },
     yAxis: {
         title: {
-            text: dataset.header
+            text: ''
         }
     },
     series: [{
@@ -799,49 +1043,120 @@ $('#container').highcharts({
 });
 
 
-$("#container").hide();
-$('#btn').click(function() {
+$("#containerProfil").hide();
+$('#profil').click(function() {
     $(this).toggleClass("active");
     if($(this).hasClass('active')){
-        var getInfosMap = getInfosMap1;
-        if($("#container").highcharts().series.length !=0){
-            $("#container").highcharts().series[0].remove(true);
+        setFormInSitu();
+        if($("#plot").highcharts().series.length !=0){
+            $("#plot").highcharts().series[0].remove(true);
         }
-        $("#container").show();
+        $("#containerProfil").show();
     }else{
-        $("#container").hide();
+        $("#containerProfil").hide();
+        $("[id$='IS']").find("option:gt(0)").remove();
+        $("#niveauIS").prop("disabled", false);
+        $("[id$='EP']").find("option:gt(0)").remove();
+        $("#districtEP").prop("disabled", false);
         //var getInfosMap = getInfosMap2;
     }
 });
+
+
+$("#export").click(function(){
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?var=Surface_Temperature&north=12&west=0&east=15&south=1&horizStride=1&time_start=2006-07-01T00%3A00%3A00Z&time_end=2007-06-30T00%3A00%3A00Z&timeStride=1&addLatLon=true&accept=netcdf",
+        async: false,
+    });
+});
+
+function updatePlot(datas){
+    //if($("#plot").highcharts().series.length !=0){
+        //$("#plot").highcharts().series[0].remove(true);
+    //}
+    if(typeof $("#plot").highcharts().get(datas.variable) == 'undefined'){
+        $("#plot").highcharts().addAxis({
+            id: datas.variable,
+            title: {
+                text: datas.variable
+            },
+            lineWidth: 2,
+            //lineColor: '#08F',
+            opposite: true
+        });
+    }
+    $("#plot").highcharts().setTitle({ text: "Periode du: "+datas.dates[0]+" au :"+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
+    $("#plot").highcharts().addSeries({
+        name: datas.header,
+        data: datas.datas,
+        lineWidth: 1,
+        //color: "#000000",
+        marker: { fillColor: '#000000', radius: 2 }
+    });
+    //$("#plot").highcharts().redraw();
+}
 
 
 // #############################################################################################################
 
 // ################################################ map init update ############################################
 function layerInfo(l){
-        alert(l.geometry.getBounds());
-    }
+    alert(l.geometry.getBounds());
+}
+
+
+function drawPolygon(){
+    var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
+    polygon.setVisibility(true);
+    map.addLayer(polygon);
+    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {callbacks: {done: function(){console.log('ok')}},
+                                                                                                        handlerOptions: {persist: true},
+                                                                                                        featureAdded: layerInfo,
+                                                                                                        });
+    polygonEditor.events.register('FeatureAdded', polygonEditor);
+    polygonEditor.events.register('refresh', polygonEditor, function(){polygon.removeAllFeatures()});
+    map.addControl(polygonEditor);
+    polygonEditor.events.on({
+        featuresadded: function(l){console.log(l.geometry.getBounds());}
+    });
+    var _draw = new OpenLayers.Control.Button({
+        displayClass: 'draw',
+        type: OpenLayers.Control.TYPE_TOGGLE,
+        eventListeners: {
+            'activate': function(){
+                polygonEditor.activate();
+            },
+            'deactivate': function(){
+                polygonEditor.deactivate();
+                polygon.removeAllFeatures();
+            }
+        },
+    });
+    return(_draw);
+}
+
 
 function initMap(){
 
     map = new OpenLayers.Map('map',{
         projection: new OpenLayers.Projection("EPSG:4326"),
-        //resolutions: [0.03, 0.09, 0.15, 0.4],
+        //resolutions: [0.001, 0.005, 0.01, 0.02, 0.03, 0.09, 0.15, 0.4],
         restrictedExtent: [-180, -90, 180, 90],
         maxResolution: 0.4,
         minResolution: 0.001,
-        controls: []
     });
     var panel = new OpenLayers.Control.Panel({displayClass: 'panel'});
     map.addControl(panel);
     var controls = [
-            new OpenLayers.Control.Navigation(),
-            new OpenLayers.Control.PanZoomBar(),
+            //new OpenLayers.Control.Attribution(),
             new OpenLayers.Control.LayerSwitcher({'ascending':false}),
-            new OpenLayers.Control.ScaleLine(),
-            new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
-            new OpenLayers.Control.OverviewMap(),
-            new OpenLayers.Control.KeyboardDefaults(),];
+            //new OpenLayers.Control.ScaleLine(),
+            //new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
+            //new OpenLayers.Control.OverviewMap(),
+            new OpenLayers.Control.KeyboardDefaults(),
+            new OpenLayers.Control.SelectFeature(),
+    ];
     panel.addControls(controls);
     
 
@@ -853,6 +1168,9 @@ function initMap(){
         isBaseLayer: true}
     );
     map.addLayer(fond);
+
+
+    // ajout des layers districts,aires de santé pour chaque pays
     $.each(geoDist, function(i,g){
         var shp = new OpenLayers.Layer.Vector(g, {
             strategies: [new OpenLayers.Strategy.Fixed()],
@@ -864,7 +1182,7 @@ function initMap(){
                 strokeColor: '#000000',
                 strokeOpacity: 1,
                 strokeWidth: 1,
-                fillOpacity: 0.
+                fillOpacity: 0.,
             }
         });
         shp.setVisibility(false);
@@ -884,29 +1202,17 @@ function initMap(){
     stt.setVisibility(false);
     map.addLayer(stt);
 
-    var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
-    polygon.setVisibility(true);
-    map.addLayer(polygon);
-    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {callbacks: {done: function(){console.log('ok')}}, handlerOptions: {persist: true}, featureAdded: layerInfo});
-    polygonEditor.events.register('FeatureAdded', polygonEditor);
-    polygonEditor.events.register('refresh', polygonEditor, function(){polygon.removeAllFeatures()});
-    map.addControl(polygonEditor);
-    polygonEditor.events.on({
-        featuresadded: function(l){console.log(l.geometry.getBounds());}
+    selectControl = new OpenLayers.Control.SelectFeature([map.layers[1],map.layers[2],map.layers[3],map.layers[4],map.layers[5]], {
+        onSelect: onFeatureSelect,
+        onUnselect: onFeatureUnselect,
     });
-    var _draw = new OpenLayers.Control.Button({
-        displayClass: 'draw',
-        type: OpenLayers.Control.TYPE_TOGGLE,
-        eventListeners: {'activate': function(){
-                            polygonEditor.activate();
-                            },
-                        'deactivate': function(){
-                            polygonEditor.deactivate();
-                            polygon.removeAllFeatures();
-                            }
-        },
-    });
-    panel.addControls(_draw);
+    map.addControl(selectControl);
+    selectControl.activate();
+    
+
+    // dessin carré pour coordonnees
+    var draw = drawPolygon();
+    panel.addControls(draw);
     
 
     
@@ -916,6 +1222,29 @@ function initMap(){
     map.events.register('click', map, getInfosMap1);
 }
 
+function onPopupClose(evt) {
+    selectControl.unselect(selectedFeature);
+}
+
+function onFeatureSelect(feature) {
+    selectedFeature = feature;
+    popup = new OpenLayers.Popup.FramedCloud("chicken",
+    feature.geometry.getBounds().getCenterLonLat(),
+    new OpenLayers.Size(100, 100),
+        "<h5>" + feature.attributes.name + "</h5>",
+    null, true, onPopupClose);
+
+    feature.popup = popup;
+    //map.addPopup(popup);
+    map.addPopup(popup, true);
+
+}
+
+function onFeatureUnselect(feature) {
+    map.removePopup(feature.popup);
+    feature.popup.destroy();
+    feature.popup = null;
+}
 
 function majLayer(){
     //Récupère les infos saisies par l'utilisateur
@@ -951,8 +1280,8 @@ function majLayer(){
             map.removeLayer(map.layers[1])
         }
     }
-    if($("#container").highcharts().series.length !=0){
-        $("#container").highcharts().series[0].remove(true);
+    if($("#plot").highcharts().series.length !=0){
+        $("#plot").highcharts().series[0].remove(true);
     }
     var wms = new OpenLayers.Layer.WMS(
         "wms",
@@ -971,7 +1300,6 @@ function majLayer(){
     );
     map.addLayer(wms);
     map.setLayerIndex(wms, 1);
-       
 }
 
 
@@ -1080,6 +1408,7 @@ function setMinMax(){
 	
 }
 // #############################################################################################################
+
 
 
 // #############################################################################################################

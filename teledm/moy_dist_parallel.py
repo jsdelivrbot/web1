@@ -285,7 +285,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
 
 if __name__ == "__main__":
     
-    ddirout = "/home/mers/dev/crc/teledm/tmp"
+    ddirout = os.path.expanduser('~') + "/dev/crc/teledm/tmp"
     deb = "2007-01-01"     #"1979" a ...
     fin = "2007-01-15"
     pays = "burkina"       #"burkina","mali","niger","senegal"
