@@ -56,9 +56,8 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-
-
 ## SENDFILE settings
+MEDIA_ROOT = os.path.join(BASE_DIR, 'teledm/tmp')
 SENDFILE_BACKEND = 'sendfile.backends.development'
 #SENDFILE_BACKEND = 'sendfile.backends.xsendfile'
 #SENDFILE_BACKEND = 'sendfile.backends.nginx'
