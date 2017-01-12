@@ -162,29 +162,29 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
         varname1 = varname
     print files[:]
     output = varname1+'_'+files[0][:-5]+'_'+niveau+'_'+shape+'_'+pays+'_'+ deb.replace('-','') + fin.replace('-','')  + res_temp + '.nc'
-#    ncnew = Dataset(ddirout+ '/' + output, 'w')
-#    # dimensions#####
-#    ncnew.createDimension('time', None)
-#    ncnew.createDimension('index_dist', nbdist)
-#    # variables#####
-#    tp = ncnew.createVariable('time','f8',('time',))
-#    index = ncnew.createVariable('index_dist','f4',('index_dist',))
-#    index[:] = range(nbdist)
-#    nbpx = ncnew.createVariable('count','f4',('time','index_dist'))
-#    vmin = ncnew.createVariable('min','f4',('time','index_dist'))
-#    vmax = ncnew.createVariable('max','f4',('time','index_dist'))
-#    vmean = ncnew.createVariable('mean','f4',('time','index_dist'))
-#    vstd = ncnew.createVariable('std','f4',('time','index_dist'))
-#    #vmed = ncnew.createVariable('median','f4',('time','index_dist'))
-#    # attributs#####
-#    ncnew.Convention ='CF-1.5'
-#    ncnew.description = 'moyenne districts pour la variable :',varname
-#    ncnew.history = 'Created ' + time.ctime(time.time())
-#    ncnew.source = ' '
-#    index.standard_name = listdist
-#    tp.standard_name = 'time'
-#    tp.calendar = 'gregorian'
-#    #fillvalue = np.nan
+    ncnew = Dataset(ddirout+ '/' + output, 'w')
+    # dimensions#####
+    ncnew.createDimension('time', None)
+    ncnew.createDimension('index_dist', nbdist)
+    # variables#####
+    tp = ncnew.createVariable('time','f8',('time',))
+    index = ncnew.createVariable('index_dist','f4',('index_dist',))
+    index[:] = range(nbdist)
+    nbpx = ncnew.createVariable('count','f4',('time','index_dist'))
+    vmin = ncnew.createVariable('min','f4',('time','index_dist'))
+    vmax = ncnew.createVariable('max','f4',('time','index_dist'))
+    vmean = ncnew.createVariable('mean','f4',('time','index_dist'))
+    vstd = ncnew.createVariable('std','f4',('time','index_dist'))
+    #vmed = ncnew.createVariable('median','f4',('time','index_dist'))
+    # attributs#####
+    ncnew.Convention ='CF-1.5'
+    ncnew.description = 'moyenne districts pour la variable :',varname
+    ncnew.history = 'Created ' + time.ctime(time.time())
+    ncnew.source = ' '
+    index.standard_name = listdist
+    tp.standard_name = 'time'
+    tp.calendar = 'gregorian'
+    #fillvalue = np.nan
     ################################################################################################################
     ################################################################################################################
     
@@ -262,27 +262,24 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
     print "#########################################################################################################################"
     print "#########################################################################################################################\n\n"
     # chargement des variables dans le .nc
-#    tp[:] = np.append(tp[:],serie_dates)
-#    tp.units = dates.units
-#    nbpx[:] = np.concatenate([nbpx_tmp[d_t] for d_t in range(0,len(nbpx_tmp))], axis=0)
-#    vmax[:] = np.concatenate([vmax_tmp[d_t] for d_t in range(0,len(vmax_tmp))], axis=0)
-#    vmean[:] = np.concatenate([vmean_tmp[d_t] for d_t in range(0,len(vmean_tmp))], axis=0)
-#    vmin[:] = np.concatenate([vmin_tmp[d_t] for d_t in range(0,len(vmin_tmp))], axis=0)
-#    vstd[:] = np.concatenate([vstd_tmp[d_t] for d_t in range(0,len(vstd_tmp))], axis=0)
+    tp[:] = np.append(tp[:],serie_dates)
+    tp.units = dates.units
+    nbpx[:] = np.concatenate([nbpx_tmp[d_t] for d_t in range(0,len(nbpx_tmp))], axis=0)
+    vmax[:] = np.concatenate([vmax_tmp[d_t] for d_t in range(0,len(vmax_tmp))], axis=0)
+    vmean[:] = np.concatenate([vmean_tmp[d_t] for d_t in range(0,len(vmean_tmp))], axis=0)
+    vmin[:] = np.concatenate([vmin_tmp[d_t] for d_t in range(0,len(vmin_tmp))], axis=0)
+    vstd[:] = np.concatenate([vstd_tmp[d_t] for d_t in range(0,len(vstd_tmp))], axis=0)
     
     index = [num2date(d,dates.units).date() for d in serie_dates]
     columns_name = geodf.name.values.tolist()
     tmpvar_dict = {"nbpx":nbpx_tmp,"vmax":vmax_tmp,"vmean":vmean_tmp,"vmin":vmin_tmp,"vstd":vstd_tmp}
-#    writer = pd.ExcelWriter(ddirout+output[:-3]+'.xlsx')
     list_df = {}
     for n in tmpvar_dict:
-        df = n+'_df'
-        df = pd.DataFrame (np.concatenate([tmpvar_dict[n][d_t] for d_t in range(0,len(tmpvar_dict[n]))], axis=0), index=index, columns=columns_name).round(4)
-#        df.T.to_excel(writer, sheet_name=name)
-        list_df[n] = df
+        list_df[n] = pd.DataFrame (np.concatenate([tmpvar_dict[n][d_t] for d_t in range(0,len(tmpvar_dict[n]))], axis=0), index=index, columns=columns_name).round(4)
+        #df.to_csv(ddirout+'/'+output[:-3]+'_'+n+'.csv', header=True)
         
     nc.close()
-#    ncnew.close()
+    ncnew.close()
     return list_df
 
 

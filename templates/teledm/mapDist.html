@@ -105,12 +105,65 @@
                 <!--<img src="{% static 'teledm/images/load.gif' %}"/>-->
             </div>
         </div>
+{% endblock %}
+
+{% block content2 %}
+    <div class="row" id="containerProfil">
         <div class="row">
-            <div id="plotcontainer"></div>
-            <div>
-                <input type="button" id="clear" value="Clear" name="clear">
+            <div class="col-lg-4">
+                <div class="row">
+                    <label>Mesures in situ</label>
+                </div>
+                <div class="row">
+                    <select class="form-control" name="mesure" id="mesureIS" >
+                        <option selected hidden>Type</option>
+                    </select>
+                    <select class="form-control" name="stations" id="stationsIS" >
+                        <option selected hidden>Station</option>
+                    </select>
+                    <select class="form-control" name="niveau" id="niveauIS" >
+                        <option selected hidden>Niveau</option>
+                    </select>
+                    <select class="form-control" name="variables" id="variablesIS" >
+                        <option selected hidden>Variable</option>
+                    </select>
+                    <select class="form-control" name="resoTempo" id="resoTempoIS" >
+                        <option selected hidden>Resolution Temporelle</option>
+                    </select>
+                    <input type="button" id="addIS" value="Plot"/>
+                </div>                
+            </div>
+            <div class="col-lg-4">
+                <div class="row">
+                    <label>Donnees Epidemiologiques</label>
+                </div>
+                <div class="row">
+                    <select class="form-control" name="epidemio" id="epidemioEP" >
+                        <option selected hidden>Type</option>
+                    </select>
+                    <select class="form-control" name="pays" id="paysEP" >
+                        <option selected hidden>Pays</option>
+                    </select>
+                    <select class="form-control" name="echelle" id="echelleEP" >
+                        <option selected hidden>Echelle</option>
+                    </select>
+                    <select class="form-control" name="district" id="districtEP" >
+                        <option selected hidden>District</option>
+                    </select>
+                    <select class="form-control" name="variable" id="variableEP" >
+                        <option selected hidden>Variable</option>
+                    </select>
+                    <input type="button" id="addEP" value="Plot"/>
+                </div>
             </div>
         </div>
+        <div class="row">
+            <div id="plotcontainer" ></div>
+        </div>
+        <div>
+            <input type="button" id="clear" value="Clear" name="clear">
+        </div>
+    </div>
 {% endblock %}
 
 {% block js%}

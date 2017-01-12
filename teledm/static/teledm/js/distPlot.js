@@ -199,6 +199,164 @@ $("#moyenne").on('submit', function(e){
 });
 
 
+
+// ########################## add plots ########################################################################
+
+$("#addIS").on('click', function(e){
+    alert('ok');
+    e.preventDefault();
+    if($("#mesureIS").val() == 'Type'){
+        alert("Erreur ! Aucun type de mesure sélectionné !");
+        throw new Exception();
+    }
+    if($("#stationIS").val() ==' Station'){
+        alert("Erreur ! Aucune station de mesure sélectionnée !");
+        throw new Exception();
+    }
+    if($("#variableIS").val() == 'Variable'){
+        alert("Erreur ! Aucune variable sélectionnée !");
+        throw new Exception();
+    }
+    if($("#resoTempoIS").val() == 'Resolution Temporelle'){
+        alert("Erreur ! Aucune resolution tempoerlle sélectionnée !");
+        throw new Exception();
+    }
+    var dictdata = $("#mesureIS,#niveauIS,#stationsIS,#variablesIS,#resoTempoIS").serialize();
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: dictdata,
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            $("#plotcontainer").highcharts().showLoading();
+        },
+        complete: function(){
+            $("#plotcontainer").highcharts().hideLoading();
+        },
+        success: function(data){
+            dataset.header = data.header;
+            dataset.variable = data.varName;
+            dataset.datas = [];
+            dataset.dates = [];
+            $.each(data.dates, function(dateNo, date){
+                var tmp=[];
+                var dateISO = date.replace(/\D/g, " ");
+                var dateCompo = dateISO.split(" ");
+                dateCompo[1]--;
+                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2],dateCompo[3], dateCompo[4], dateCompo[5]);
+                tmp.push(dateUTC, parseFloat(data.datas[dateNo]));
+                dataset.datas.push(tmp);
+            });
+            if(typeof $("#plotcontainer").highcharts().get(dataset.variable) == 'undefined'){
+                $("#plotcontainer").highcharts().addAxis({
+                    id: dataset.variable,
+                    title: {
+                        text: dataset.variable
+                    },
+                    lineWidth: 2,
+                    //lineColor: '#08F',
+                    opposite: true
+                });
+            }
+            $("#plotcontainer").highcharts().addSeries({
+                yAxis: dataset.variable,
+                name: dataset.header+'_'+dataset.variable,
+                data: dataset.datas,
+                lineWidth: 1,
+                //color: "#000000",
+                marker: { fillColor: '#000000', radius: 2 }
+            });
+        },
+        error : function(xhr,errmsg,err) {
+            console.log('erreur: '+errmsg);
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+})
+
+
+
+
+$("#addEP").on('click', function(e){
+    e.preventDefault();
+    if($("#epidemioEP").val() == 'Type'){
+        alert("Erreur ! Aucun type de mesure sélectionné !");
+        throw new Exception();
+    }
+    if($("#paysEP").val() ==' Pays'){
+        alert("Erreur ! Aucun pays sélectionné !");
+        throw new Exception();
+    }
+    if($("#echelle").val() == 'Echelle'){
+        alert("Erreur ! Aucune echelle de découpage sélectionnée !");
+        throw new Exception();
+    }
+    if( ($("#districtEP").prop("disabled") == false) & ($("#districtEP").val() == 'District')){
+        alert("Erreur ! Aucun district sélectionné !");
+        throw new Exception();
+    }
+    if($("#variableEP").val() == 'Variable'){
+        alert("Erreur ! Aucune variable sélectionnée !");
+        throw new Exception();
+    }
+    var dictdata = $("[id$='EP']").serialize();
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: dictdata,
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            $("#plotcontainer").highcharts().showLoading();
+        },
+        complete: function(){
+            $("#plotcontainer").highcharts().hideLoading();
+        },
+        success: function(data){
+            dataset.header = data.header;
+            dataset.variable = data.varName;
+            dataset.datas = [];
+            dataset.dates = [];
+            $.each(data.dates, function(dateNo, date){
+                var tmp=[];
+                var dateISO = date.replace(/\D/g, " ");
+                var dateCompo = dateISO.split(" ");
+                dateCompo[1]--;
+                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2],dateCompo[3], dateCompo[4], dateCompo[5]);
+                tmp.push(dateUTC, parseFloat(data.datas[dateNo]));
+                dataset.datas.push(tmp);
+            });
+            if(typeof $("#plotcontainer").highcharts().get(dataset.variable) == 'undefined'){
+                $("#plotcontainer").highcharts().addAxis({
+                    id: dataset.variable,
+                    title: {
+                        text: dataset.variable
+                    },
+                    lineWidth: 2,
+                    //lineColor: '#08F',
+                    opposite: true
+                });
+            }
+            $("#plotcontainer").highcharts().addSeries({
+                yAxis: dataset.variable,
+                name: dataset.header+'_'+dataset.variable,
+                data: dataset.datas,
+                lineWidth: 1,
+                //color: "#000000",
+                marker: { fillColor: '#000000', radius: 2 }
+            });
+        },
+        error : function(xhr,errmsg,err) {
+            console.log('erreur: '+errmsg);
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+})
+
+
 $('#mapcontainer').highcharts('Map', {
     title : {
         text : 'Statistiques',

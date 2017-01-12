@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
 from sendfile import sendfile
 import json, simplejson
 import os
@@ -41,25 +42,26 @@ def mapViewer(request):
             station = request.POST['stations']
             variable = str(request.POST['variables'])
             resoTempo = request.POST['resoTempo']
-            niveau = request.POST['niveau']
-            if mesure == "aeronet":
+            try:
+                niveau = request.POST['niveau']
                 df = pd.read_csv(ddir + mesure + '/niveau_'+niveau+'/'+station+'_aeronet_'+niveau+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-            else:
+            except KeyError:
                 df = pd.read_csv(ddir + mesure + '/'+station+'_'+mesure+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-            varName = station+'_'+variable
+            geo = station
         else:
             epidemio = request.POST['epidemio']
             pays = request.POST['pays']
             echelle = request.POST['echelle']
-            district = request.POST['district']
-            variable = request.POST['variables']
-            csv = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
-            if echelle == 'district':
+            variable = str(request.POST['variable'])
+            try:
+                district = request.POST['district']
+                csv = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
                 df = csv[csv.district==district]
-            else:
-                df = csv[csv.district==pays]
-            varName = district+'_'+variable
-        dictdatas = {'varName':varName, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}        
+                geo = district
+            except KeyError:
+                df = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+                geo = pays
+        dictdatas = {'header':geo, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}        
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='text/json')
     else:
         return render_to_response('teledm/mapViewer.html',context_instance=RequestContext(request))
@@ -69,7 +71,7 @@ def mapViewer(request):
 def mapDist(request):
     if request.is_ajax():
         print request.POST
-        ddirout = "/home/dev/crc/teledm/tmp"
+        ddirout = settings.MEDIA_ROOT
         deb = request.POST['datedebut'] 
         fin = request.POST['datefin'] 
         pays = request.POST['pays']  

@@ -1,7 +1,6 @@
+var geoDist = ['niger_district_sante', 'mali_district_sante','burkina_aire_sante', 'burkina_district_sante',];
 var mesures = ["aeronet", "teom", "meteo"];
-var epidemio = ["meningite"];
-var meningites = ["cas", "deces", "incidence", "population"];
-var geoEpidemio = ["pays", "district"];
+
 var stationsAeronet = ["Banizoumbou", "Cinzana", "Dakar"];
 var variablesAeronet1 = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_340', '%TripletVar_380', '%TripletVar_412', '%TripletVar_440',
                          '%TripletVar_443', '%TripletVar_490', '%TripletVar_500', '%TripletVar_531', '%TripletVar_532', '%TripletVar_551',
@@ -39,14 +38,58 @@ var variablesAeronet1 = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_34
                          'dAE/dln(wavelength)-Total_500nm[alphap]']
 var variablesAeronet2 = ["AOT_551-Total", "Total_AOD_500nm[tau_a]", "AOT_551", "500-870Angstrom", "FineModeFraction_500nm[eta]"];
 var niveau = ['1_5','2'];
-var resoTempoAeronet = ["diurne_15min", "diurne_h", "diurne_d", "diurne_w", "diurne_m", "diurne_t",
-                        "h24_15min", "h24_h", "h24_d", "h24_w", "h24_m", "h24_t"]
+var resoTempo = {
+    "aeronet":["diurne_15min", "diurne_h", "diurne_d", "diurne_w", "diurne_m", "diurne_t",
+                        "h24_15min", "h24_h", "h24_d", "h24_w", "h24_m", "h24_t"],
+    "teom":["diurne_15min", "diurne_h", "diurne_d", "diurne_w", "diurne_m", "diurne_t",
+                        "h24_15min", "h24_h", "h24_d", "h24_w", "h24_m", "h24_t"],
+    "meteo":['3h', '6h', '12h', 'd', 'w', 'm']
+};
 var stationsTeom = ["Banizoumbou", "Cinzana", "MBour", "Dedougou"];
 var variablesTeom = ["concentration"];
 var stationsMeteo = ["Banizoumbou", "Cinzana", "MBour", "Dedougou"];
 var variablesMeteo = ["wind", "wind_dir", "temp", "relh", "rain"];
 var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
-var geoDist = ['niger_district_sante', 'mali_district_sante','burkina_aire_sante', 'burkina_district_sante',];
+
+var epidemio = ["meningite"];
+var meningitePays = {
+    'Burkina':['pays', 'district'],
+    'Mali':['pays', 'district'],
+    'Niger':['pays', 'district'],
+    //'Senegal':['pays']
+};
+var meningiteDist = {
+    'Burkina':['Banfora', 'Barsalogo', 'Batie', 'Bogande', 'Boromo', 'Boulsa', 'Bousse',
+    'Dande', 'Dano', 'Dedougou', 'Diapaga', 'Diebougou', 'Djibo', 'Dori', 'Fada', 'Fadgay',
+    'Gaoua', 'Gayeri', 'Gorom-Gorom', 'Gourcy', 'Hounde', 'Kaya', 'Kombissiri', 'Kongoussi',
+    'Kossodo', 'Koudougou', 'Koupela', 'Leo', 'Leosap', 'Manga', 'Nanoro', 'Nouna', 'Orodara',
+    'Ouagou', 'Ouahigouya', 'Ouargaye', 'Pama', 'Paul6', 'Pissy', 'Po', 'Reo', 'Sapone', 'Sapouy',
+    'Sebba', 'Secteur15', 'Secteur22', 'Secteur30', 'Seguenega', 'Sindou', 'Solenzo', 'Tenkodogo',
+    'Titao', 'Toma', 'Tougan', 'Yako', 'Zabre', 'Ziniare', 'Zorgho'],
+
+    'Mali':['Abeibara', 'Ansongo', 'Bafoulabe', 'Banamba', 'Bandiagara', 'Bankass', 'Baraoueli', 'Bla',
+    'Bougouni', 'Bourem', 'Commune1', 'Commune2', 'Commune3', 'Commune4', 'Commune5', 'Commune6', 'Diema',
+    'Diofan', 'Dioila', 'Dire', 'Djenne', 'Douentza', 'Fana', 'Gao', 'Goundam', 'Gourma-Rharous', 'Kadiolo',
+    'Kangaba', 'Kati', 'Katoue', 'Kayes', 'Kenieba', 'Kidal', 'Kita', 'Kolokani', 'Kolondieba', 'Koro', 'Koulikoro',
+    'Koutiala', 'Macina', 'Markala', 'Menaka', 'Mopti', 'Nara', 'Niafunke', 'Niono', 'Nioro', 'Ouelessebougou', 'San',
+    'Segmar', 'Segou', 'Selingue', 'Sikasso', 'Tenenkou', 'Tessalit', 'Tin-Essako', 'Tombouctou', 'Tominian',
+    'Yanfolila', 'Yansel', 'Yelimane', 'Yorosso', 'Youwarou'],
+
+    'Niger':['Abalak', 'Agadez', 'Agatch', 'Aguie', 'Arlit', 'Bilma', 'Birni-Nkonni',
+    'Boboye', 'Bouza', 'Dakoro', 'Diffa', 'Dogon-Doutchi', 'Dosso', 'Filingue', 'Gaya',
+    'Goure', 'Guidan-Roumdji', 'Illela', 'Keita', 'Kollo', 'Loga', 'Madaoua', 'Madarounfa',
+    'Magaria', 'Maine-Soroa', 'Maradi', 'Matameye', 'Mayahi', 'Mirriah', 'Nguigmi', 'Niamey',
+    'Niamey1', 'Niamey2', 'Niamey3', 'Ouallam', 'Say', 'Tahoua', 'Tanout', 'Tchiab', 'Tchintabaraden',
+    'Tchirozerine', 'Tera', 'Tessaoua', 'Tillaberi', 'Zinder'],
+};
+var meningiteVar = {
+    'pays':['deces', 'population', 'incidence'],
+    'district':['cas', 'incidence', 'population']
+};
+
+
+
+
 var map;
 var fond;
 var mapPanel;
@@ -83,6 +126,7 @@ var varInfos = {
 
 var dataset = {
     header: "",
+    variable: "",
     lon: "",
     lat: "",
     dates: [],
@@ -192,63 +236,112 @@ function setFormInSitu(){
     $.each(mesures, function(i, item){
         $("#mesureIS").append($("<option></option>").attr("value", item).text(item));
     });
+    $.each(epidemio, function(i, item){
+        $("#epidemioEP").append($("<option></option>").attr("value", item).text(item));
+    });
+
+    $("#mesureIS").on('change', function(){
+        $("#stationsIS").find("option:gt(0)").remove();
+        $("#niveauIS").find("option:gt(0)").remove();
+        $("#variablesIS").find("option:gt(0)").remove();
+        $("#resoTempoIS").find("option:gt(0)").remove();
+        if($(this).val() == 'aeronet'){
+            $.each(stationsAeronet, function(i, item){
+                $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $("#niveauIS").prop("disabled", false);
+            $.each(niveau, function(i, item){
+                $("#niveauIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $.each(variablesAeronet1, function(i, item){
+                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $("#niveauIS").prop('selectedIndex', 1);
+            $.each(resoTempo[$(this).val()], function(i, item){
+                $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+            });
+        }else if($(this).val() == 'teom'){
+            $("#niveauIS").prop("disabled", true);
+            $.each(stationsTeom, function(i, item){
+                $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $.each(variablesTeom, function(i, item){
+                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $.each(resoTempo[$(this).val()], function(i, item){
+                $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+            });
+        }else{
+            $("#niveauIS").prop("disabled", true);
+            $.each(stationsMeteo, function(i, item){
+                $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $.each(variablesMeteo, function(i, item){
+                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+            });
+            $.each(resoTempo[$(this).val()], function(i, item){
+                $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+            });
+        }
+    });
+    
+    $("#niveauIS").on('change', function(){
+        $("#variablesIS").find("option:gt(0)").remove();
+        if($(this).val() == '1_5'){
+            $.each(variablesAeronet1, function(i, item){
+                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+            });
+        }else{
+            $.each(variablesAeronet2, function(i, item){
+                $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+            });
+        }
+    });
+    
+    
+    $("#epidemioEP").on('change', function(){
+        $("#paysEP").find("option:gt(0)").remove();
+        $("#echelleEP").find("option:gt(0)").remove();
+        $("#districtEP").find("option:gt(0)").remove();
+        $("#districtEP").prop("disabled", false);
+        $("#variableEP").find("option:gt(0)").remove();
+        if($(this).val() == 'meningite'){
+            $.each(Object.keys(meningitePays), function(i, item){
+                $("#paysEP").append($("<option></option>").attr("value", item).text(item));
+            });
+        }
+    });
+    
+    $("#paysEP").on('change', function(){
+        $("#echelleEP").find("option:gt(0)").remove();
+        $("#districtEP").find("option:gt(0)").remove();
+        $("#districtEP").prop("disabled", false);
+        $("#variableEP").find("option:gt(0)").remove();
+        $.each(meningitePays[$(this).val()], function(i, item){
+            $("#echelleEP").append($("<option></option>").attr("value", item).text(item));
+        });
+    });
+    
+    
+    $("#echelleEP").on('change', function(){
+        $("#districtEP").find("option:gt(0)").remove();
+        $("#variableEP").find("option:gt(0)").remove();
+        if($(this).val() == 'district'){
+            $("#districtEP").prop("disabled", false);
+            $.each(meningiteDist[$("#paysEP").val()], function(i, item){
+                $("#districtEP").append($("<option></option>").attr("value", item).text(item))
+            });
+            $.each(meningiteVar.district, function(i, item){
+                $("#variableEP").append($("<option></option>").attr("value", item).text(item));
+            });
+        }else{
+            $("#districtEP").prop("disabled", true);
+            $.each(meningiteVar.pays, function(i, item){
+                $("#variableEP").append($("<option></option>").attr("value", item).text(item));
+            });
+        }
+    });
 }
-
-$("#mesureIS").on('change', function(){
-    //$("#stationsIS").val('');
-    $("#stationsIS").find("option:gt(0)").remove();
-    $("#niveauIS").find("option:gt(0)").remove();
-    $("#variablesIS").find("option:gt(0)").remove();
-    $("#resoTempoIS").find("option:gt(0)").remove();
-    if($(this).val() == 'aeronet'){
-        $.each(stationsAeronet, function(i, item){
-            $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
-        });
-        $.each(niveau, function(i, item){
-            $("#niveauIS").append($("<option></option>").attr("value", item).text(item));
-        });
-        $.each(variablesAeronet1, function(i, item){
-            $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-        });
-        $("#niveauIS").prop('selectedIndex', 1);
-        $.each(resoTempoAeronet, function(i, item){
-            $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
-        });
-    }else if($(this).val() == 'teom'){
-        $.each(stationsTeom, function(i, item){
-            $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
-        });
-        $.each(variablesTeom, function(i, item){
-            $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-        });
-        $.each(resoTempoAeronet, function(i, item){
-            $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
-        });
-    }else{
-       $.each(stationsMeteo, function(i, item){
-            $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
-        });
-        $.each(variablesMeteo, function(i, item){
-            $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-        });
-        $.each(resoTempoAeronet, function(i, item){
-            $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
-        });
-    }
-});
-
-$("#niveauIS").on('change', function(){
-    $("#variablesIS").find("option:gt(0)").remove();
-    if($(this).val() == '1_5'){
-        $.each(variablesAeronet1, function(i, item){
-            $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-        });
-    }else{
-        $.each(variablesAeronet2, function(i, item){
-            $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-        });
-    }
-});
 
 function getDateRange(url){
     var lstvariables = [];
@@ -703,7 +796,8 @@ function getInfosMap1(e){
                         },
                         success: function(text) {
                             var lines = text.split('\n');
-                            dataset.header = '';
+                            dataset.header = lstInfos.capteur + '_' + lstInfos.produit;
+                            dataset.variable = '';
                             dataset.lon = '';
                             dataset.lat = '';
                             dataset.datas = [];
@@ -724,11 +818,10 @@ function getInfosMap1(e){
                                         dataset.lon = items[2];
                                     }
                                 }else{
-                                    dataset.header = items[3];
+                                    dataset.variable = items[3];
                                 }
                             });
                             updatePlot(dataset);
-                            console.log(dataset.datas);
                         },
                         error: function(res,statut,erreur){
                         }
@@ -765,7 +858,6 @@ $("#addIS").on('click', function(e){
         alert("Erreur ! Aucune resolution tempoerlle sélectionnée !");
         throw new Exception();
     }
-    alert($("#stationIS").value);
     var dictdata = $("#mesureIS,#niveauIS,#stationsIS,#variablesIS,#resoTempoIS").serialize();
     $.ajax({
         async: false,
@@ -781,10 +873,8 @@ $("#addIS").on('click', function(e){
             $("#plot").highcharts().hideLoading();
         },
         success: function(data){
-            console.log(data.dates[0]);
-            dataset.header = data.varName;
-            dataset.lon = '';
-            dataset.lat = '';
+            dataset.header = data.header;
+            dataset.variable = data.varName;
             dataset.datas = [];
             dataset.dates = [];
             $.each(data.dates, function(dateNo, date){
@@ -796,8 +886,20 @@ $("#addIS").on('click', function(e){
                 tmp.push(dateUTC, parseFloat(data.datas[dateNo]));
                 dataset.datas.push(tmp);
             });
+            if(typeof $("#plot").highcharts().get(dataset.variable) == 'undefined'){
+                $("#plot").highcharts().addAxis({
+                    id: dataset.variable,
+                    title: {
+                        text: dataset.variable
+                    },
+                    lineWidth: 2,
+                    //lineColor: '#08F',
+                    opposite: true
+                });
+            }
             $("#plot").highcharts().addSeries({
-                name: dataset.header,
+                yAxis: dataset.variable,
+                name: dataset.header+'_'+dataset.variable,
                 data: dataset.datas,
                 lineWidth: 1,
                 //color: "#000000",
@@ -812,103 +914,85 @@ $("#addIS").on('click', function(e){
 })
 
 
-function getInfosMap2(e){
-    console.log('ok');
-    var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
-    if(map.layers[1].name !== 'wms')  //si pas de layers
-    {
-        var errorPopup = new OpenLayers.Popup (
-            "error",
-            lonLat,
-            new OpenLayers.Size(100, 50),
-            "Pas de couche sélectionnée",
-            true, //ajout un bouton "fermer la fenetre"
-            null  //action apres close
-            );
-        errorPopup.autoSize = true;
-        map.addPopup(errorPopup);
+
+
+$("#addEP").on('click', function(e){
+    e.preventDefault();
+    if($("#epidemioEP").val() == 'Type'){
+        alert("Erreur ! Aucun type de mesure sélectionné !");
+        throw new Exception();
     }
-    else
-    {
-        console.log('ok');
-        if(map.maxExtent.containsLonLat(lonLat))
-        {
-            var tempPopup = new OpenLayers.Popup (
-                "temp",
-                lonLat,
-                new OpenLayers.Size(100, 50),
-                "Loading...",
-                true, //ajout un bouton "fermer la fenetre"
-                null  //action apres close
-			);
-			//tempPopup.autoSize = true;
-			//map.addPopup(tempPopup);
-            var lonlat = map.getLonLatFromViewPortPx(e.xy);
-            //mise a jour date
-            var dateForm= $("input[id='date']").val();
-            lstInfos.date=dateForm;
-            var URLRequest = 
-                ROOT+"/ncss/"
-                + lstInfos.nomDataset
-                + "/" + lstInfos.capteur
-                + "/" + lstInfos.produit
-                + "/" + lstInfos.resspatiale
-                + "/" + lstInfos.nomFichier
-                + "?time_start="+ encodeURIComponent(lstInfos.date)
-                + "&time_end="+ encodeURIComponent(lstInfos.date)
-                + "&var="+ lstInfos.param
-
-                + "&latitude=" + lonlat.lat
-                + "&longitude=" + lonlat.lon
-
-                + "&accept=xml"
-                ;
-            $.ajax({
-                type: "GET",
-                url: URLRequest,
-                dataType: "xml",
-                async: false,
-                success: function(xml) 
-                {
-                    var lon = parseFloat($(xml).find('data[name="lon"]').text());
-                    var lat = parseFloat($(xml).find('data[name="lat"]').text());
-                    var val = parseFloat($(xml).find('data[name="'+lstInfos.param+'"]').text());
-                    var res = "";
-                    if (lon) 
-                    {
-                        // We have a successful result
-                        var truncVal = val.toPrecision(3);
-                        if(truncVal > 200)  //Kelvin -> Celsius
-                        {
-                            truncVal-=273,15
-                        }
-                        res = "Lon: "+ lon.toFixed(6) + 
-                              " </br>Lat: " + lat.toFixed(6) +
-        				   " </br>Value: " + truncVal;
-                    } 
-                    else 
-                    {
-                        res = "Impossible d'obtenir les informations demandées";
-                    }
-                    //map.removePopup(tempPopup);   //supprime le popup temporaire
-                    var popup = new OpenLayers.Popup (
-                        "id", // TODO: does this need to be unique?
-                        lonLat,
-                        new OpenLayers.Size(100, 50),
-                        res,
-                        true, //bouton fermer
-                        null  //action additionnel du bouton fermer
-                    );
-                    popup.autoSize = true;
-                    map.addPopup(popup);
-                },
-                error: function(request, status, error){
-                    console.log(error);
-                }
+    if($("#paysEP").val() ==' Pays'){
+        alert("Erreur ! Aucun pays sélectionné !");
+        throw new Exception();
+    }
+    if($("#echelle").val() == 'Echelle'){
+        alert("Erreur ! Aucune echelle de découpage sélectionnée !");
+        throw new Exception();
+    }
+    if( ($("#districtEP").prop("disabled") == false) & ($("#districtEP").val() == 'District')){
+        alert("Erreur ! Aucun district sélectionné !");
+        throw new Exception();
+    }
+    if($("#variableEP").val() == 'Variable'){
+        alert("Erreur ! Aucune variable sélectionnée !");
+        throw new Exception();
+    }
+    var dictdata = $("[id$='EP']").serialize();
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: dictdata,
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            $("#plot").highcharts().showLoading();
+        },
+        complete: function(){
+            $("#plot").highcharts().hideLoading();
+        },
+        success: function(data){
+            dataset.header = data.header;
+            dataset.variable = data.varName;
+            dataset.datas = [];
+            dataset.dates = [];
+            $.each(data.dates, function(dateNo, date){
+                var tmp=[];
+                var dateISO = date.replace(/\D/g, " ");
+                var dateCompo = dateISO.split(" ");
+                dateCompo[1]--;
+                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2],dateCompo[3], dateCompo[4], dateCompo[5]);
+                tmp.push(dateUTC, parseFloat(data.datas[dateNo]));
+                dataset.datas.push(tmp);
             });
+            if(typeof $("#plot").highcharts().get(dataset.variable) == 'undefined'){
+                $("#plot").highcharts().addAxis({
+                    id: dataset.variable,
+                    title: {
+                        text: dataset.variable
+                    },
+                    lineWidth: 2,
+                    //lineColor: '#08F',
+                    opposite: true
+                });
+            }
+            $("#plot").highcharts().addSeries({
+                yAxis: dataset.variable,
+                name: dataset.header+'_'+dataset.variable,
+                data: dataset.datas,
+                lineWidth: 1,
+                //color: "#000000",
+                marker: { fillColor: '#000000', radius: 2 }
+            });
+        },
+        error : function(xhr,errmsg,err) {
+            console.log('erreur: '+errmsg);
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
         }
-    }//fin else
-}
+    });
+})
+
 
 
 //Création du chart dans le div #containerProfil
@@ -946,7 +1030,7 @@ $('#plot').highcharts({
     },
     yAxis: {
         title: {
-            text: dataset.header
+            text: ''
         }
     },
     series: [{
@@ -963,12 +1047,17 @@ $("#containerProfil").hide();
 $('#profil').click(function() {
     $(this).toggleClass("active");
     if($(this).hasClass('active')){
+        setFormInSitu();
         if($("#plot").highcharts().series.length !=0){
             $("#plot").highcharts().series[0].remove(true);
         }
         $("#containerProfil").show();
     }else{
         $("#containerProfil").hide();
+        $("[id$='IS']").find("option:gt(0)").remove();
+        $("#niveauIS").prop("disabled", false);
+        $("[id$='EP']").find("option:gt(0)").remove();
+        $("#districtEP").prop("disabled", false);
         //var getInfosMap = getInfosMap2;
     }
 });
@@ -983,19 +1072,29 @@ $("#export").click(function(){
 });
 
 function updatePlot(datas){
-    if($("#plot").highcharts().series.length !=0){
-        $("#plot").highcharts().series[0].remove(true);
+    //if($("#plot").highcharts().series.length !=0){
+        //$("#plot").highcharts().series[0].remove(true);
+    //}
+    if(typeof $("#plot").highcharts().get(datas.variable) == 'undefined'){
+        $("#plot").highcharts().addAxis({
+            id: datas.variable,
+            title: {
+                text: datas.variable
+            },
+            lineWidth: 2,
+            //lineColor: '#08F',
+            opposite: true
+        });
     }
-    console.log(datas.datas);
     $("#plot").highcharts().setTitle({ text: "Periode du: "+datas.dates[0]+" au :"+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
     $("#plot").highcharts().addSeries({
         name: datas.header,
         data: datas.datas,
         lineWidth: 1,
-        color: "#000000",
+        //color: "#000000",
         marker: { fillColor: '#000000', radius: 2 }
     });
-    $("#plot").highcharts().redraw();
+    //$("#plot").highcharts().redraw();
 }
 
 
@@ -1316,7 +1415,6 @@ function setMinMax(){
 window.onload = function(){
     $('select').select2();
     setForm();
-    setFormInSitu();
     initMap();
     setColorbar();
 }
