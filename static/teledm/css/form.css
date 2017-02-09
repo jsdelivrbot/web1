@@ -53,7 +53,7 @@ input.input-small{
 }
 
 
-#Sat,#Periode,#Zone,#InSitu,#Epidemio,#theme {
+#Sat,#Periode,#Zone,#InSitu,#Epidemio,#theme,#containerProfil {
     background:  #F8F8FF;
     border: #006699 solid 1px;
     border-radius:10px;

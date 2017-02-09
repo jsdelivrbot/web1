@@ -1,9 +1,3 @@
-.leaflet-container {  /* all maps */
-    width:  800px;
-    height: 600px;
-     margin: 10px 10px; 
-    }
-
 .row {
   margin-right: 0px;
   margin-left: 0px;
@@ -78,7 +72,7 @@ li a {
 }
 
 #left {
-    padding-right: 470px;
+    padding-right: 400px;
 }
 
 #fr,#eng {

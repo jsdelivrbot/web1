@@ -69,31 +69,64 @@ def mapViewer(request):
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapDist(request):
+    print request.POST
     if request.is_ajax():
-        print request.POST
-        ddirout = settings.MEDIA_ROOT
-        deb = request.POST['datedebut'] 
-        fin = request.POST['datefin'] 
-        pays = request.POST['pays']  
-        niveau = request.POST['decoupage'] 
-        types = request.POST['type'] 
-        sat = request.POST['capteur']  
-        prod = request.POST['produit']
-        res_temp = request.POST['pasdetemps']
-        res = request.POST['resospatiale']
-        varname = request.POST['variable'] 
-        shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
-        ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)
-        val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
-        datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
-        list_dates = ldf['vmean'].index.values.tolist()
-        geojson = pays+"_"+niveau+"_sante.geojson"
-        filename = varname + '_' + prod + '_r' + res + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
-        dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson, 'filename':filename}
+        if 'capteur' in request.POST.keys():
+            ddirout = settings.MEDIA_ROOT
+            deb = request.POST['datedebut'] 
+            fin = request.POST['datefin'] 
+            pays = request.POST['pays']  
+            niveau = request.POST['decoupage'] 
+            types = request.POST['type'] 
+            sat = request.POST['capteur']  
+            prod = request.POST['produit']
+            res_temp = request.POST['pasdetemps']
+            res = request.POST['resospatiale']
+            varname = request.POST['variable'] 
+            shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
+            ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)
+            val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
+            datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
+            list_dates = ldf['vmean'].index.values.tolist()
+            geojson = pays+"_"+niveau+"_sante.geojson"
+            filename = varname + '_' + prod + '_r' + res[3:] + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
+            dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson, 'filename':filename}
+        elif 'mesure' in request.POST.keys():
+            mesure = request.POST['mesure']
+            station = request.POST['stations']
+            variable = str(request.POST['variables'])
+            resoTempo = request.POST['resoTempo']
+            try:
+                niveau = request.POST['niveau']
+                df = pd.read_csv(ddir + mesure + '/niveau_'+niveau+'/'+station+'_aeronet_'+niveau+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+            except KeyError:
+                df = pd.read_csv(ddir + mesure + '/'+station+'_'+mesure+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+            dictdatas = {'header':station, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
+        else:
+            epidemio = request.POST['epidemio']
+            pays = request.POST['pays']
+            echelle = request.POST['echelle']
+            variable = str(request.POST['variable'])
+            print variable
+            try:
+                print 'try'
+                district = request.POST['district']
+                csv = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
+                df = csv[csv.district==district]
+            except KeyError:
+                print 'keyError'
+                df = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+                print df
+            dictdatas = {'header':pays, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
+            
+        print dictdatas
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='application/json')
     else:
-        jsdatas = json.dumps({'form':''}, cls=DjangoJSONEncoder)
-        return render_to_response('teledm/mapDist.html',{'jsdatas':jsdatas},context_instance=RequestContext(request))
+        if 'submit' in request.POST.keys():
+            filename = request.POST['filename']
+            return sendfile(request, tmpDir + '/' + filename)
+        else:
+            return render_to_response('teledm/mapDist.html',context_instance=RequestContext(request))
 
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
@@ -156,7 +189,6 @@ def calval(request):
                                        type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
                                        inSitu, station, varStation, niveau
                                        )
-            print df
             return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
         else:
             vals = np.random.random_sample(10)

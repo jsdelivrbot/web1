@@ -7,6 +7,12 @@ var dataset = {
     fileOut: ''
 };
 
+var datasetInSitu = {
+    header: "",
+    variable: "",
+    dates: [],
+    datas: []
+};
 
 
 function verifForm(){
@@ -175,7 +181,7 @@ $("#moyenne").on('submit', function(e){
             });
             dataset.dates = data.dates;
             dataset.datas = data.datas;
-            dataset.fileOut = data.filename;
+            $("#filename").val(data.filename);
             var shape = data.shape;
             dataset.pays = shape.split('_')[0];
             dataset.decoupage = shape.split('_')[1];
@@ -197,6 +203,162 @@ $("#moyenne").on('submit', function(e){
         }
     })
 });
+
+
+
+// ########################## add plots ########################################################################
+
+$("#addIS").on('click', function(e){
+    e.preventDefault();
+    if($("#mesureIS").val() == 'Type'){
+        alert("Erreur ! Aucun type de mesure sélectionné !");
+        throw new Exception();
+    }
+    if($("#stationIS").val() ==' Station'){
+        alert("Erreur ! Aucune station de mesure sélectionnée !");
+        throw new Exception();
+    }
+    if($("#variableIS").val() == 'Variable'){
+        alert("Erreur ! Aucune variable sélectionnée !");
+        throw new Exception();
+    }
+    if($("#resoTempoIS").val() == 'Resolution Temporelle'){
+        alert("Erreur ! Aucune resolution tempoerlle sélectionnée !");
+        throw new Exception();
+    }
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: $("[id$='IS']").serialize(),
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            $("#plotcontainer").highcharts().showLoading();
+        },
+        complete: function(){
+            $("#plotcontainer").highcharts().hideLoading();
+        },
+        success: function(data){
+            datasetInSitu.header = data.header;
+            datasetInSitu.variable = data.varName;
+            datasetInSitu.datas = [];
+            datasetInSitu.dates = [];
+            $.each(data.dates, function(dateNo, date){
+                var tmp=[];
+                var dateISO = date.replace(/\D/g, " ");
+                var dateCompo = dateISO.split(" ");
+                dateCompo[1]--;
+                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2],dateCompo[3], dateCompo[4], dateCompo[5]);
+                tmp.push(dateUTC, parseFloat(data.datas[dateNo]));
+                datasetInSitu.datas.push(tmp);
+            });
+            if(typeof $("#plotcontainer").highcharts().get(datasetInSitu.variable) == 'undefined'){
+                $("#plotcontainer").highcharts().addAxis({
+                    id: datasetInSitu.variable,
+                    title: {
+                        text: datasetInSitu.variable
+                    },
+                    lineWidth: 2,
+                    //lineColor: '#08F',
+                    opposite: true
+                });
+            }
+            $("#plotcontainer").highcharts().addSeries({
+                yAxis: datasetInSitu.variable,
+                name: datasetInSitu.header+'_'+datasetInSitu.variable,
+                data: datasetInSitu.datas,
+                lineWidth: 1,
+                //color: "#000000",
+                marker: { fillColor: '#000000', radius: 2 }
+            });
+        },
+        error : function(xhr,errmsg,err) {
+            console.log('erreur: '+errmsg);
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+})
+
+
+
+
+$("#addEP").on('click', function(e){
+    e.preventDefault();
+    alert('ok');
+    if($("#epidemioEP").val() == 'Type'){
+        alert("Erreur ! Aucun type de mesure sélectionné !");
+        throw new Exception();
+    }
+    if($("#paysEP").val() ==' Pays'){
+        alert("Erreur ! Aucun pays sélectionné !");
+        throw new Exception();
+    }
+    if($("#echelle").val() == 'Echelle'){
+        alert("Erreur ! Aucune echelle de découpage sélectionnée !");
+        throw new Exception();
+    }
+    if( ($("#districtEP").prop("disabled") == false) & ($("#districtEP").val() == 'District')){
+        alert("Erreur ! Aucun district sélectionné !");
+        throw new Exception();
+    }
+    if($("#variableEP").val() == 'Variable'){
+        alert("Erreur ! Aucune variable sélectionnée !");
+        throw new Exception();
+    }
+    $.ajax({
+        async: false,
+        type: "POST",
+        url: '',
+        dataType: 'json',
+        data: $("[id$='EP']").serialize(),
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+            $("#plotcontainer").highcharts().showLoading();
+        },
+        complete: function(){
+            $("#plotcontainer").highcharts().hideLoading();
+        },
+        success: function(data){
+            datasetInSitu.header = data.header;
+            datasetInSitu.variable = data.varName;
+            datasetInSitu.datas = [];
+            datasetInSitu.dates = [];
+            $.each(data.dates, function(dateNo, date){
+                var tmp=[];
+                var dateISO = date.replace(/\D/g, " ");
+                var dateCompo = dateISO.split(" ");
+                dateCompo[1]--;
+                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2],dateCompo[3], dateCompo[4], dateCompo[5]);
+                tmp.push(dateUTC, parseFloat(data.datas[dateNo]));
+                datasetInSitu.datas.push(tmp);
+            });
+            if(typeof $("#plotcontainer").highcharts().get(datasetInSitu.variable) == 'undefined'){
+                $("#plotcontainer").highcharts().addAxis({
+                    id: datasetInSitu.variable,
+                    title: {
+                        text: datasetInSitu.variable
+                    },
+                    lineWidth: 2,
+                    //lineColor: '#08F',
+                    opposite: true
+                });
+            }
+            $("#plotcontainer").highcharts().addSeries({
+                yAxis: datasetInSitu.variable,
+                name: datasetInSitu.header+'_'+datasetInSitu.variable,
+                data: datasetInSitu.datas,
+                lineWidth: 1,
+                //color: "#000000",
+                marker: { fillColor: '#000000', radius: 2 }
+            });
+        },
+        error : function(xhr,errmsg,err) {
+            console.log('erreur: '+errmsg);
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+})
 
 
 $('#mapcontainer').highcharts('Map', {
@@ -225,11 +387,23 @@ $('#mapcontainer').highcharts('Map', {
                             newserie.data = $.map(newserie.data, function (value) {
                                 return isNaN(value) ? { y: null } : value;
                             });
+                            var newDataset = [];
+                            console.log(dataset.dates);
+                            $.each(dataset.dates, function(dateNo, date){
+                                var tmp=[];
+                                var dateISO = date.replace(/\D/g, " ");
+                                var dateCompo = dateISO.split(" ");
+                                dateCompo[1]--;
+                                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
+                                tmp.push(dateUTC, parseFloat(newserie.data[dateNo]));
+                                newDataset.push(tmp);
+                            });
+                            console.log(newDataset);
                             $("#plotcontainer").highcharts().addSeries({
                                 name: newserie.name+' '+$("#calcul").val().substr(2, $("#calcul").val().length),
-                                data: newserie.data
+                                data: newDataset
                             });
-                            $("#plotcontainer").highcharts().xAxis[0].setCategories(dataset.dates);
+                            //$("#plotcontainer").highcharts().xAxis[0].setCategories(dataset.dates);
                             $("#plotcontainer").highcharts().setTitle({ text: "Profil temporel"}, { text: $("#variableSel").val()});          
                         }
                     }
@@ -288,8 +462,7 @@ $('#plotcontainer').highcharts({
         valueDecimals: 9
     },
     xAxis: [{
-        categories: [],
-        type: 'Category',
+        type: 'datetime',
     }],
     yAxis: [{
         title: {
