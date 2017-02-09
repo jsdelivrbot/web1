@@ -1,23 +1,37 @@
 .Panel {
-    width: 18px;
-    height: 18px;
+    background: #eaedf2;
+    width: 26px;
+    height: 44px;
     cursor: pointer;
-    left: 10px;
-    bottom: 100px;
+    left: 9px;
+    top: 62px;
 }
 
 
 .drawItemInactive {
     background: #30d5c8;
     border: 2px solid #075f67;
-    width: 18px;
-    height: 18px;
+    width: 21px;
+    height: 21px;
 }
 
 .drawItemActive {
-    background: #dddddd;
-    border: 2px solid #dddddd;
-    width: 18px;
-    height: 18px;
+    background: #FFFFE0;
+    border: 2px solid #075f67;
+    width: 21px;
+    height: 21px;
 }
 
+.selectLItemInactive {
+    background: #30d5c8;
+    border: 2px solid #075f67;
+    width: 21px;
+    height: 21px;
+}
+
+.selectLItemActive {
+    background: #FFFFE0;
+    border: 2px solid #075f67;
+    width: 21px;
+    height: 21px;
+}

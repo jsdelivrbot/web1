@@ -690,7 +690,7 @@ function stopAnim(e)
 
 // ########################## get infoMap ######################################################################
 
-function getInfosMap1(e){
+function getInfosMapTemporel(e){
     var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
     if(map.layers[1].name !== 'wms'){ //si pas de layers wms
         var errorPopup = new OpenLayers.Popup (
@@ -703,11 +703,8 @@ function getInfosMap1(e){
             );
         errorPopup.autoSize = true;
         map.addPopup(errorPopup);
-    }
-    else
-    {
-        if(map.maxExtent.containsLonLat(lonLat))
-        {
+    }else{
+        if(map.maxExtent.containsLonLat(lonLat)){
             var tempPopup = new OpenLayers.Popup (
                 "temp",
                 lonLat,
@@ -716,8 +713,97 @@ function getInfosMap1(e){
                 true, //ajout un bouton "fermer la fenetre"
                 null  //action apres close
 			);
-			//tempPopup.autoSize = true;
-			//map.addPopup(tempPopup);
+            var lonlat = map.getLonLatFromViewPortPx(e.xy);
+            //mise a jour date
+            var dateForm= $("input[id='date']").val();
+            lstInfos.date=dateForm;
+            var urlInfo = ROOT + "/ncss"
+                        + "/" + lstInfos.nomDataset 
+                        + "/" + lstInfos.capteur
+                        + "/" + lstInfos.produit
+                        + "/" + lstInfos.resspatiale
+                        + "/" + lstInfos.nomFichier
+                        + "?time_start="+ encodeURIComponent(varInfos.debut)
+                        + "&time_end="+ encodeURIComponent(varInfos.fin)
+                        + "&var="+ lstInfos.param
+            
+                        + "&latitude=" + lonlat.lat
+                        + "&longitude=" + lonlat.lon
+            
+                        + "&accept=csv"
+                        ;
+            console.log(urlInfo);
+            $.ajax({
+                type: "GET",
+                url: urlInfo,
+                dataType: "text",
+                async: true,
+                beforeSend: function(){
+                    $("#plot").highcharts().showLoading();
+                },
+                complete: function(){
+                    $("#plot").highcharts().hideLoading();
+                },
+                success: function(text) {
+                    var lines = text.split('\n');
+                    dataset.header = lstInfos.capteur + '_' + lstInfos.produit;
+                    dataset.variable = '';
+                    dataset.lon = '';
+                    dataset.lat = '';
+                    dataset.datas = [];
+                    dataset.dates = [];
+                    $.each(lines, function(lineNo, line){
+                        var items = line.split(',');
+                        if (lineNo != 0){
+                            if (items[3] != undefined){
+                                var dateISO = items[0].replace(/\D/g, " ")
+                                var dateCompo = dateISO.split(" ");
+                                dateCompo[1]--;
+                                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
+                                var tmp = [];
+                                tmp.push(dateUTC, parseFloat(items[3]))
+                                dataset.dates.push(items[0]);
+                                dataset.datas.push(tmp);
+                                dataset.lat = items[1];
+                                dataset.lon = items[2];
+                            }
+                        }else{
+                            dataset.variable = items[3];
+                        }
+                    });
+                    updatePlot(dataset);
+                },
+                error: function(statut,erreur){
+                }
+            })
+        }
+    }//fin else
+}
+
+
+function getInfosMap(e){
+    var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
+    if(map.layers[1].name !== 'wms'){ //si pas de layers wms
+        var errorPopup = new OpenLayers.Popup (
+            "error",
+            lonLat,
+            new OpenLayers.Size(100, 50),
+            "Pas de couche sélectionnée",
+            true, //ajout un bouton "fermer la fenetre"
+            null  //action apres close
+            );
+        errorPopup.autoSize = true;
+        map.addPopup(errorPopup);
+    }else{
+        if(map.maxExtent.containsLonLat(lonLat)){
+            var tempPopup = new OpenLayers.Popup (
+                "temp",
+                lonLat,
+                new OpenLayers.Size(100, 50),
+                "Loading...",
+                true, //ajout un bouton "fermer la fenetre"
+                null  //action apres close
+			);
             var lonlat = map.getLonLatFromViewPortPx(e.xy);
             //mise a jour date
             var dateForm= $("input[id='date']").val();
@@ -732,10 +818,8 @@ function getInfosMap1(e){
                 + "?time_start="+ encodeURIComponent(lstInfos.date)
                 + "&time_end="+ encodeURIComponent(lstInfos.date)
                 + "&var="+ lstInfos.param
-
                 + "&latitude=" + lonlat.lat
                 + "&longitude=" + lonlat.lon
-
                 + "&accept=xml"
                 ;
             $.ajax({
@@ -743,14 +827,12 @@ function getInfosMap1(e){
                 url: URLRequest,
                 dataType: "xml",
                 async: false,
-                success: function(xml) 
-                {
+                success: function(xml) {
                     var lon = parseFloat($(xml).find('data[name="lon"]').text());
                     var lat = parseFloat($(xml).find('data[name="lat"]').text());
                     var val = parseFloat($(xml).find('data[name="'+lstInfos.param+'"]').text());
                     var res = "";
-                    if (lon) 
-                    {
+                    if (lon){
                         // We have a successful result
                         var truncVal = val.toPrecision(3);
                         if(truncVal > 200)  //Kelvin -> Celsius
@@ -761,81 +843,28 @@ function getInfosMap1(e){
                               " </br>Lat: " + lat.toFixed(6) +
         				   " </br>Value: " + truncVal;
                     } 
-                    else 
-                    {
+                    else{
                         res = "Impossible d'obtenir les informations demandées";
                     }
                     //map.removePopup(tempPopup);   //supprime le popup temporaire
-                    
-                    var urlInfo = ROOT + "/ncss"
-                    + "/" + lstInfos.nomDataset 
-                    + "/" + lstInfos.capteur
-                    + "/" + lstInfos.produit
-                    + "/" + lstInfos.resspatiale
-                    + "/" + lstInfos.nomFichier
-                    + "?time_start="+ encodeURIComponent(varInfos.debut)
-                    + "&time_end="+ encodeURIComponent(varInfos.fin)
-                    + "&var="+ lstInfos.param
-    
-                    + "&latitude=" + lonlat.lat
-                    + "&longitude=" + lonlat.lon
-    
-                    + "&accept=csv"
-                    ;
-                    console.log(urlInfo);
-                    $.ajax({
-                        type: "GET",
-                        url: urlInfo,
-                        dataType: "text",
-                        async: true,
-                        beforeSend: function(){
-                            $("#plot").highcharts().showLoading();
-                        },
-                        complete: function(){
-                            $("#plot").highcharts().hideLoading();
-                        },
-                        success: function(text) {
-                            var lines = text.split('\n');
-                            dataset.header = lstInfos.capteur + '_' + lstInfos.produit;
-                            dataset.variable = '';
-                            dataset.lon = '';
-                            dataset.lat = '';
-                            dataset.datas = [];
-                            dataset.dates = [];
-                            $.each(lines, function(lineNo, line){
-                                var items = line.split(',');
-                                if (lineNo != 0){
-                                    if (items[3] != undefined){
-                                        var dateISO = items[0].replace(/\D/g, " ")
-                                        var dateCompo = dateISO.split(" ");
-                                        dateCompo[1]--;
-                                        var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
-                                        var tmp = [];
-                                        tmp.push(dateUTC, parseFloat(items[3]))
-                                        dataset.dates.push(items[0]);
-                                        dataset.datas.push(tmp);
-                                        dataset.lat = items[1];
-                                        dataset.lon = items[2];
-                                    }
-                                }else{
-                                    dataset.variable = items[3];
-                                }
-                            });
-                            updatePlot(dataset);
-                        },
-                        error: function(res,statut,erreur){
-                        }
-                    })
-                    //plotSerie(dataset, lonlat);
+                    var popup = new OpenLayers.Popup(
+                        "id",
+                        lonlat,
+                        new OpenLayers.Size(200, 75),
+                        res,
+                        true,
+                        null
+                    );
+                    popup.AutoSize = true;
+                    map.addPopup(popup);
                 },
-                error: function(request, status, error){
-                    console.log(error);
+                error: function(e){
+                    console.log('error');
                 }
             });
         }
     }//fin else
 }
-
 
 
 // ########################## add plots ########################################################################
@@ -996,6 +1025,7 @@ $("#addEP").on('click', function(e){
 
 
 //Création du chart dans le div #containerProfil
+//function initPlot(){
 $('#plot').highcharts({
     chart:{
         type: 'spline',
@@ -1033,32 +1063,39 @@ $('#plot').highcharts({
             text: ''
         }
     },
-    series: [{
-        lineWidth: 1,
-        color: "#000000"
-    }],
     exporting:{
         enabled: true
     },
 });
+//}
 
 
 $("#containerProfil").hide();
 $('#profil').click(function() {
     $(this).toggleClass("active");
+    map.events.register('click', map, getInfosMapTemporel);
+    map.events.unregister('click', map, getInfosMap);
     if($(this).hasClass('active')){
         setFormInSitu();
-        if($("#plot").highcharts().series.length !=0){
-            $("#plot").highcharts().series[0].remove(true);
+        while ($("#plot").highcharts().series.length !=0){
+            for(var i=0; i < $("#plot").highcharts().series.length; i++){
+                $("#plot").highcharts().series[i].remove(true);
+            }
+        }
+        while ($("#plot").highcharts().yAxis.length != 0){
+            for (var i=0; i < $("#plot").highcharts().yAxis.length; i++){
+                $("#plot").highcharts().yAxis[i].remove(true);
+            }
         }
         $("#containerProfil").show();
     }else{
         $("#containerProfil").hide();
+        map.events.unregister('click', map, getInfosMapTemporel);
+        map.events.register('click', map, getInfosMap);
         $("[id$='IS']").find("option:gt(0)").remove();
         $("#niveauIS").prop("disabled", false);
         $("[id$='EP']").find("option:gt(0)").remove();
         $("#districtEP").prop("disabled", false);
-        //var getInfosMap = getInfosMap2;
     }
 });
 
@@ -1072,9 +1109,6 @@ $("#export").click(function(){
 });
 
 function updatePlot(datas){
-    //if($("#plot").highcharts().series.length !=0){
-        //$("#plot").highcharts().series[0].remove(true);
-    //}
     if(typeof $("#plot").highcharts().get(datas.variable) == 'undefined'){
         $("#plot").highcharts().addAxis({
             id: datas.variable,
@@ -1102,7 +1136,7 @@ function updatePlot(datas){
 
 // ################################################ map init update ############################################
 function layerInfo(l){
-    alert(l.geometry.getBounds());
+    console.log("latlon "+l.geometry.getBounds());
 }
 
 
@@ -1110,17 +1144,18 @@ function drawPolygon(){
     var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
     polygon.setVisibility(true);
     map.addLayer(polygon);
-    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {callbacks: {done: function(){console.log('ok')}},
-                                                                                                        handlerOptions: {persist: true},
+    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {handlerOptions: {persist: true, snapAngle: 45.0},
                                                                                                         featureAdded: layerInfo,
                                                                                                         });
-    polygonEditor.events.register('FeatureAdded', polygonEditor);
-    polygonEditor.events.register('refresh', polygonEditor, function(){polygon.removeAllFeatures()});
     map.addControl(polygonEditor);
-    polygonEditor.events.on({
-        featuresadded: function(l){console.log(l.geometry.getBounds());}
-    });
+    //polygonEditor.handler.setOptions({snapAngle: 45.0, angle: 0.785398, fixedRadius: 0.1});
+    polygonEditor.handler.callbacks.create = function(data){
+        if ( polygon.features.length > 0 ){
+            polygon.removeAllFeatures();
+        }
+    };
     var _draw = new OpenLayers.Control.Button({
+        title: "Dessin d'un carré délimitant la zone d'extraction",
         displayClass: 'draw',
         type: OpenLayers.Control.TYPE_TOGGLE,
         eventListeners: {
@@ -1137,6 +1172,31 @@ function drawPolygon(){
 }
 
 
+function selectLayers(){
+    var _selectL = new OpenLayers.Control.Button({
+        title: "Active la lecture des shapes",
+        displayClass: 'selectL',
+        type: OpenLayers.Control.TYPE_TOGGLE,
+        eventListeners: {
+            'activate': function(){
+                selectControl.activate();
+                map.events.unregister('click', map, getInfosMap);
+                map.events.unregister('click', map, getInfosMapTemporel);
+            },
+            'deactivate': function(){
+                selectControl.deactivate();
+                map.events.register('click', map, getInfosMap);
+            }
+        },
+    });
+    
+    return(_selectL);
+}
+
+
+
+
+
 function initMap(){
 
     map = new OpenLayers.Map('map',{
@@ -1150,9 +1210,10 @@ function initMap(){
     map.addControl(panel);
     var controls = [
             //new OpenLayers.Control.Attribution(),
+            new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
             new OpenLayers.Control.LayerSwitcher({'ascending':false}),
             //new OpenLayers.Control.ScaleLine(),
-            //new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
+            
             //new OpenLayers.Control.OverviewMap(),
             new OpenLayers.Control.KeyboardDefaults(),
             new OpenLayers.Control.SelectFeature(),
@@ -1207,19 +1268,21 @@ function initMap(){
         onUnselect: onFeatureUnselect,
     });
     map.addControl(selectControl);
-    selectControl.activate();
+    
     
 
-    // dessin carré pour coordonnees
+    // ajout des bouttons de controle: dessin carré pour coordonnees, info shapes/raster
     var draw = drawPolygon();
     panel.addControls(draw);
+    var selectL = selectLayers();
+    panel.addControls(selectL);
     
 
     
     // Activate the control.
     //
     map.zoomToMaxExtent();
-    map.events.register('click', map, getInfosMap1);
+    map.events.register('click', map, getInfosMap);
 }
 
 function onPopupClose(evt) {
@@ -1416,5 +1479,6 @@ window.onload = function(){
     $('select').select2();
     setForm();
     initMap();
+    //initPlot();
     setColorbar();
 }
