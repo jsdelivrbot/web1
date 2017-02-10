@@ -151,8 +151,8 @@ function resetSelect(listSelect, id){
 
 
 function resetDate(){
-    $('#date').datepicker('destroy');
-    $('#date').val("");
+    $("[id^='date']").datepicker('destroy');
+    $("[id^='date']").val("");
 }
 
 
@@ -365,8 +365,8 @@ function getDateRange(url){
 
 
 function changeDates(start,end,period){
-    $('#date').datepicker('destroy');
-    $( "#date" ).datepicker({
+    $("[id^='date']").datepicker('destroy');
+    $( "[id^='date']" ).datepicker({
         yearRange: '1979:2025',
         dateFormat: 'yy-mm-dd',
         changeMonth: true,
@@ -1100,13 +1100,7 @@ $('#profil').click(function() {
 });
 
 
-$("#export").click(function(){
-    $.ajax({
-        type: "GET",
-        url: "http://localhost:8080/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?var=Surface_Temperature&north=12&west=0&east=15&south=1&horizStride=1&time_start=2006-07-01T00%3A00%3A00Z&time_end=2007-06-30T00%3A00%3A00Z&timeStride=1&addLatLon=true&accept=netcdf",
-        async: false,
-    });
-});
+
 
 function updatePlot(datas){
     if(typeof $("#plot").highcharts().get(datas.variable) == 'undefined'){
@@ -1116,11 +1110,10 @@ function updatePlot(datas){
                 text: datas.variable
             },
             lineWidth: 2,
-            //lineColor: '#08F',
             opposite: true
         });
     }
-    $("#plot").highcharts().setTitle({ text: "Periode du: "+datas.dates[0]+" au :"+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
+    $("#plot").highcharts().setTitle({ text: "Periode du "+datas.dates[0]+" au "+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
     $("#plot").highcharts().addSeries({
         name: datas.header,
         data: datas.datas,
@@ -1144,18 +1137,15 @@ function drawPolygon(){
     var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
     polygon.setVisibility(true);
     map.addLayer(polygon);
-    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {handlerOptions: {persist: true, snapAngle: 45.0},
-                                                                                                        featureAdded: layerInfo,
-                                                                                                        });
+    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {handlerOptions: {persist: true, snapAngle: 45.0},featureAdded: layerInfo,});
     map.addControl(polygonEditor);
-    //polygonEditor.handler.setOptions({snapAngle: 45.0, angle: 0.785398, fixedRadius: 0.1});
     polygonEditor.handler.callbacks.create = function(data){
         if ( polygon.features.length > 0 ){
             polygon.removeAllFeatures();
         }
     };
     var _draw = new OpenLayers.Control.Button({
-        title: "Dessin d'un carré délimitant la zone d'extraction",
+        title: "Dessin",
         displayClass: 'draw',
         type: OpenLayers.Control.TYPE_TOGGLE,
         eventListeners: {
@@ -1174,7 +1164,7 @@ function drawPolygon(){
 
 function selectLayers(){
     var _selectL = new OpenLayers.Control.Button({
-        title: "Active la lecture des shapes",
+        title: "Info shapes",
         displayClass: 'selectL',
         type: OpenLayers.Control.TYPE_TOGGLE,
         eventListeners: {
@@ -1185,16 +1175,17 @@ function selectLayers(){
             },
             'deactivate': function(){
                 selectControl.deactivate();
-                map.events.register('click', map, getInfosMap);
+                if($("#profil").hasClass('active')){
+                    map.events.register('click', map, getInfosMapTemporel);
+                }else{
+                    map.events.register('click', map, getInfosMap);
+                }
             }
         },
     });
     
     return(_selectL);
 }
-
-
-
 
 
 function initMap(){
@@ -1213,7 +1204,6 @@ function initMap(){
             new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
             new OpenLayers.Control.LayerSwitcher({'ascending':false}),
             //new OpenLayers.Control.ScaleLine(),
-            
             //new OpenLayers.Control.OverviewMap(),
             new OpenLayers.Control.KeyboardDefaults(),
             new OpenLayers.Control.SelectFeature(),
@@ -1263,6 +1253,7 @@ function initMap(){
     stt.setVisibility(false);
     map.addLayer(stt);
 
+    // activation selection features layers (stations, districts, aires)
     selectControl = new OpenLayers.Control.SelectFeature([map.layers[1],map.layers[2],map.layers[3],map.layers[4],map.layers[5]], {
         onSelect: onFeatureSelect,
         onUnselect: onFeatureUnselect,
@@ -1271,7 +1262,7 @@ function initMap(){
     
     
 
-    // ajout des bouttons de controle: dessin carré pour coordonnees, info shapes/raster
+    // ajout des bouttons de controle: shape pour coordonnees, info shapes/raster
     var draw = drawPolygon();
     panel.addControls(draw);
     var selectL = selectLayers();
@@ -1279,11 +1270,18 @@ function initMap(){
     
 
     
-    // Activate the control.
-    //
+    // chargement du fond carto
     map.zoomToMaxExtent();
+    // activation de l'interrogation du raster 
     map.events.register('click', map, getInfosMap);
+
+    $('#testButton').click(function(){
+      console.log('click');
+      map.getView().setZoom(map.getView().getZoom()+1); 
+    });
 }
+
+
 
 function onPopupClose(evt) {
     selectControl.unselect(selectedFeature);

@@ -51,9 +51,9 @@
                             <label for="date" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span> </label>
                             <input id="date" name="datedebut" type="text" class="date-picker form-control"/>
                         </div>
-                        <div class="infos">
-                        </div>
-                        </br>
+                    </div>
+                    </br>
+                    <div class="row">
                         <div id="dateAnimation"></div>
                         <div role="group" aria-label="Animation controls">
                             <button type="button" class="btn btn-default btn-sm" id="backward" onclick="prevDate()">
@@ -133,8 +133,12 @@
                 </div>
                 <div>
                     <input type="button" value="Mise à jour de la carte" onclick="updateMap()">
-                    <input type="button" id="export" value="Export"/>
                 </div>
+            </form>
+        </div>
+        <div class="row">
+            <form method="post" action="">
+                <input type="button" id="export" value="Export" onclick="http://localhost:8080/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?var=Surface_Temperature&north=12&west=0&east=15&south=1&horizStride=1&time_start=2006-07-01T00%3A00%3A00Z&time_end=2007-06-30T00%3A00%3A00Z&timeStride=1&addLatLon=true&accept=netcdf"/>
             </form>
         </div>
 {% endblock %}
@@ -142,6 +146,7 @@
 {% block content1 %}
     </br>
     <div id="map" class="map" ></div>
+    <div id="panel" type="button" id="testButton" class="btn btn-primary">TEST BUTTON</div>
 {% endblock %}
 
 {% block content2 %}

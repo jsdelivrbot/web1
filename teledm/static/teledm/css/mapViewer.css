@@ -1,37 +1,34 @@
+
+
 .Panel {
     background: #eaedf2;
-    width: 26px;
-    height: 44px;
+    opacity: 0.5;
+    width: 27px;
+    height: 48px;
     cursor: pointer;
-    left: 9px;
+    left: 8px;
     top: 62px;
 }
 
-
-.drawItemInactive {
-    background: #30d5c8;
+.drawItemInactive,.drawItemActive,.selectLItemInactive,.selectLItemActive{
     border: 2px solid #075f67;
     width: 21px;
     height: 21px;
+    margin: 2px;
+}
+
+.drawItemInactive {
+    background: #30d5c8;
 }
 
 .drawItemActive {
     background: #FFFFE0;
-    border: 2px solid #075f67;
-    width: 21px;
-    height: 21px;
 }
 
 .selectLItemInactive {
     background: #30d5c8;
-    border: 2px solid #075f67;
-    width: 21px;
-    height: 21px;
 }
 
 .selectLItemActive {
     background: #FFFFE0;
-    border: 2px solid #075f67;
-    width: 21px;
-    height: 21px;
 }
