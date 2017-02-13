@@ -137,16 +137,38 @@
             </form>
         </div>
         <div class="row">
-            <form method="post" action="">
-                <input type="button" id="export" value="Export" onclick="http://localhost:8080/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?var=Surface_Temperature&north=12&west=0&east=15&south=1&horizStride=1&time_start=2006-07-01T00%3A00%3A00Z&time_end=2007-06-30T00%3A00%3A00Z&timeStride=1&addLatLon=true&accept=netcdf"/>
-            </form>
+            <div class="container">  
+                <a href="#profil" class="btn btn-info" data-toggle="collapse">Profil Temporel</a>
+                <div id="profil" class="collapse">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="row">
+                                <label>Mesures in situ</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="row">
+                                <label>Donnees Epidemiologiques</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="container">  
+                <a href="#export" class="btn btn-info" data-toggle="collapse">Export Subset</a>
+                <div id="export" class="collapse">
+                    <input type="button" id="export" value="Export"/>
+                </div>
+            </div>
         </div>
 {% endblock %}
 
 {% block content1 %}
     </br>
     <div id="map" class="map" ></div>
-    <div id="panel" type="button" id="testButton" class="btn btn-primary">TEST BUTTON</div>
+    <!--<div id="panel" type="button" id="testButton" class="btn btn-primary">TEST BUTTON</div>-->
 {% endblock %}
 
 {% block content2 %}

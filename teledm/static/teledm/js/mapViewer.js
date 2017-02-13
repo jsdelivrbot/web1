@@ -512,6 +512,18 @@ function getInfos()
         lstInfos.restempo = restempo;
     }
 
+    var layer = $('#variableS1').val();
+    if(layer=='Variable')
+    {
+        
+        alert("Erreur ! Aucune variable sélectionnée !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.layer = layer;
+    }
+
     var level = $('#levelS1').val();
     if(level=='layer')
     {
@@ -1370,6 +1382,61 @@ function updateMap()
 }
 
 
+
+var uri = "http://localhost:8080/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?var=Surface_Temperature&north=12&west=0&east=15&south=1&horizStride=1&time_start=2006-07-01T00%3A00%3A00Z&time_end=2007-06-30T00%3A00%3A00Z&timeStride=1&addLatLon=true&accept=netcdf"
+var name = "test.nc"
+
+
+function downloadURI(uri, name) {
+  var link = document.createElement("a");
+  link.download = name;
+  link.href = uri;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  delete link;
+}
+
+$("#export").on('click', function(){
+    //Récupère les infos saisies par l'utilisateur
+    try
+    {
+    getInfos();
+    }
+    catch(e)
+    {
+        return null;
+    }
+    autoScale();
+    setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
+    //setDescLayer();  //mise a jour description du layer
+    //pour tout les dataset selectionnés : générer l'URL à parser
+    var URL = ROOT+ "/ncss/" +
+        lstInfos.nomDataset +
+        "/" + lstInfos.capteur +
+        "/" + lstInfos.produit +
+        "/" + lstInfos.resspatiale +
+        "/" + lstInfos.nomFichier +
+        "?var=" + lstInfos.layer +
+        "&north=" + 12 +
+        "&west=" + 0 +
+        "&east="+ 15 +
+        "&south=" + 1 +
+        "&horizStride=" + 1 +
+        "&time_start=" + varInfos.debut +
+        "&time_end=" + varInfos.fin + 
+        "&timeStride=" + 1 +
+        "&addLatLon=true" + 
+        "&accept=netcdf";
+    console.log(URL);
+    var link = document.createElement("a");
+    link.download = 'test.nc';
+    link.href = URL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    delete link;
+});
 
 // #############################################################################################################
 
