@@ -136,33 +136,7 @@
                 </div>
             </form>
         </div>
-        <div class="row">
-            <div class="container">  
-                <a href="#profil" class="btn btn-info" data-toggle="collapse">Profil Temporel</a>
-                <div id="profil" class="collapse">
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <div class="row">
-                                <label>Mesures in situ</label>
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="row">
-                                <label>Donnees Epidemiologiques</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="container">  
-                <a href="#export" class="btn btn-info" data-toggle="collapse">Export Subset</a>
-                <div id="export" class="collapse">
-                    <input type="button" id="export" value="Export"/>
-                </div>
-            </div>
-        </div>
+        
 {% endblock %}
 
 {% block content1 %}
@@ -226,6 +200,39 @@
         </div>
         <div class="row">
             <div id="plot"></div>
+        </div>
+    </div>
+    <div class="row">
+        <input type="button" id="export" value="Export Subset"/>
+    </div>
+    <div class="row" id="containerExport">
+        <div class="col-lg-4">
+            <div class="row">
+                <input type="button" id="draw" value="Select LatLon"/>
+            </div class="row">
+            <div class="row">
+                <div class="row">
+                    <div class="col-sm-2 col-sm-offset-3">
+                        <input type="text" class="input-small" name="uly" id="uly" placeholder="North"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2 col-sm-offset-1">
+                        <input type="text" class="input-small" name="ulx" id="ulx" placeholder="West"/>
+                    </div>
+                    <div class="col-sm-2 col-sm-offset-2">
+                        <input type="text" class="input-small" name="lrx" id="lrx" placeholder="East"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2 col-sm-offset-3">
+                        <input type="text" class="input-small" name="lry" id="lry" placeholder="South"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <input type="button" id="download" value="Download"/>
         </div>
     </div>
 {% endblock %}

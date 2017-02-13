@@ -1,4 +1,6 @@
-
+.olControlNavToolbar {
+    top: 80px;
+}
 
 .Panel {
     background: #eaedf2;
@@ -12,13 +14,15 @@
 
 .drawItemInactive,.drawItemActive,.selectLItemInactive,.selectLItemActive{
     border: 2px solid #075f67;
-    width: 21px;
-    height: 21px;
+    width: 210px;
+    height: 210px;
     margin: 2px;
+    background: #6ed665 url('../select.png') center;
 }
 
-.drawItemInactive {
+.drawItemInactive {    
     background: #30d5c8;
+    
 }
 
 .drawItemActive {

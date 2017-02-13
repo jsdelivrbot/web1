@@ -1112,6 +1112,68 @@ $('#profil').click(function() {
 });
 
 
+$("#containerExport").hide();
+$('#export').click(function() {
+    $(this).toggleClass("active");
+    if($(this).hasClass('active')){
+        $("#containerExport").show();
+        $("#draw").on('click', function(){
+            var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
+            polygon.setVisibility(true);
+            map.addLayer(polygon);
+            var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {handlerOptions: {persist: true, snapAngle: 45.0},featureAdded: layerInfo,});
+            map.addControl(polygonEditor);
+            polygonEditor.handler.callbacks.create = function(data){
+                if ( polygon.features.length > 0 ){
+                    polygon.removeAllFeatures();
+                }
+            };
+        });
+    }else{
+        $("#containerExport").hide();
+    }
+});
+
+
+
+$("#download").on('click', function(){
+    //Récupère les infos saisies par l'utilisateur
+    try
+    {
+    getInfos();
+    }
+    catch(e)
+    {
+        return null;
+    }
+    var URL = ROOT+ "/ncss/" +
+        lstInfos.nomDataset +
+        "/" + lstInfos.capteur +
+        "/" + lstInfos.produit +
+        "/" + lstInfos.resspatiale +
+        "/" + lstInfos.nomFichier +
+        "?var=" + lstInfos.layer +
+        "&north=" + 12 +
+        "&west=" + 0 +
+        "&east="+ 15 +
+        "&south=" + 1 +
+        "&horizStride=" + 1 +
+        "&time_start=" + varInfos.debut +
+        "&time_end=" + varInfos.fin + 
+        "&timeStride=" + 1 +
+        "&addLatLon=true" + 
+        "&accept=netcdf";
+    console.log(URL);
+    var link = document.createElement("a");
+    link.download = 'test.nc';
+    link.href = URL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    delete link;
+});
+
+
 
 
 function updatePlot(datas){
@@ -1141,7 +1203,12 @@ function updatePlot(datas){
 
 // ################################################ map init update ############################################
 function layerInfo(l){
-    console.log("latlon "+l.geometry.getBounds());
+    var coords = l.geometry.getBounds();
+    console.log(coords);
+    $("#ulx").val(coords.left);
+    $("#lry").val(coords.bottom);
+    $("#lrx").val(coords.right);
+    $("#uly").val(coords.top);
 }
 
 
@@ -1177,6 +1244,7 @@ function drawPolygon(){
 function selectLayers(){
     var _selectL = new OpenLayers.Control.Button({
         title: "Info shapes",
+        text: "I",
         displayClass: 'selectL',
         type: OpenLayers.Control.TYPE_TOGGLE,
         eventListeners: {
@@ -1204,26 +1272,38 @@ function initMap(){
 
     map = new OpenLayers.Map('map',{
         projection: new OpenLayers.Projection("EPSG:4326"),
-        //resolutions: [0.001, 0.005, 0.01, 0.02, 0.03, 0.09, 0.15, 0.4],
         restrictedExtent: [-180, -90, 180, 90],
         maxResolution: 0.4,
         minResolution: 0.001,
     });
-    var panel = new OpenLayers.Control.Panel({displayClass: 'panel'});
+    map.addControl(new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}));
+    map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
+    map.addControl(new OpenLayers.Control.PanZoom());
+    OpenLayers.Control.CustomNavToolbar = OpenLayers.Class(OpenLayers.Control.Panel, {					
+        initialize: function(options) {
+            OpenLayers.Control.Panel.prototype.initialize.apply(this, [options]);
+            this.addControls([
+                new OpenLayers.Control.Navigation(),
+                new OpenLayers.Control.ZoomBox({alwaysZoom:true}),
+            ]);
+            this.displayClass = 'olControlNavToolbar'
+        },
+        draw: function() {
+            var div = OpenLayers.Control.Panel.prototype.draw.apply(this, arguments);
+            this.defaultControl = this.controls[0];
+            return div;
+        }
+    });
+    var panel = new OpenLayers.Control.CustomNavToolbar();
     map.addControl(panel);
-    var controls = [
-            //new OpenLayers.Control.Attribution(),
-            new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
-            new OpenLayers.Control.LayerSwitcher({'ascending':false}),
-            //new OpenLayers.Control.ScaleLine(),
-            //new OpenLayers.Control.OverviewMap(),
-            new OpenLayers.Control.KeyboardDefaults(),
-            new OpenLayers.Control.SelectFeature(),
-    ];
-    panel.addControls(controls);
     
 
-    //fond = new OpenLayers.Layer.Stamen("terrain",{layers:"basic"}, {isBaseLayer: true});
+    // ajout des bouttons de controle: shape pour coordonnees, info shapes/raster
+    var drawP = drawPolygon();
+    panel.addControls(drawP);
+    var selectL = selectLayers();
+    panel.addControls(selectL);
+
     fond = new OpenLayers.Layer.WMS(
         "OSM",
         "http://vmap0.tiles.osgeo.org/wms/vmap0",
@@ -1272,13 +1352,7 @@ function initMap(){
     });
     map.addControl(selectControl);
     
-    
 
-    // ajout des bouttons de controle: shape pour coordonnees, info shapes/raster
-    var draw = drawPolygon();
-    panel.addControls(draw);
-    var selectL = selectLayers();
-    panel.addControls(selectL);
     
 
     
@@ -1286,11 +1360,6 @@ function initMap(){
     map.zoomToMaxExtent();
     // activation de l'interrogation du raster 
     map.events.register('click', map, getInfosMap);
-
-    $('#testButton').click(function(){
-      console.log('click');
-      map.getView().setZoom(map.getView().getZoom()+1); 
-    });
 }
 
 
@@ -1381,62 +1450,6 @@ function updateMap()
     majLayer();
 }
 
-
-
-var uri = "http://localhost:8080/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?var=Surface_Temperature&north=12&west=0&east=15&south=1&horizStride=1&time_start=2006-07-01T00%3A00%3A00Z&time_end=2007-06-30T00%3A00%3A00Z&timeStride=1&addLatLon=true&accept=netcdf"
-var name = "test.nc"
-
-
-function downloadURI(uri, name) {
-  var link = document.createElement("a");
-  link.download = name;
-  link.href = uri;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  delete link;
-}
-
-$("#export").on('click', function(){
-    //Récupère les infos saisies par l'utilisateur
-    try
-    {
-    getInfos();
-    }
-    catch(e)
-    {
-        return null;
-    }
-    autoScale();
-    setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
-    //setDescLayer();  //mise a jour description du layer
-    //pour tout les dataset selectionnés : générer l'URL à parser
-    var URL = ROOT+ "/ncss/" +
-        lstInfos.nomDataset +
-        "/" + lstInfos.capteur +
-        "/" + lstInfos.produit +
-        "/" + lstInfos.resspatiale +
-        "/" + lstInfos.nomFichier +
-        "?var=" + lstInfos.layer +
-        "&north=" + 12 +
-        "&west=" + 0 +
-        "&east="+ 15 +
-        "&south=" + 1 +
-        "&horizStride=" + 1 +
-        "&time_start=" + varInfos.debut +
-        "&time_end=" + varInfos.fin + 
-        "&timeStride=" + 1 +
-        "&addLatLon=true" + 
-        "&accept=netcdf";
-    console.log(URL);
-    var link = document.createElement("a");
-    link.download = 'test.nc';
-    link.href = URL;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    delete link;
-});
 
 // #############################################################################################################
 
