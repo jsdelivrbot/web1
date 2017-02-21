@@ -1,1 +1,1 @@
-const ROOT = "http://localhost:8080/thredds";
+const ROOT = "https://localhost:8443/thredds";

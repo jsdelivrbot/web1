@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
 from django.shortcuts import render_to_response, HttpResponse
+from ipware.ip import get_real_ip
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
@@ -23,7 +24,11 @@ ddir = ddirDB + "/donnees/in_situ/"
 
 
 def home(request):
-    print request.POST
+    #print(ip_address(request))
+    for k in request.META.keys():
+        print('%s : %s\n') %(k, request.META[k])
+    ip = get_real_ip(request)
+    print('ip = %s') % ip
     if request.is_ajax():
         dates = [d.strftime('%Y-%m-%d') for d in pd.date_range('2014-01-01','2014-01-31', freq='D')]
         datas = np.random.randint(0,3,31).tolist()
