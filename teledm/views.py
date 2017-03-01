@@ -24,11 +24,6 @@ ddir = ddirDB + "/donnees/in_situ/"
 
 
 def home(request):
-    #print(ip_address(request))
-    for k in request.META.keys():
-        print('%s : %s\n') %(k, request.META[k])
-    ip = get_real_ip(request)
-    print('ip = %s') % ip
     if request.is_ajax():
         dates = [d.strftime('%Y-%m-%d') for d in pd.date_range('2014-01-01','2014-01-31', freq='D')]
         datas = np.random.randint(0,3,31).tolist()

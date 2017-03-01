@@ -26,24 +26,7 @@ INSTALLED_APPS = [
     'sendfile',
     'teledm',
     'portailCRC',
-    #'django_extensions',
-    #'django.contrib.gis',
-    #'django_ftpserver',
-    #'usermanagement',
-    #'bootstrap3',
-    #'bootstrap3_datetime',
-    #'djangojs',
-    #'wms',
-    #'leaflet',
-    #'djgeojson',
 ]
-
-#LEAFLET_CONFIG = {
-#        'SPATIAL_EXTEND': [-15.0,0,57,52],
-#        'DEFAULT_CENTER': [20.0, 15.0],
-#        'DEFAULT_ZOOM': 4,
-#}
-
 
 
 ## smtp config
@@ -78,6 +61,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'admin_reorder.middleware.ModelAdminReorder',
+    'teledm.middleware.filterIP_middleware.FilterIPMiddleware',
 ]
 
 ROOT_URLCONF = 'crc.urls'
@@ -116,26 +100,16 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-#SERIALIZATION_MODULES = {
-#    'geojson': 'djgeojson.serializers'
-#}
 
-#FTPSERVER_AUTHORIZER = 'django_ftpserver.authorizers.FTPAccountAuthorizer'
-#FTPSERVER_HANDLER = 'pyftpdlib.handlers.FTPHandler'
-#FTPSERVER_TLSHANDLER = 'pyftpdlib.handlers.TLS_FTPHandler'
 
 # Password validation
-AUTH_PASSWORD_VALIDATORS = [
-    {
+AUTH_PASSWORD_VALIDATORS = [{
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
+    },{
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
+    },{
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
+    },{
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
@@ -154,7 +128,7 @@ USE_TZ = False
 #STATICFILES_DIRS = ( os.path.join(PROJECT_ROOT, "static"), )
 STATIC_ROOT = BASE_DIR + "/static/"
 STATIC_URL = '/static/'
-STATICFILES_DIRS = ()
+#STATICFILES_DIRS = ()
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',

@@ -4,7 +4,7 @@
 import pandas as pd
 import geopandas as gpd
 import numpy as np
-from rasterstats import raster_stats
+from rasterstats import raster_stats, zonal_stats
 from netCDF4 import Dataset, num2date,date2num
 from joblib import Parallel, delayed
 import time
@@ -96,7 +96,7 @@ def calc_stats(rx,ry,gdf,ndist,trsfm,tps):
             var1 = np.repeat(tps[i,...],100*ry, axis=0)
             var2 = np.repeat(var1,100*rx, axis=1)
             val_input=np.ma.masked_array(var2, np.isnan(var2))
-            stats = raster_stats(gdf['geometry'],val_input, transform=trsfm, stats=['min', 'max', 'mean', 'count', 'std', 'median'])#fonction stat du module rasterstats
+            stats = zonal_stats(gdf['geometry'],val_input, transform=trsfm, stats=['min', 'max', 'mean', 'count', 'std', 'median'])#fonction stat du module rasterstats
             df = gdf.join(pd.DataFrame(stats))# chargement des stats dans la geodataframe
     	#chargement des stats dans les différentes matrices
             nb_px[i,:] = np.array(df['count'].ix[:])
