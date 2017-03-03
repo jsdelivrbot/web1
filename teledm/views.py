@@ -1,7 +1,6 @@
 #-*- coding: utf-8 -*-
 
 from django.shortcuts import render_to_response, HttpResponse
-from ipware.ip import get_real_ip
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
@@ -18,6 +17,10 @@ from traitement import traitementDF
 from scatterPlots import scatterSatStation, scatter2Sat
 from Util import *
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'teledm/tmp')
 ddirDB = os.path.expanduser('~') + "/Bureau/teledm"
 ddir = ddirDB + "/donnees/in_situ/"
@@ -28,8 +31,14 @@ def home(request):
         dates = [d.strftime('%Y-%m-%d') for d in pd.date_range('2014-01-01','2014-01-31', freq='D')]
         datas = np.random.randint(0,3,31).tolist()
         datas = {'dates':dates, 'datas':datas}
+        logger.debug("Debug message!")
+        logger.info("Info message!")
+        logger.warning("Warning message!")
+        logger.error("Error message!")
+        logger.critical("Critical message!")
         return HttpResponse(json.dumps(datas), content_type='teledm/home.html')
     else:
+        logger.debug("this is a debug message!")
         return render_to_response('teledm/home.html', context_instance=RequestContext(request))
     
 #@login_required
@@ -64,6 +73,11 @@ def mapViewer(request):
         dictdatas = {'header':geo, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}        
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='text/json')
     else:
+        logger.debug("Debug message!")
+        logger.info("Info message!")
+        logger.warning("Warning message!")
+        logger.error("Error message!")
+        logger.critical("Critical message!")
         return render_to_response('teledm/mapViewer.html',context_instance=RequestContext(request))
 
 #@login_required

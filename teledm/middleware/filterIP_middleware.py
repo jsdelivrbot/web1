@@ -1,16 +1,16 @@
+from django.core.exceptions import PermissionDenied
+
+
 class FilterIPMiddleware(object):
     # Check if client IP is allowed
     def process_request(self, request):
-        allowed_ips = ['192.168.1.1', '123.123.123.123','127.0.0.1'] # Authorized ip's
+        allowed_ips = ['192.168.1.1', '123.123.123.123', '127.0.0.1', ] # Authorized ip's
         ip = request.META.get('REMOTE_ADDR') # Get client IP
         if ip not in allowed_ips:
-            raise Http403 # If user is not allowed raise Error
+            raise PermissionDenied # If user is not allowed raise Error
 
         # If IP is allowed we don't do anything
         return None
-
-
-
 
 
 

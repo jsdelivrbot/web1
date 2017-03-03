@@ -1,0 +1,6 @@
+[03/Mar/2017 18:13:30] DEBUG [teledm.views:41] this is a debug message!
+[03/Mar/2017 18:14:23] DEBUG [teledm.views:76] Debug message!
+[03/Mar/2017 18:14:23] INFO [teledm.views:77] Info message!
+[03/Mar/2017 18:14:23] WARNING [teledm.views:78] Warning message!
+[03/Mar/2017 18:14:23] ERROR [teledm.views:79] Error message!
+[03/Mar/2017 18:14:23] CRITICAL [teledm.views:80] Critical message!
