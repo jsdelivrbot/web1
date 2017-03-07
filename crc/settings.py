@@ -22,12 +22,30 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djangobower',    
     'admin_reorder',
     'sendfile',
     'teledm',
     'portailCRC',
 ]
 
+BOWER_PATH = '/usr/local/bin/bower'
+BOWER_INSTALLED_APPS = (
+    'jquery',
+    'jquery.cookie',
+    'jquery-ui',
+    'underscore',
+    'bootstrap',
+    'highcharts',
+    'highcharts-regression',
+    'export-csv',
+    #'exporting',
+    'select2',
+    'OpenLayers',
+    'html5shiv',
+    'respond',
+    'moment',
+)
 
 ## smtp config
 EMAIL_USE_TLS = True
@@ -89,10 +107,23 @@ TEMPLATES = [
     },
 ]
 
+
+# secure proxy SSL header and secure cookies
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
+#SECURE_SSL_REDIRECT = True
+
+# session expire at browser close
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# wsgi scheme
+#os.environ['wsgi.url_scheme'] = 'https'
 WSGI_APPLICATION = 'crc.wsgi.application'
 
 
 # Database
+SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.spatialite',
@@ -167,9 +198,13 @@ USE_TZ = False
 #PROJECT_ROOT = os.path.normpath(os.path.dirname(__file__))
 #STATICFILES_DIRS = ( os.path.join(PROJECT_ROOT, "static"), )
 STATIC_ROOT = BASE_DIR + "/static/"
+
 STATIC_URL = '/static/'
-#STATICFILES_DIRS = ()
+
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
  )

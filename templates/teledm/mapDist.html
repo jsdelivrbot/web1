@@ -202,11 +202,15 @@
     <script type="text/javascript">
         var addr = "{% static 'teledm/shapes/' %}";
     </script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <!--<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>-->
     <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
-    <script type="text/javascript" src="http://code.highcharts.com/maps/modules/map.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/maps/modules/map.js"></script>
+    
+    <!--<script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>-->
+    <!--<script type="text/javascript" src="{% static 'highcharts/js/highcharts.js' %}"></script>-->
+    <!--<script type="text/javascript" src="{% static 'highmaps/js/highmaps.js' %}"></script>-->
+    <script type="text/javascript" src="{% static 'highcharts-export-csv/export-csv.js' %}"></script>
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
     <script type="text/javascript" src="{% static 'teledm/js/mapDistForm.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/distPlot.js' %}"></script>
 {% endblock %}

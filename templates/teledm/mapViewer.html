@@ -241,16 +241,19 @@
     <script>
         var urlShp = "{% static 'teledm/shapes/' %}";
     </script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <!--<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>-->
     <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
     <!--<script type="text/javascript" src="https://code.highcharts.com/stock/highstock.js"></script>-->
     <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
     <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.3.2"></script>
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
+    <!--<script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>-->
+    <script type="text/javascript" src="{% static 'highcharts-export-csv/export-csv.js' %}"></script>   
     <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js"></script>-->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.js"></script>-->
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>-->
     <script type="text/javascript" src="http://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script type="text/javascript" src="{% static 'respond/src/respond.js' %}"></script>
+    <script type="text/javascript" src="{% static 'html5shiv/dist/html5shiv-printshiv.js' %}"></script>    
     <script type="text/javascript" src="{% static 'teledm/js/mapViewer.js' %}"></script>   
 {% endblock %}
