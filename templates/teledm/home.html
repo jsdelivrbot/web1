@@ -21,87 +21,26 @@
     <div id="t">
        Accueil TeleDM
     </div>
-    <div class="container">
-        <div class="row">    
-            <div class="col-lg-3">
-                <div class="panel-group" id="accordion">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                             <h5 class="panel-title">
-                                  <a class="accordion-toggle" data-toggle="collapse" href="#collapseOne">
-                                    <b>Plateformes/Instruments</b>
-                                  </a>
-                            </h5>                          
-                        </div>
-                        <div id="collapseOne" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <div class="driving-license-kind">
-                                    <div id="type"><b>Satellite</b></div>
-                                    <div id="capteur"><b>Modis</b></div>
-                                    <div id="A" class="checkbox">
-                                        <input type="checkbox" value="">MYD04</div>
-                                    <div id="B" class="checkbox">
-                                        <input type="checkbox" value="">MYD05</div>
-                                    <div id="C" class="checkbox">
-                                        <input type="checkbox" value="">MYD07</div>
-                                    <div id="capteur"><b>Aura-OMI</b></div>
-                                    <div id="C" class="checkbox">
-                                        <input type="checkbox" value="">omaeruv</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                             <h5 class="panel-title">
-                                  <a class="accordion-toggle" data-toggle="collapse" href="#collapseTwo">
-                                    <b>Résolution spatiale</b>
-                                  </a>
-                            </h5>                          
-                        </div>
-                        <div id="collapseTwo" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                             <h5 class="panel-title">
-                                  <a class="accordion-toggle" data-toggle="collapse" href="#collapseThree">
-                                    <b>Résolution temporelle</b>
-                                  </a>
-                            </h5>
-                        </div>
-                        <div id="collapseThree" class="panel-collapse collapse">
-                            <div class="panel-body"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    </br>
+    <div>
+        Outil mapviewer
+    </div>
+    </br>
+    <div>
+        Outil extraction de la donnée au niveau du pays/district/aire de santé
+    </div>
+    </br>
+    <div>
+        Outil CalVal
     </div>
 {% endblock form %}
 
 {% block content1 %}
-    <div id="map" class="map" ></div>
 {% endblock %}
 
 {% block content2 %}
-    <dic class="col-lg-3">
-        <!--<div id="tree" </div>-->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i>
-                <label>Catalogue(s)</label>
-            </div>
-            <div class=pannel-body>
-                <label>Liste des catalogues/scénarios :</label><br>
-                <div id="listeCat">Aucun catalogue dispo</div>
-            </div>
-        </div>
-    </div>
 {% endblock %}
+
 {% block js %}
     <script>
         var urlCat = "{% static 'teledm/' %}";

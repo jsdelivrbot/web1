@@ -141,7 +141,7 @@ def read_csv(csv_file,in_situ,variable_csv, debut, fin,per,df_in):
     print csv_file
     df_in["moy_" + in_situ] = np.nan
     bad_lines = skipRows(debut, fin, csv_file)
-    df_csv = pd.read_csv(csv_file, sep=',', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable_csv, "Solar_Zenith_Angle"], skiprows=bad_lines)
+    df_csv = pd.read_csv(csv_file, sep=',', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=[u'date', variable_csv, u"Solar_Zenith_Angle"], skiprows=bad_lines)
     for i in df_in.index :
         if per == '+-1h':
             # si le nombre de valeurs >=4 dansl'intervalle +-1h

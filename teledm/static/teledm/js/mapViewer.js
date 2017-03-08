@@ -955,7 +955,7 @@ $("#addIS").on('click', function(e){
 
 
 
-
+// fonction plot donnees epidemio
 $("#addEP").on('click', function(e){
     e.preventDefault();
     if($("#epidemioEP").val() == 'Type'){
@@ -1078,7 +1078,6 @@ $('#plot').highcharts({
         enabled: true
     },
 });
-//}
 
 
 $("#containerProfil").hide();
