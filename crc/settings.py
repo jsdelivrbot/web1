@@ -58,12 +58,12 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 ## SENDFILE settings
-MEDIA_ROOT = os.path.join(BASE_DIR, 'teledm/tmp')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'tmp')
 SENDFILE_BACKEND = 'sendfile.backends.development'
 #SENDFILE_BACKEND = 'sendfile.backends.xsendfile'
 #SENDFILE_BACKEND = 'sendfile.backends.nginx'
-SENDFILE_ROOT = os.path.join(BASE_DIR, 'teledm/tmp')
-SENDFILE_URL = '/teledm/tmp'
+SENDFILE_ROOT = os.path.join(BASE_DIR, 'tmp')
+SENDFILE_URL = os.path.join(BASE_DIR, 'tmp') #'/tmp'
 
 #NC_SERVICE_DATA_ROOT = BASE_DIR+'/datas'
 #NC_TEMPORARY_FILE_LOCATION = BASE_DIR+'/tmp'
@@ -161,8 +161,11 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'log/teledm.log'),
+            #'class': 'logging.FileHandler',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'midnight',
+            'interval': 1,
             'formatter': 'verbose'
         },
     },
@@ -184,6 +187,14 @@ LOGGING = {
     }
 }
 
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': os.path.join(BASE_DIR, 'tmp'),
+    }
+}
 
 
 # Internationalization
