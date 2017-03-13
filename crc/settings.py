@@ -58,12 +58,12 @@ EMAIL_HOST_PASSWORD = ''
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 ## SENDFILE settings
-MEDIA_ROOT = os.path.join(BASE_DIR, 'tmp')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'teledm/tmp')
 SENDFILE_BACKEND = 'sendfile.backends.development'
 #SENDFILE_BACKEND = 'sendfile.backends.xsendfile'
 #SENDFILE_BACKEND = 'sendfile.backends.nginx'
-SENDFILE_ROOT = os.path.join(BASE_DIR, 'tmp')
-SENDFILE_URL = os.path.join(BASE_DIR, 'tmp') #'/tmp'
+SENDFILE_ROOT = os.path.join(BASE_DIR, 'teledm/tmp')
+SENDFILE_URL = os.path.join(BASE_DIR, 'teledm/tmp') #'/tmp'
 
 #NC_SERVICE_DATA_ROOT = BASE_DIR+'/datas'
 #NC_TEMPORARY_FILE_LOCATION = BASE_DIR+'/tmp'
@@ -126,8 +126,8 @@ WSGI_APPLICATION = 'crc.wsgi.application'
 SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
-        #'ENGINE': 'django.db.backends.sqlite3',
+        #'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }

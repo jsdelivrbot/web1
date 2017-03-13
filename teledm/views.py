@@ -41,8 +41,8 @@ def home(request):
         logger.debug("this is a debug message!")
         return render_to_response('teledm/home.html', context_instance=RequestContext(request))
     
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapViewer(request):
     print request.POST
     if request.is_ajax():
@@ -85,8 +85,8 @@ def mapViewer(request):
         logger.critical("Critical message!")
         return render_to_response('teledm/mapViewer.html',context_instance=RequestContext(request))
 
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapDist(request):
     print request.POST
     if request.is_ajax():
@@ -147,8 +147,8 @@ def mapDist(request):
         else:
             return render_to_response('teledm/mapDist.html',context_instance=RequestContext(request))
 
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def calval(request):
     if request.is_ajax():
         print request.POST

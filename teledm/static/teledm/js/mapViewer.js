@@ -700,7 +700,7 @@ function stopAnim(e)
 
 
 // ########################## get infoMap ######################################################################
-
+// Info serie temporelle
 function getInfosMapTemporel(e){
     var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
     if(map.layers[1].name !== 'wms'){ //si pas de layers wms
@@ -791,7 +791,7 @@ function getInfosMapTemporel(e){
     }//fin else
 }
 
-
+// info ponctuelle lat/lon/data
 function getInfosMap(e){
     var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
     if(map.layers[1].name !== 'wms'){ //si pas de layers wms
@@ -878,7 +878,7 @@ function getInfosMap(e){
 }
 
 
-// ########################## add plots ########################################################################
+// ########################## add plots Profils ########################################################################
 
 $("#addIS").on('click', function(e){
     e.preventDefault();
