@@ -7,7 +7,7 @@ from django.contrib.auth.views import login, logout, password_reset, password_re
 from django.views.generic import TemplateView
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    #url(r'^admin/', admin.site.urls),
     url(r'^crc/', include('portailCRC.urls', namespace='portailCRC', app_name='portailCRC')),
     url(r'^crc/teledm/', include('teledm.urls', namespace='teledm', app_name='teledm')),
     #url(r'^user/', include('usermanagement.urls')),

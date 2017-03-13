@@ -16,14 +16,14 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
+    #'django.contrib.admin',
+    #'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'djangobower',    
-    'admin_reorder',
+    #'admin_reorder',
     'sendfile',
     'teledm',
     'portailCRC',
@@ -74,8 +74,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    #'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'admin_reorder.middleware.ModelAdminReorder',
@@ -88,7 +88,7 @@ LOGIN_REDIRECT_URL = '/crc/teledm'
 ADMIN_REORDER = (
     'crc',
     #{'app': 'teledm', 'models': ('teledm.Country','teledm.Station','teledm.MeteoData')},
-    {'app': 'auth', 'models': ('auth.User',)},
+    #{'app': 'auth', 'models': ('auth.User',)},
 )
 
 TEMPLATES = [
@@ -109,10 +109,10 @@ TEMPLATES = [
 
 
 # secure proxy SSL header and secure cookies
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
+#SECURE_SSL_REDIRECT = True
 
 # session expire at browser close
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -134,16 +134,16 @@ DATABASES = {
 
 
 # Password validation
-AUTH_PASSWORD_VALIDATORS = [{
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },{
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },{
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },{
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+#AUTH_PASSWORD_VALIDATORS = [{
+#        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+#    },{
+#        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+#    },{
+#        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+#    },{
+#        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+#    },
+#]
 
 
 LOGGING = {
