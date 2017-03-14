@@ -79,7 +79,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'admin_reorder.middleware.ModelAdminReorder',
-    'teledm.middleware.filterIP_middleware.FilterIPMiddleware',
+    #'teledm.middleware.filterIP_middleware.FilterIPMiddleware',
 ]
 
 ROOT_URLCONF = 'crc.urls'
