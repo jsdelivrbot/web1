@@ -223,7 +223,7 @@ function setForm(){
         }else{
             var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
         }
-        var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+        var urlInfo = ROOT + '/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
         getDateRange(urlInfo);
         setSelect(varInfos.variables, selectSource1[5]);
         changeDates(varInfos.debut,varInfos.fin,this.value);
@@ -1113,22 +1113,29 @@ $('#profil').click(function() {
 $("#containerExport").hide();
 $('#export').click(function() {
     $(this).toggleClass("active");
+    var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
+    polygon.setVisibility(true);
+    map.addLayer(polygon);
+    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {handlerOptions: {persist: true, snapAngle: 45.0},featureAdded: layerInfo,});
+    map.addControl(polygonEditor);
+    polygonEditor.handler.callbacks.create = function(data){
+        if ( polygon.features.length > 0 ){
+            polygon.removeAllFeatures();
+        }
+    };
     if($(this).hasClass('active')){
         $("#containerExport").show();
-        $("#draw").on('click', function(){
-            var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
-            polygon.setVisibility(true);
-            map.addLayer(polygon);
-            var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {handlerOptions: {persist: true, snapAngle: 45.0},featureAdded: layerInfo,});
-            map.addControl(polygonEditor);
-            polygonEditor.handler.callbacks.create = function(data){
-                if ( polygon.features.length > 0 ){
-                    polygon.removeAllFeatures();
-                }
-            };
-        });
+        
+        polygonEditor.activate();
     }else{
+        //map.removeControl(polygonEditor);
+        polygonEditor.deactivate();
+        polygon.removeAllFeatures();
         $("#containerExport").hide();
+        $("#ulx").val("");
+        $("#uly").val("");
+        $("#lrx").val("");
+        $("#lry").val("");
     }
 });
 
@@ -1151,10 +1158,10 @@ $("#download").on('click', function(){
         "/" + lstInfos.resspatiale +
         "/" + lstInfos.nomFichier +
         "?var=" + lstInfos.layer +
-        "&north=" + 12 +
-        "&west=" + 0 +
-        "&east="+ 15 +
-        "&south=" + 1 +
+        "&north=" + $("#uly").val() +
+        "&west=" + $("#ulx").val() +
+        "&east="+ $("#lrx").val() +
+        "&south=" + $("#lry").val() +
         "&horizStride=" + 1 +
         "&time_start=" + varInfos.debut +
         "&time_end=" + varInfos.fin + 
@@ -1202,7 +1209,6 @@ function updatePlot(datas){
 // ################################################ map init update ############################################
 function layerInfo(l){
     var coords = l.geometry.getBounds();
-    console.log(coords);
     $("#ulx").val(coords.left);
     $("#lry").val(coords.bottom);
     $("#lrx").val(coords.right);
@@ -1210,33 +1216,7 @@ function layerInfo(l){
 }
 
 
-function drawPolygon(){
-    var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
-    polygon.setVisibility(true);
-    map.addLayer(polygon);
-    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {handlerOptions: {persist: true, snapAngle: 45.0},featureAdded: layerInfo,});
-    map.addControl(polygonEditor);
-    polygonEditor.handler.callbacks.create = function(data){
-        if ( polygon.features.length > 0 ){
-            polygon.removeAllFeatures();
-        }
-    };
-    var _draw = new OpenLayers.Control.Button({
-        title: "Dessin",
-        displayClass: 'draw',
-        type: OpenLayers.Control.TYPE_TOGGLE,
-        eventListeners: {
-            'activate': function(){
-                polygonEditor.activate();
-            },
-            'deactivate': function(){
-                polygonEditor.deactivate();
-                polygon.removeAllFeatures();
-            }
-        },
-    });
-    return(_draw);
-}
+
 
 
 function selectLayers(){
@@ -1269,6 +1249,7 @@ function selectLayers(){
 function initMap(){
 
     map = new OpenLayers.Map('map',{
+        controls: [],
         projection: new OpenLayers.Projection("EPSG:4326"),
         restrictedExtent: [-180, -90, 180, 90],
         maxResolution: 0.4,
@@ -1297,8 +1278,8 @@ function initMap(){
     
 
     // ajout des bouttons de controle: shape pour coordonnees, info shapes/raster
-    var drawP = drawPolygon();
-    panel.addControls(drawP);
+    //var drawP = drawPolygon();
+    //panel.addControls(drawP);
     var selectL = selectLayers();
     panel.addControls(selectL);
 
@@ -1427,7 +1408,7 @@ function majLayer(){
         "wms",
         URL,
         {
-            layers: "Deep_Blue_Aerosol_Optical_Depth_550_Land",
+            layers: "",
             transparent: "true",
             format: "image/png",
             styles: "boxfill/rainbow",

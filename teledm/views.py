@@ -128,17 +128,13 @@ def mapDist(request):
             variable = str(request.POST['variable'])
             print variable
             try:
-                print 'try'
                 district = request.POST['district']
                 csv = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
                 df = csv[csv.district==district]
             except KeyError:
                 print 'keyError'
                 df = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-                print df
             dictdatas = {'header':pays, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
-            
-        print dictdatas
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='application/json')
     else:
         if 'submit' in request.POST.keys():

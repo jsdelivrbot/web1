@@ -151,8 +151,8 @@ function resetSelect(listSelect, id){
 
 
 function resetDate(){
-    $('#date').datepicker('destroy');
-    $('#date').val("");
+    $("[id^='date']").datepicker('destroy');
+    $("[id^='date']").val("");
 }
 
 
@@ -223,7 +223,7 @@ function setForm(){
         }else{
             var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
         }
-        var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+        var urlInfo = ROOT + '/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
         getDateRange(urlInfo);
         setSelect(varInfos.variables, selectSource1[5]);
         changeDates(varInfos.debut,varInfos.fin,this.value);
@@ -365,8 +365,8 @@ function getDateRange(url){
 
 
 function changeDates(start,end,period){
-    $('#date').datepicker('destroy');
-    $( "#date" ).datepicker({
+    $("[id^='date']").datepicker('destroy');
+    $( "[id^='date']" ).datepicker({
         yearRange: '1979:2025',
         dateFormat: 'yy-mm-dd',
         changeMonth: true,
@@ -399,7 +399,6 @@ function createURL(valueSelected, selector){
     else {
         var URLCat = ROOT + '/' + URL;
     }
-    
     $.ajax( {
 				type: "GET",
 				url: URLCat,
@@ -510,6 +509,18 @@ function getInfos()
     else
     {
         lstInfos.restempo = restempo;
+    }
+
+    var layer = $('#variableS1').val();
+    if(layer=='Variable')
+    {
+        
+        alert("Erreur ! Aucune variable sélectionnée !");
+        throw new Exception();
+    }
+    else
+    {
+        lstInfos.layer = layer;
     }
 
     var level = $('#levelS1').val();
@@ -689,8 +700,8 @@ function stopAnim(e)
 
 
 // ########################## get infoMap ######################################################################
-
-function getInfosMap1(e){
+// Info serie temporelle
+function getInfosMapTemporel(e){
     var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
     if(map.layers[1].name !== 'wms'){ //si pas de layers wms
         var errorPopup = new OpenLayers.Popup (
@@ -703,11 +714,8 @@ function getInfosMap1(e){
             );
         errorPopup.autoSize = true;
         map.addPopup(errorPopup);
-    }
-    else
-    {
-        if(map.maxExtent.containsLonLat(lonLat))
-        {
+    }else{
+        if(map.maxExtent.containsLonLat(lonLat)){
             var tempPopup = new OpenLayers.Popup (
                 "temp",
                 lonLat,
@@ -716,8 +724,97 @@ function getInfosMap1(e){
                 true, //ajout un bouton "fermer la fenetre"
                 null  //action apres close
 			);
-			//tempPopup.autoSize = true;
-			//map.addPopup(tempPopup);
+            var lonlat = map.getLonLatFromViewPortPx(e.xy);
+            //mise a jour date
+            var dateForm= $("input[id='date']").val();
+            lstInfos.date=dateForm;
+            var urlInfo = ROOT + "/ncss"
+                        + "/" + lstInfos.nomDataset 
+                        + "/" + lstInfos.capteur
+                        + "/" + lstInfos.produit
+                        + "/" + lstInfos.resspatiale
+                        + "/" + lstInfos.nomFichier
+                        + "?time_start="+ encodeURIComponent(varInfos.debut)
+                        + "&time_end="+ encodeURIComponent(varInfos.fin)
+                        + "&var="+ lstInfos.param
+            
+                        + "&latitude=" + lonlat.lat
+                        + "&longitude=" + lonlat.lon
+            
+                        + "&accept=csv"
+                        ;
+            console.log(urlInfo);
+            $.ajax({
+                type: "GET",
+                url: urlInfo,
+                dataType: "text",
+                async: true,
+                beforeSend: function(){
+                    $("#plot").highcharts().showLoading();
+                },
+                complete: function(){
+                    $("#plot").highcharts().hideLoading();
+                },
+                success: function(text) {
+                    var lines = text.split('\n');
+                    dataset.header = lstInfos.capteur + '_' + lstInfos.produit;
+                    dataset.variable = '';
+                    dataset.lon = '';
+                    dataset.lat = '';
+                    dataset.datas = [];
+                    dataset.dates = [];
+                    $.each(lines, function(lineNo, line){
+                        var items = line.split(',');
+                        if (lineNo != 0){
+                            if (items[3] != undefined){
+                                var dateISO = items[0].replace(/\D/g, " ")
+                                var dateCompo = dateISO.split(" ");
+                                dateCompo[1]--;
+                                var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
+                                var tmp = [];
+                                tmp.push(dateUTC, parseFloat(items[3]))
+                                dataset.dates.push(items[0]);
+                                dataset.datas.push(tmp);
+                                dataset.lat = items[1];
+                                dataset.lon = items[2];
+                            }
+                        }else{
+                            dataset.variable = items[3];
+                        }
+                    });
+                    updatePlot(dataset);
+                },
+                error: function(statut,erreur){
+                }
+            })
+        }
+    }//fin else
+}
+
+// info ponctuelle lat/lon/data
+function getInfosMap(e){
+    var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
+    if(map.layers[1].name !== 'wms'){ //si pas de layers wms
+        var errorPopup = new OpenLayers.Popup (
+            "error",
+            lonLat,
+            new OpenLayers.Size(100, 50),
+            "Pas de couche sélectionnée",
+            true, //ajout un bouton "fermer la fenetre"
+            null  //action apres close
+            );
+        errorPopup.autoSize = true;
+        map.addPopup(errorPopup);
+    }else{
+        if(map.maxExtent.containsLonLat(lonLat)){
+            var tempPopup = new OpenLayers.Popup (
+                "temp",
+                lonLat,
+                new OpenLayers.Size(100, 50),
+                "Loading...",
+                true, //ajout un bouton "fermer la fenetre"
+                null  //action apres close
+			);
             var lonlat = map.getLonLatFromViewPortPx(e.xy);
             //mise a jour date
             var dateForm= $("input[id='date']").val();
@@ -732,10 +829,8 @@ function getInfosMap1(e){
                 + "?time_start="+ encodeURIComponent(lstInfos.date)
                 + "&time_end="+ encodeURIComponent(lstInfos.date)
                 + "&var="+ lstInfos.param
-
                 + "&latitude=" + lonlat.lat
                 + "&longitude=" + lonlat.lon
-
                 + "&accept=xml"
                 ;
             $.ajax({
@@ -743,14 +838,12 @@ function getInfosMap1(e){
                 url: URLRequest,
                 dataType: "xml",
                 async: false,
-                success: function(xml) 
-                {
+                success: function(xml) {
                     var lon = parseFloat($(xml).find('data[name="lon"]').text());
                     var lat = parseFloat($(xml).find('data[name="lat"]').text());
                     var val = parseFloat($(xml).find('data[name="'+lstInfos.param+'"]').text());
                     var res = "";
-                    if (lon) 
-                    {
+                    if (lon){
                         // We have a successful result
                         var truncVal = val.toPrecision(3);
                         if(truncVal > 200)  //Kelvin -> Celsius
@@ -761,75 +854,23 @@ function getInfosMap1(e){
                               " </br>Lat: " + lat.toFixed(6) +
         				   " </br>Value: " + truncVal;
                     } 
-                    else 
-                    {
+                    else{
                         res = "Impossible d'obtenir les informations demandées";
                     }
                     //map.removePopup(tempPopup);   //supprime le popup temporaire
-                    
-                    var urlInfo = ROOT + "/ncss"
-                    + "/" + lstInfos.nomDataset 
-                    + "/" + lstInfos.capteur
-                    + "/" + lstInfos.produit
-                    + "/" + lstInfos.resspatiale
-                    + "/" + lstInfos.nomFichier
-                    + "?time_start="+ encodeURIComponent(varInfos.debut)
-                    + "&time_end="+ encodeURIComponent(varInfos.fin)
-                    + "&var="+ lstInfos.param
-    
-                    + "&latitude=" + lonlat.lat
-                    + "&longitude=" + lonlat.lon
-    
-                    + "&accept=csv"
-                    ;
-                    console.log(urlInfo);
-                    $.ajax({
-                        type: "GET",
-                        url: urlInfo,
-                        dataType: "text",
-                        async: true,
-                        beforeSend: function(){
-                            $("#plot").highcharts().showLoading();
-                        },
-                        complete: function(){
-                            $("#plot").highcharts().hideLoading();
-                        },
-                        success: function(text) {
-                            var lines = text.split('\n');
-                            dataset.header = lstInfos.capteur + '_' + lstInfos.produit;
-                            dataset.variable = '';
-                            dataset.lon = '';
-                            dataset.lat = '';
-                            dataset.datas = [];
-                            dataset.dates = [];
-                            $.each(lines, function(lineNo, line){
-                                var items = line.split(',');
-                                if (lineNo != 0){
-                                    if (items[3] != undefined){
-                                        var dateISO = items[0].replace(/\D/g, " ")
-                                        var dateCompo = dateISO.split(" ");
-                                        dateCompo[1]--;
-                                        var dateUTC = Date.UTC(dateCompo[0], dateCompo[1], dateCompo[2]);
-                                        var tmp = [];
-                                        tmp.push(dateUTC, parseFloat(items[3]))
-                                        dataset.dates.push(items[0]);
-                                        dataset.datas.push(tmp);
-                                        dataset.lat = items[1];
-                                        dataset.lon = items[2];
-                                    }
-                                }else{
-                                    dataset.variable = items[3];
-                                }
-                            });
-                            updatePlot(dataset);
-                        },
-                        error: function(res,statut,erreur){
-                        }
-                    })
-                    //plotSerie(dataset, lonlat);
+                    var popup = new OpenLayers.Popup(
+                        "id",
+                        lonlat,
+                        new OpenLayers.Size(200, 75),
+                        res,
+                        true,
+                        null
+                    );
+                    popup.AutoSize = true;
+                    map.addPopup(popup);
                 },
-                error: function(request, status, error){
-                    console.log(error);
+                error: function(e){
+                    console.log('error');
                 }
             });
         }
@@ -837,8 +878,7 @@ function getInfosMap1(e){
 }
 
 
-
-// ########################## add plots ########################################################################
+// ########################## add plots Profils ########################################################################
 
 $("#addIS").on('click', function(e){
     e.preventDefault();
@@ -915,7 +955,7 @@ $("#addIS").on('click', function(e){
 
 
 
-
+// fonction plot donnees epidemio
 $("#addEP").on('click', function(e){
     e.preventDefault();
     if($("#epidemioEP").val() == 'Type'){
@@ -996,6 +1036,7 @@ $("#addEP").on('click', function(e){
 
 
 //Création du chart dans le div #containerProfil
+//function initPlot(){
 $('#plot').highcharts({
     chart:{
         type: 'spline',
@@ -1033,10 +1074,6 @@ $('#plot').highcharts({
             text: ''
         }
     },
-    series: [{
-        lineWidth: 1,
-        color: "#000000"
-    }],
     exporting:{
         enabled: true
     },
@@ -1046,35 +1083,105 @@ $('#plot').highcharts({
 $("#containerProfil").hide();
 $('#profil').click(function() {
     $(this).toggleClass("active");
+    map.events.register('click', map, getInfosMapTemporel);
+    map.events.unregister('click', map, getInfosMap);
     if($(this).hasClass('active')){
         setFormInSitu();
-        if($("#plot").highcharts().series.length !=0){
-            $("#plot").highcharts().series[0].remove(true);
+        while ($("#plot").highcharts().series.length !=0){
+            for(var i=0; i < $("#plot").highcharts().series.length; i++){
+                $("#plot").highcharts().series[i].remove(true);
+            }
+        }
+        while ($("#plot").highcharts().yAxis.length != 0){
+            for (var i=0; i < $("#plot").highcharts().yAxis.length; i++){
+                $("#plot").highcharts().yAxis[i].remove(true);
+            }
         }
         $("#containerProfil").show();
     }else{
         $("#containerProfil").hide();
+        map.events.unregister('click', map, getInfosMapTemporel);
+        map.events.register('click', map, getInfosMap);
         $("[id$='IS']").find("option:gt(0)").remove();
         $("#niveauIS").prop("disabled", false);
         $("[id$='EP']").find("option:gt(0)").remove();
         $("#districtEP").prop("disabled", false);
-        //var getInfosMap = getInfosMap2;
     }
 });
 
 
-$("#export").click(function(){
-    $.ajax({
-        type: "GET",
-        url: "http://localhost:8080/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?var=Surface_Temperature&north=12&west=0&east=15&south=1&horizStride=1&time_start=2006-07-01T00%3A00%3A00Z&time_end=2007-06-30T00%3A00%3A00Z&timeStride=1&addLatLon=true&accept=netcdf",
-        async: false,
-    });
+$("#containerExport").hide();
+$('#export').click(function() {
+    $(this).toggleClass("active");
+    var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
+    polygon.setVisibility(true);
+    map.addLayer(polygon);
+    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {handlerOptions: {persist: true, snapAngle: 45.0},featureAdded: layerInfo,});
+    map.addControl(polygonEditor);
+    polygonEditor.handler.callbacks.create = function(data){
+        if ( polygon.features.length > 0 ){
+            polygon.removeAllFeatures();
+        }
+    };
+    if($(this).hasClass('active')){
+        $("#containerExport").show();
+        
+        polygonEditor.activate();
+    }else{
+        //map.removeControl(polygonEditor);
+        polygonEditor.deactivate();
+        polygon.removeAllFeatures();
+        $("#containerExport").hide();
+        $("#ulx").val("");
+        $("#uly").val("");
+        $("#lrx").val("");
+        $("#lry").val("");
+    }
 });
 
+
+
+$("#download").on('click', function(){
+    //Récupère les infos saisies par l'utilisateur
+    try
+    {
+    getInfos();
+    }
+    catch(e)
+    {
+        return null;
+    }
+    var URL = ROOT+ "/ncss/" +
+        lstInfos.nomDataset +
+        "/" + lstInfos.capteur +
+        "/" + lstInfos.produit +
+        "/" + lstInfos.resspatiale +
+        "/" + lstInfos.nomFichier +
+        "?var=" + lstInfos.layer +
+        "&north=" + $("#uly").val() +
+        "&west=" + $("#ulx").val() +
+        "&east="+ $("#lrx").val() +
+        "&south=" + $("#lry").val() +
+        "&horizStride=" + 1 +
+        "&time_start=" + varInfos.debut +
+        "&time_end=" + varInfos.fin + 
+        "&timeStride=" + 1 +
+        "&addLatLon=true" + 
+        "&accept=netcdf";
+    console.log(URL);
+    var link = document.createElement("a");
+    link.download = 'test.nc';
+    link.href = URL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    delete link;
+});
+
+
+
+
 function updatePlot(datas){
-    //if($("#plot").highcharts().series.length !=0){
-        //$("#plot").highcharts().series[0].remove(true);
-    //}
     if(typeof $("#plot").highcharts().get(datas.variable) == 'undefined'){
         $("#plot").highcharts().addAxis({
             id: datas.variable,
@@ -1082,11 +1189,10 @@ function updatePlot(datas){
                 text: datas.variable
             },
             lineWidth: 2,
-            //lineColor: '#08F',
             opposite: true
         });
     }
-    $("#plot").highcharts().setTitle({ text: "Periode du: "+datas.dates[0]+" au :"+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
+    $("#plot").highcharts().setTitle({ text: "Periode du "+datas.dates[0]+" au "+datas.dates[datas.dates.length-1] }, { text: "Longitude: "+datas.lon+", Latitude: "+datas.lat });
     $("#plot").highcharts().addSeries({
         name: datas.header,
         data: datas.datas,
@@ -1102,65 +1208,81 @@ function updatePlot(datas){
 
 // ################################################ map init update ############################################
 function layerInfo(l){
-    alert(l.geometry.getBounds());
+    var coords = l.geometry.getBounds();
+    $("#ulx").val(coords.left);
+    $("#lry").val(coords.bottom);
+    $("#lrx").val(coords.right);
+    $("#uly").val(coords.top);
 }
 
 
-function drawPolygon(){
-    var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
-    polygon.setVisibility(true);
-    map.addLayer(polygon);
-    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {callbacks: {done: function(){console.log('ok')}},
-                                                                                                        handlerOptions: {persist: true},
-                                                                                                        featureAdded: layerInfo,
-                                                                                                        });
-    polygonEditor.events.register('FeatureAdded', polygonEditor);
-    polygonEditor.events.register('refresh', polygonEditor, function(){polygon.removeAllFeatures()});
-    map.addControl(polygonEditor);
-    polygonEditor.events.on({
-        featuresadded: function(l){console.log(l.geometry.getBounds());}
-    });
-    var _draw = new OpenLayers.Control.Button({
-        displayClass: 'draw',
+
+
+
+function selectLayers(){
+    var _selectL = new OpenLayers.Control.Button({
+        title: "Info shapes",
+        text: "I",
+        displayClass: 'selectL',
         type: OpenLayers.Control.TYPE_TOGGLE,
         eventListeners: {
             'activate': function(){
-                polygonEditor.activate();
+                selectControl.activate();
+                map.events.unregister('click', map, getInfosMap);
+                map.events.unregister('click', map, getInfosMapTemporel);
             },
             'deactivate': function(){
-                polygonEditor.deactivate();
-                polygon.removeAllFeatures();
+                selectControl.deactivate();
+                if($("#profil").hasClass('active')){
+                    map.events.register('click', map, getInfosMapTemporel);
+                }else{
+                    map.events.register('click', map, getInfosMap);
+                }
             }
         },
     });
-    return(_draw);
+    
+    return(_selectL);
 }
 
 
 function initMap(){
 
     map = new OpenLayers.Map('map',{
+        controls: [],
         projection: new OpenLayers.Projection("EPSG:4326"),
-        //resolutions: [0.001, 0.005, 0.01, 0.02, 0.03, 0.09, 0.15, 0.4],
         restrictedExtent: [-180, -90, 180, 90],
         maxResolution: 0.4,
         minResolution: 0.001,
     });
-    var panel = new OpenLayers.Control.Panel({displayClass: 'panel'});
+    map.addControl(new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}));
+    map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
+    map.addControl(new OpenLayers.Control.PanZoom());
+    OpenLayers.Control.CustomNavToolbar = OpenLayers.Class(OpenLayers.Control.Panel, {					
+        initialize: function(options) {
+            OpenLayers.Control.Panel.prototype.initialize.apply(this, [options]);
+            this.addControls([
+                new OpenLayers.Control.Navigation(),
+                new OpenLayers.Control.ZoomBox({alwaysZoom:true}),
+            ]);
+            this.displayClass = 'olControlNavToolbar'
+        },
+        draw: function() {
+            var div = OpenLayers.Control.Panel.prototype.draw.apply(this, arguments);
+            this.defaultControl = this.controls[0];
+            return div;
+        }
+    });
+    var panel = new OpenLayers.Control.CustomNavToolbar();
     map.addControl(panel);
-    var controls = [
-            //new OpenLayers.Control.Attribution(),
-            new OpenLayers.Control.LayerSwitcher({'ascending':false}),
-            //new OpenLayers.Control.ScaleLine(),
-            //new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}),
-            //new OpenLayers.Control.OverviewMap(),
-            new OpenLayers.Control.KeyboardDefaults(),
-            new OpenLayers.Control.SelectFeature(),
-    ];
-    panel.addControls(controls);
     
 
-    //fond = new OpenLayers.Layer.Stamen("terrain",{layers:"basic"}, {isBaseLayer: true});
+    // ajout des bouttons de controle: shape pour coordonnees, info shapes/raster
+    //var drawP = drawPolygon();
+    //panel.addControls(drawP);
+    var selectL = selectLayers();
+    panel.addControls(selectL);
+
     fond = new OpenLayers.Layer.WMS(
         "OSM",
         "http://vmap0.tiles.osgeo.org/wms/vmap0",
@@ -1202,25 +1324,24 @@ function initMap(){
     stt.setVisibility(false);
     map.addLayer(stt);
 
+    // activation selection features layers (stations, districts, aires)
     selectControl = new OpenLayers.Control.SelectFeature([map.layers[1],map.layers[2],map.layers[3],map.layers[4],map.layers[5]], {
         onSelect: onFeatureSelect,
         onUnselect: onFeatureUnselect,
     });
     map.addControl(selectControl);
-    selectControl.activate();
-    
-
-    // dessin carré pour coordonnees
-    var draw = drawPolygon();
-    panel.addControls(draw);
     
 
     
-    // Activate the control.
-    //
+
+    
+    // chargement du fond carto
     map.zoomToMaxExtent();
-    map.events.register('click', map, getInfosMap1);
+    // activation de l'interrogation du raster 
+    map.events.register('click', map, getInfosMap);
 }
+
+
 
 function onPopupClose(evt) {
     selectControl.unselect(selectedFeature);
@@ -1287,7 +1408,7 @@ function majLayer(){
         "wms",
         URL,
         {
-            layers: "Deep_Blue_Aerosol_Optical_Depth_550_Land",
+            layers: "",
             transparent: "true",
             format: "image/png",
             styles: "boxfill/rainbow",
@@ -1307,7 +1428,6 @@ function updateMap()
 {
     majLayer();
 }
-
 
 
 // #############################################################################################################
@@ -1416,5 +1536,6 @@ window.onload = function(){
     $('select').select2();
     setForm();
     initMap();
+    //initPlot();
     setColorbar();
 }

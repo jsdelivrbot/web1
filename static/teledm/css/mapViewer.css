@@ -1,23 +1,37 @@
-.Panel {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    left: 10px;
-    bottom: 100px;
+.olControlNavToolbar {
+    top: 50px;
 }
 
+.Panel {
+    background: #eaedf2;
+    opacity: 0.5;
+    width: 27px;
+    height: 48px;
+    cursor: pointer;
+    left: 8px;
+    top: 30px;
+}
 
-.drawItemInactive {
-    background: #30d5c8;
+.drawItemInactive,.drawItemActive,.selectLItemInactive,.selectLItemActive{
     border: 2px solid #075f67;
-    width: 18px;
-    height: 18px;
+    width: 210px;
+    height: 210px;
+    margin: 2px;
+}
+
+.drawItemInactive {    
+    background: #30d5c8;
+    
 }
 
 .drawItemActive {
-    background: #dddddd;
-    border: 2px solid #dddddd;
-    width: 18px;
-    height: 18px;
+    background: #FFFFE0;
 }
 
+.selectLItemInactive {
+    background: #30d5c8;
+}
+
+.selectLItemActive {
+    background: #FFFFE0;
+}

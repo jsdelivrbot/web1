@@ -1,5 +1,5 @@
 .olControlNavToolbar {
-    top: 80px;
+    top: 50px;
 }
 
 .Panel {
@@ -9,7 +9,7 @@
     height: 48px;
     cursor: pointer;
     left: 8px;
-    top: 62px;
+    top: 30px;
 }
 
 .drawItemInactive,.drawItemActive,.selectLItemInactive,.selectLItemActive{

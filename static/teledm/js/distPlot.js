@@ -1,3 +1,12 @@
+colorMaps = {
+    "jaune": ["#ffffcc", "#ff6600"],
+    "bleu": ["#e6f2ff", "#0059b3"],
+    "brun": ["#f2e6d9", "#86592d"],
+    "brun2": ["#d1e0e0", "#476b6b"],
+    "vert": ["#73e600", "#264d00"],
+    
+};
+
 var dataset = {
     pays: '',
     decoupage: '',
@@ -143,6 +152,15 @@ $("#calcul").on('change', function(){
     });
 });
 
+
+$("#colorAxis").on('change', function(){
+    colors = colorMaps[$("#colorAxis").val()];
+    $("#mapcontainer").highcharts().colorAxis[0].update({
+        nullColor: 'white',
+        minColor: colors[0],
+        maxColor: colors[1]
+    });
+});
 
 $("#moyenne").on('submit', function(e){
     e.preventDefault();
@@ -377,6 +395,8 @@ $('#mapcontainer').highcharts('Map', {
     },
     colorAxis: {
         nullColor: 'white',
+        minColor: "#FFF8DC",
+        maxColor: "#B22222"
     },
     plotOptions:{
     	series:{
@@ -479,4 +499,9 @@ $("#clear").on('click', function(){
     while($("#plotcontainer").highcharts().series.length > 0){
                 $("#plotcontainer").highcharts().series[0].remove(true);
             }
+    //while ($("#plotcontainer").highcharts().yAxis.length != 0){
+            //for (var i=0; i < $("#plotcontainer").highcharts().yAxis.length; i++){
+                //$("#plotcontainer").highcharts().yAxis[i].remove(true);
+            //}
+        //}
 });

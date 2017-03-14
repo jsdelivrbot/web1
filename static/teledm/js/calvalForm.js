@@ -1,5 +1,3 @@
-const ROOT = "http://localhost:8080/thredds";
-
 var stationsAeronet = ["Banizoumbou", "Cinzana", "Dakar"];
 var variablesAeronet = ['%TripletVar_1020', '%TripletVar_1640', '%TripletVar_340', '%TripletVar_380', '%TripletVar_412', '%TripletVar_440',
                          '%TripletVar_443', '%TripletVar_490', '%TripletVar_500', '%TripletVar_531', '%TripletVar_532', '%TripletVar_551',
