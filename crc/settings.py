@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'portailCRC',
 ]
 
-BOWER_PATH = '/usr/local/bin/bower'
+#BOWER_PATH = '/usr/local/bin/bower'
 BOWER_INSTALLED_APPS = (
     'jquery',
     'jquery.cookie',
