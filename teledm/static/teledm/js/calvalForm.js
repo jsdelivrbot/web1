@@ -223,7 +223,7 @@ function setForm(){
         }else{
             var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
         }
-        var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+        var urlInfo = ROOT + '/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
         getDateRange(urlInfo);
         setSelect(varInfos.variables, selectSource1[5]);
         changeDates1(varInfos.debut,varInfos.fin,this.value);
@@ -240,29 +240,33 @@ function setForm(){
             event.preventDefault();
     });
 
+    // ouest
     $("#ulx").on("change", function(){
-        if (parseInt($("#lrx").val()) < parseInt($("#ulx").val())){
+        if ( ($("#lrx").val()) && (parseInt($("#lrx").val()) < parseInt($("#ulx").val())) ){ 
             alert("La longitude EST ne peut pas être inférieure à la longitude OUEST");
             $("#lrx").val("");
         }
     });
 
+    // est
     $("#lrx").on("change", function(){
-        if (parseInt($("#lrx").val()) < parseInt($("#ulx").val())){
+        if (($("#ulx").val()) && (parseInt($("#lrx").val()) < parseInt($("#ulx").val()))){
             alert("La longitude EST ne peut pas être inférieure à la longitude OUEST");
             $("#lrx").val("");
         }
     });
 
+    // nord
     $("#uly").on("change", function(){
-        if (parseInt($("#lry").val()) > parseInt($("#uly").val())){
+        if (($("#lry").val()) && (parseInt($("#lry").val()) > parseInt($("#uly").val()))){
             alert("La latitude SUD ne peut pas être inférieure à la latitude NORD");
             $("#lry").val("");
         }
     });
 
+    // sud
     $("#lry").on("change", function(){
-        if (parseInt($("#lry").val()) > parseInt($("#uly").val())){
+        if ( ($("#uly").val()) && (parseInt($("#lry").val()) > parseInt($("#uly").val()))){
             alert("La latitude SUD ne peut pas être inférieure à la latitude NORD");
             $("#lry").val("");
         }
@@ -273,20 +277,21 @@ function setForm(){
     });
 
     $('.input-small').on('click', function(){
-        //$('#buffer option').removeAttr('selected');
-        //$("#buffer").find("option:gt(0)").remove();
-        $("#buffer").prop('selectedIndex', 0).change();
-        //$("#buffer.select2-offscreen").empty();
-        //$("#buffer").append(new Option());
+        if ( !$("#ulx").val() && !$("#uly").val() && !$("#lrx").val() && !$("#lry").val()){
+            $("#buffer").prop('selectedIndex', 0).change();
+        }
     });
 }
 
-
+$('#Option').prop('disabled', true);
 function setFormS2(){
     //type capteur produit variable resospatiale level
+    $('#Option').prop('checked', false);
+    $('#Option').prop('disabled', true);
     var selectSource = $("[id$='S2']");
     createURL('', selectSource[0], selectSource); //chargement du type1
     if(document.getElementById('checkboxSr2').checked){
+        $('#Option').prop('disabled', false);
         for (i = 0; i < selectSource.length; i++){
             selectSource[i].disabled=false;
         }
@@ -313,7 +318,7 @@ function setFormS2(){
             resetSelect(selectSource, 3);
             if (this.selectedIndex < 1)
                 return; // absence de choix
-            //charge les choix de variables
+            //charge les choix de la resolution spatiale
             createURL(this.value, selectSource[3], selectSource);
             };
         // choix de la resolution spatiale
@@ -322,7 +327,13 @@ function setFormS2(){
             resetSelect(selectSource, 4);
             if (this.selectedIndex < 1)
                 return; // absence de choix
-            //charge les choix de variables
+            //charge les choix de pas de temps
+            if( ($("#Option").prop("checked") == true )){
+                if ($('#resospatialeS1').val() != $('#resospatialeS2').val()){
+                    alert("L'option sélectionnées nécessite la même résolution spatiale pour chacune des couches.\nIl est possible que le produit sélectionné ne propose pas de résolution adéquate.");
+                    throw new Exception();
+                }
+            }
             createURL(this.value, '', selectSource);
             for (var i=0; i<resoTemp.length; ++i) {
                 selectSource[4].options[selectSource[4].options.length] = new Option(resoTemp[i][1], resoTemp[i][0]);
@@ -348,7 +359,7 @@ function setFormS2(){
             }else{
                 var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
             }
-            var urlInfo = 'http://localhost:8080/thredds/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+            var urlInfo = ROOT + '/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
             getDateRange(urlInfo);
             setSelect(varInfos.variables, selectSource[5]);
         };
@@ -590,6 +601,11 @@ window.onload = function(){
 $("#scatter").on('submit',  function(e){
     e.preventDefault(); 
     verifForm();
+    if ( $("#Option").prop('checked') == true ){
+        var action = "scatterSpatial";
+    } else {
+        var action = "scatterTemporel";
+    }
     $("[id^='plot']").each(function(){
         while($(this).highcharts().series.length > 0){
             $(this).highcharts().series[0].remove(true);
@@ -600,7 +616,7 @@ $("#scatter").on('submit',  function(e){
         type: "POST",
         url: '',
         //dataType: 'json',
-        data: $("#scatter").serialize()+"&action=scatter",
+        data: $("#scatter").serialize()+"&action="+action,
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
             $("[id^='plot']").each(function(){

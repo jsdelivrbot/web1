@@ -14,7 +14,7 @@ from datetime import datetime
 
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
-from scatterPlots import scatterSatStation, scatter2Sat
+from scatterPlots import scatterSatStation, scatter2Sat_Temporel, scatter2Sat_Spatial
 from Util import *
 
 import logging
@@ -148,68 +148,71 @@ def mapDist(request):
 def calval(request):
     if request.is_ajax():
         print request.POST
-        if request.POST['action'] == 'scatter':
-            if request.POST['ulx']:
-                ulx = float(request.POST['ulx'])
-                uly = float(request.POST['uly'])
-                lrx = float(request.POST['lrx'])
-                lry = float(request.POST['lry'])
-                z_buffer = request.POST['buffer']
+        if request.POST['ulx']:
+            ulx = float(request.POST['ulx'])
+            uly = float(request.POST['uly'])
+            lrx = float(request.POST['lrx'])
+            lry = float(request.POST['lry'])
+            z_buffer = request.POST['buffer']
+        else:
+            z_buffer = int(request.POST['buffer'])
+            ulx = request.POST['ulx']
+            uly = request.POST['uly']
+            lrx = request.POST['lrx']
+            lry = request.POST['lry']
+        pas_de_temps1 = request.POST['pasdetemps1']
+        datedebut = request.POST['datedebut']
+        datefin = request.POST['datefin']
+        type1 = request.POST['type1']
+        sat1 = request.POST['capteur1']
+        prd_sat1 = request.POST['produit1']
+        res_sat1 = request.POST['resospatiale1'][3:]
+        variable_sat1 = request.POST['variable1']
+        level_sat1 = request.POST['level1']
+        if request.POST['level1'] == 'Layer':
+            level_sat1 = ''
+        else:
+            level_sat1 = np.float(request.POST['level1'])
+        if 'type2' in request.POST:
+            type2 = request.POST['type2']
+            sat2 = request.POST['capteur2']
+            prd_sat2 = request.POST['produit2']
+            res_sat2 = request.POST['resospatiale2'][3:]
+            variable_sat2 = request.POST['variable2']
+            if request.POST['level2'] == 'Layer':
+                level_sat2 = ''
             else:
-                z_buffer = int(request.POST['buffer'])
-                ulx = request.POST['ulx']
-                uly = request.POST['uly']
-                lrx = request.POST['lrx']
-                lry = request.POST['lry']
-            pas_de_temps1 = request.POST['pasdetemps1']
-            datedebut = request.POST['datedebut']
-            datefin = request.POST['datefin']
-            type1 = request.POST['type1']
-            sat1 = request.POST['capteur1']
-            prd_sat1 = request.POST['produit1']
-            res_sat1 = request.POST['resospatiale1'][3:]
-            variable_sat1 = request.POST['variable1']
-            level_sat1 = request.POST['level1']
-            if request.POST['level1'] == 'Layer':
-                level_sat1 = ''
-            else:
-                level_sat1 = np.float(request.POST['level1'])
-            if 'type2' in request.POST:
-                type2 = request.POST['type2']
-                sat2 = request.POST['capteur2']
-                prd_sat2 = request.POST['produit2']
-                res_sat2 = request.POST['resospatiale2'][3:]
-                variable_sat2 = request.POST['variable2']
-                if request.POST['level2'] == 'Layer':
-                    level_sat2 = ''
-                else:
-                    level_sat2 = np.float(request.POST['level2'])
-                df = scatter2Sat(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
+                level_sat2 = np.float(request.POST['level2'])
+            if request.POST['action'] == 'scatterTemporel':
+                df = scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
                                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
                                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2
                                  )
             else:
-                periode = request.POST['integration']
-                if 'stationsaeronet' in request.POST:
-                    inSitu = "aeronet"
-                    station = request.POST['stationsaeronet']
-                    varStation = request.POST['variablesaeronet']
-                    niveau = request.POST['niveau']
-                else:
-                    inSitu = 'teom'
-                    station = request.POST['stationsteom']
-                    varStation = request.POST['variablesteom']
-                    niveau = ''
-                df = scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,
-                                       type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
-                                       inSitu, station, varStation, niveau
-                                       )
-            return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+                df = scatter2Sat_Spatial(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
+                                 type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
+                                 type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2
+                                 )
         else:
-            vals = np.random.random_sample(10)
-            vals[3:6] = np.nan
-            dic = {"sat":"MYD04","dates":[datetime(2007,01,01),datetime(2007,01,02)], "satVar":"AOT", "set":vals.tolist()}
-            
-            return HttpResponse(simplejson.dumps(dic, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+            periode = request.POST['integration']
+            if 'stationsaeronet' in request.POST:
+                inSitu = "aeronet"
+                station = request.POST['stationsaeronet']
+                varStation = request.POST['variablesaeronet']
+                niveau = request.POST['niveau']
+            else:
+                inSitu = 'teom'
+                station = request.POST['stationsteom']
+                varStation = request.POST['variablesteom']
+                niveau = ''
+            df = scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,
+                                   type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
+                                   inSitu, station, varStation, niveau
+                                   )
+        for k in ['a', 'prd', 'dates', 'b', 'prdVar_units', 'zone', 'satVar', 'prdVar', 'satVar_units', 'line', 'rCarre', 'sat']:
+            print('%s, %s' % (k,df[k]))
+        print type(df['dates'])
+        print type(df['scatterValues'])
+        return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
     else:
         return render_to_response('teledm/calval.html',{},context_instance=RequestContext(request))

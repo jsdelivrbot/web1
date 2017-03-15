@@ -245,7 +245,7 @@ def scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, dat
     return mat
 
 
-def scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
+def scatter2Sat(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1, 
                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
                  ):
@@ -309,69 +309,6 @@ def scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
     mat["b"] = b1                                 # intersection
     return mat
 
-
-
-def scatter2Sat_Spatial(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
-                 type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1, 
-                 type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
-                 ):
-
-
-    start = datetime.strptime(datedeb, "%Y-%m-%d")
-
-    #############################image satellite 1 ####################################
-    if sat1 == "toms":
-        fichier_sat1 = sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    elif prd_sat1 in ["chimere01","chimere02"]:
-        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
-    elif prd_sat1 == 'seviri_aerus':
-        fichier_sat1 = 'seviri_r'+res_sat1+'_' + pas_de_temps + '.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    else:
-        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    ############################ image satellite 2 ####################################
-    if sat2 == "toms":
-        fichier_sat2 = sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    elif prd_sat2 in ["chimere01","chimere02"]:
-        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
-        path_sat1 = ddirDB+type2+'/'+sat2+'/'+prd_sat2[:-2]+'/'+'res'+res_sat2+'/'+fichier_sat2
-    elif prd_sat2 == 'seviri_aerus':
-        fichier_sat2 = 'seviri_r'+res_sat2+'_' + pas_de_temps + '.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    else:
-        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    ###################################################################################
-        
-        
-    df_sat1, npx1, sat1_units = readNC_box(path_sat1,variable_sat1,ulx,uly,lrx,lry, start,start, prd_sat1, level_sat1, pas_de_temps)
-    df_sat2, npx2, sat2_units = readNC_box(path_sat2,variable_sat2,ulx,uly,lrx,lry, start,start, prd_sat2, level_sat2, pas_de_temps)
-    mat1 = np.squeeze(df_sat1[df_sat1.columns[:npx1]].values)
-    mat2 = np.squeeze(df_sat2[df_sat2.columns[:npx2]].values)
-    mask = ~np.isnan(mat1) & ~np.isnan(mat2)
-    a1, b1, r_value, p_value, std_err = linregress(mat2[mask], mat1[mask])
-    line_sat = a1 * mat2[mask] + b1
-    scatterValues = [list(a) for a in zip(mat1.tolist(),mat2.tolist())]
-    mat = {}
-    mat["sat"] = prd_sat1
-    mat["satVar"] = variable_sat1
-    mat["satVar_units"] = sat1_units
-    mat["zone"] = "zone %.2f, %.2f, %.2f, %.2f " % (ulx, uly, lrx, lry)
-    mat["prd"] = prd_sat2
-    mat["prdVar"] = variable_sat2
-    mat["prdVar_units"] = sat2_units
-    mat["dates"] = [str(start.date())]
-    mat["scatterValues"] = scatterValues          # liste des valeurs sat1 (nan enleves) / sat2
-    mat["line"] = line_sat                        # droite de regression sat1/sat2
-    mat["rCarre"] = r_value ** 2                  # rCarre scatterplot sat1/sat2
-    mat["a"] = a1                                 # pente de la droite de regr
-    mat["b"] = b1                                 # intersection
-    return mat
-
 if __name__ == '__main__':
 
 ###################### test #########################################################
@@ -398,10 +335,10 @@ if __name__ == '__main__':
     level_sat1 = ""
     ############################# image satellite 2 ####################################
     type2 = "satellite"
-    sat2 = "modis"
-    prd_sat2 = "MYD07"
-    res_sat2 = "009"
-    variable_sat2 = "Surface_Temperature"
+    sat2 = "aura_omi"
+    prd_sat2 = "omaeruv"
+    res_sat2 = "025"
+    variable_sat2 = "UVAerosolIndex"
     level_sat2 = ""
     ############################ donnees in situ 1 ######################################
     type0 = 'in_situ'
@@ -419,9 +356,7 @@ if __name__ == '__main__':
     
     teom = scatterSatStation(ulx,uly,lrx,lry,z_buffer, pas_de_temps,periode,datedebut, datefin,type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,prd_station2,nom_station2,variable_station2,'')
     
-    satellite = scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer, pas_de_temps,datedebut, datefin,type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2)
-    
-    satellite1 = scatter2Sat_Spatial(ulx,uly,lrx,lry,z_buffer, pas_de_temps,datedebut, datedebut,type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2)
+    satellite = scatter2Sat(ulx,uly,lrx,lry,z_buffer, pas_de_temps,periode,datedebut, datefin,type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2)
     #resultats["matrice"].to_csv(ddirout+"qlt_flag.csv")
     #print resultats[0]
     print "fichier traite"
