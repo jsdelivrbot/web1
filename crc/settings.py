@@ -79,7 +79,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'admin_reorder.middleware.ModelAdminReorder',
-    'teledm.middleware.filterIP_middleware.FilterIPMiddleware',
+    #'teledm.middleware.filterIP_middleware.FilterIPMiddleware',
 ]
 
 ROOT_URLCONF = 'crc.urls'
@@ -109,10 +109,10 @@ TEMPLATES = [
 
 
 # secure proxy SSL header and secure cookies
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#SESSION_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
+#SECURE_SSL_REDIRECT = True
 
 # session expire at browser close
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -134,16 +134,16 @@ DATABASES = {
 
 
 # Password validation
-#AUTH_PASSWORD_VALIDATORS = [{
-#        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-#    },{
-#        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-#    },{
-#        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-#    },{
-#        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-#    },
-#]
+AUTH_PASSWORD_VALIDATORS = [{
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },{
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },{
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },{
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 
 LOGGING = {
