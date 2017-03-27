@@ -1110,36 +1110,6 @@ $('#profil').click(function() {
 });
 
 
-$("#containerExport").hide();
-$('#export').click(function() {
-    $(this).toggleClass("active");
-    var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
-    polygon.setVisibility(true);
-    map.addLayer(polygon);
-    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {handlerOptions: {persist: true, snapAngle: 45.0},featureAdded: layerInfo,});
-    map.addControl(polygonEditor);
-    polygonEditor.handler.callbacks.create = function(data){
-        if ( polygon.features.length > 0 ){
-            polygon.removeAllFeatures();
-        }
-    };
-    if($(this).hasClass('active')){
-        $("#containerExport").show();
-        
-        polygonEditor.activate();
-    }else{
-        //map.removeControl(polygonEditor);
-        polygonEditor.deactivate();
-        polygon.removeAllFeatures();
-        $("#containerExport").hide();
-        $("#ulx").val("");
-        $("#uly").val("");
-        $("#lrx").val("");
-        $("#lry").val("");
-    }
-});
-
-
 
 $("#download").on('click', function(){
     //Récupère les infos saisies par l'utilisateur
@@ -1332,14 +1302,46 @@ function initMap(){
     map.addControl(selectControl);
     
 
-    
+    var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
+    polygon.setVisibility(true);
+    map.addLayer(polygon);
+    var polygonEditor = new OpenLayers.Control.DrawFeature(polygon, OpenLayers.Handler.RegularPolygon, {handlerOptions: {persist: true, snapAngle: 45.0},featureAdded: layerInfo,});
+    map.addControl(polygonEditor);
+    polygonEditor.handler.callbacks.create = function(data){
+        if ( polygon.features.length > 0 ){
+            polygon.removeAllFeatures();
+        }
+    };
 
     
     // chargement du fond carto
     map.zoomToMaxExtent();
     // activation de l'interrogation du raster 
     map.events.register('click', map, getInfosMap);
+    $('#export').click(function() {
+        $(this).toggleClass("active");
+        
+        if($(this).hasClass('active')){
+            $("#containerExport").show();
+            
+            polygonEditor.activate();
+        }else{
+            //map.removeControl(polygonEditor);
+            polygonEditor.deactivate();
+            polygon.removeAllFeatures();
+            $("#containerExport").hide();
+            $("#ulx").val("");
+            $("#uly").val("");
+            $("#lrx").val("");
+            $("#lry").val("");
+        }
+    });
 }
+
+
+$("#containerExport").hide();
+
+
 
 
 

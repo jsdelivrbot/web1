@@ -168,9 +168,9 @@ def tempo(freq,debut,fin,df_in,prdsat1, insitu, prdsat2):
 
 def heure_passage(station_aeronet):
     # calcul de l'heure de passage du satellite en fonction de la staton aeronet étudiée
-    coord_st=pd.read_csv(ddirDB+'in_situ/aeronet/carto_aeronet/coord_aeronet.csv')
-    latst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lat)
-    lonst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lon)
+    coord_st=pd.read_csv(ddirDB+'in_situ/aeronet/carto_aeronet/coord_aeronet.csv', sep='\t', header=0)
+    latst=np.asarray(coord_st[coord_st['name'].isin([station_aeronet])].lat)
+    lonst=np.asarray(coord_st[coord_st['name'].isin([station_aeronet])].lon)
     if np.round(lonst[0]) in np.arange(-25.,-8.):
         heure = 14
     if np.round(lonst[0]) in np.arange(-8.,20.):
@@ -219,7 +219,10 @@ def scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, dat
         dfout = df_sat1
     else:
         dfout = tempo(pas_de_temps,start,end,df_sat1,prd_sat1, inSitu, "")
-    line_station1, rCarre_1, a1,b1, scatterValues1 = scatter_stats(dfout,prd_sat1, inSitu)
+    try:
+        line_station1, rCarre_1, a1,b1, scatterValues1 = scatter_stats(dfout,prd_sat1, inSitu)
+    except ValueError:
+        line_station1, rCarre_1, a1,b1, scatterValues1 = np.nan, np.nan, np.nan, np.nan, np.nan
 
     mat = {}
     mat["sat"] = prd_sat1
@@ -354,7 +357,8 @@ def scatter2Sat_Spatial(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
     mat2 = np.squeeze(df_sat2[df_sat2.columns[:npx2]].values)
     mask = ~np.isnan(mat1) & ~np.isnan(mat2)
     a1, b1, r_value, p_value, std_err = linregress(mat2[mask], mat1[mask])
-    line_sat = a1 * mat2[mask] + b1
+    line_regr = a1 * mat2[mask] + b1
+    line_sat = [list(a) for a in zip(mat2[mask].tolist(), line_regr.tolist())]
     scatterValues = [list(a) for a in zip(mat1.tolist(),mat2.tolist())]
     mat = {}
     mat["sat"] = prd_sat1
@@ -377,8 +381,8 @@ if __name__ == '__main__':
 ###################### test #########################################################
 #####################################################################################
 
-    ddirDB = "/home/sebastien/Bureau/teledm/donnees/"
-    ddirout = "/home/sebastien/Bureau/"
+    ddirDB = os.path.join(os.path.expanduser('~'), "Bureau/teledm/donnees/")
+    ddirout = os.path.join(os.path.expanduser('~'), "Bureau")
     ulx = 0.5
     uly = 20
     lrx = 1.7
@@ -394,7 +398,7 @@ if __name__ == '__main__':
     sat1 = "modis"
     prd_sat1 = "MYD04"
     res_sat1 = "009"
-    variable_sat1 = "Deep_Blue_Aerosol_Optical_Depth_550_Land"
+    variable_sat1 = "Deep_Blue_Surface_Reflectance_Land_412_nm"
     level_sat1 = ""
     ############################# image satellite 2 ####################################
     type2 = "satellite"
