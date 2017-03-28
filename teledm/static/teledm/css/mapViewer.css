@@ -1,37 +1,46 @@
-.olControlNavToolbar {
-    top: 50px;
+.panel .selectControlItemInactive {
+    background:url(http://robert.szczepanek.pl/icon/0.1/identify.png) no-repeat;
+    opacity: 0.2;
+    width: 24px;
+    height: 24px;
 }
 
-.Panel {
-    background: #eaedf2;
-    opacity: 0.5;
-    width: 27px;
-    height: 48px;
+.panel .selectControlItemActive {
+    background:url(http://robert.szczepanek.pl/icon/0.1/identify.png) no-repeat;
+    width: 24px;
+    height: 24px;
+}
+
+.panel .olControlNavigationItemInactive {
+    background:url(http://robert.szczepanek.pl/icon/0.1/pan.png) no-repeat;
+    opacity: 0.2;
+    width: 24px;
+    height: 24px;
+}
+
+.panel .olControlNavigationItemActive {
+    background:url(http://robert.szczepanek.pl/icon/0.1/pan.png) no-repeat;
+    width: 24px;
+    height: 24px;
+}
+
+.panel .olControlZoomBoxItemInactive {
+    background:url(http://robert.szczepanek.pl/icon/0.1/zoom-in.png) no-repeat;
+    opacity: 0.2;
+    width: 24px;
+    height: 24px;
+}
+
+.panel .olControlZoomBoxItemActive {
+    background:url(http://robert.szczepanek.pl/icon/0.1/zoom-in.png) no-repeat;
+    width: 24px;
+    height: 24px;
+}
+
+.panel {
+    width: 24px;
+    height: 75px;
     cursor: pointer;
-    left: 8px;
-    top: 30px;
-}
-
-.drawItemInactive,.drawItemActive,.selectLItemInactive,.selectLItemActive{
-    border: 2px solid #075f67;
-    width: 210px;
-    height: 210px;
-    margin: 2px;
-}
-
-.drawItemInactive {    
-    background: #30d5c8;
-    
-}
-
-.drawItemActive {
-    background: #FFFFE0;
-}
-
-.selectLItemInactive {
-    background: #30d5c8;
-}
-
-.selectLItemActive {
-    background: #FFFFE0;
+    left: 15px;
+    top: 10px;
 }

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 import pandas as pd
 import geopandas as gpd
 import numpy as np
@@ -15,7 +16,10 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-ddirDB = os.path.expanduser('~') + "/Bureau/teledm/"
+try:
+    ddirDB = getattr(settings, "DIRDB", None)
+except ImproperlyConfigured:
+    ddirDB = os.path.expanduser('~') + "/Bureau/teledm/"
 
 
 ######################################################################################################################
@@ -117,7 +121,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
     anfin = datetime.strptime(fin,"%Y-%m-%d").strftime("%Y")
     
     
-    ddirin = ddirDB+'/donnees/'+types+"/"+sat+"/"+prod+"/"+res
+    ddirin = os.path.join(ddirDB, 'donnees', types, sat, prod, res)
     os.chdir(ddirin)
     files = sorted(glob.glob('*'+res_temp+'.nc'))#liste des fichiers .nc
     
@@ -129,21 +133,21 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
         if shape == "all_fs":
     		try:
     			#fshape = '/work/crct/se5780me/carto/fs_par_annee/'+shape+'/150409_BF_FS_2015.shp'
-    			fshape = ddirDB + '/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+anfin+'.shp'
+    			fshape = os.path.join(ddirDB, 'carto/fs_par_annee', shape, '150409_BF_FS_'+anfin+'.shp')
     			geodf = gpd.GeoDataFrame.from_file(fshape)
     		except:
-    			fshape = ddirDB + '/carto/fs_par_annee/all_fs/150409_BF_FS_2015.shp'
+    			fshape = os.path.join(ddirDB, 'carto/fs_par_annee/all_fs/150409_BF_FS_2015.shp')
     			geodf = gpd.GeoDataFrame.from_file(fshape)
         else:
     		try:
-    			fshape = ddirDB + '/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+shape+'_'+anfin+'.shp'
+    			fshape = os.path.join(ddirDB, 'carto/fs_par_annee', shape, '150409_BF_FS_'+shape+'_'+anfin+'.shp')
     			#fshape = '/work/crct/se5780me/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+shape+'2015.shp'
     			geodf = gpd.GeoDataFrame.from_file(fshape)
     		except:
-    			fshape = ddirDB + '/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+shape+'_2015.shp'
+    			fshape = os.path.join(ddirDB, 'carto/fs_par_annee', shape, '150409_BF_FS_'+shape+'_2015.shp')
     			geodf = gpd.GeoDataFrame.from_file(fshape)  
     else:
-        fshape = ddirDB + '/carto/'+niveau+'/'+pays+'_'+niveau+'_sante.shp'
+        fshape = os.path.join(ddirDB, 'carto', niveau, pays+'_'+niveau+'_sante.shp')
         geodf = gpd.GeoDataFrame.from_file(fshape)
     
     nbdist = len(geodf[geodf.columns[1]]) # nombre de districts/aires
@@ -285,7 +289,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
 
 if __name__ == "__main__":
     
-    ddirout = os.path.expanduser('~') + "/dev/crc/teledm/tmp"
+    ddirout = os.path.join(os.path.expanduser('~'), "dev/crc/teledm/tmp")
     deb = "2007-01-01"     #"1979" a ...
     fin = "2007-01-15"
     pays = "burkina"       #"burkina","mali","niger","senegal"

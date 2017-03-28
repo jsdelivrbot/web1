@@ -25,7 +25,8 @@ tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))
 ddirDB = os.path.expanduser('~') + "/Bureau/teledm"
 ddir = ddirDB + "/donnees/in_situ/"
 
-
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def home(request):
     if request.is_ajax():
         dates = [d.strftime('%Y-%m-%d') for d in pd.date_range('2014-01-01','2014-01-31', freq='D')]

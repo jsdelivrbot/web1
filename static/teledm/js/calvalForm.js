@@ -522,23 +522,32 @@ function verifForm(){
         alert("Erreur ! Aucun niveau de couche sélectionné !");
         throw new Exception();
     }
-    var dateForm= $("input[id='date']").val();
-    if(dateForm=='')
-    {
+    var date1 = $("input[id='date1']").val();
+    
+    if (date1==''){
         alert("Erreur ! Aucune date saisie !");
         throw new Exception();
     }else{
-        var date
         if (lstInfos.restempo == 'w'){
-            lstInfos.date = moment(dateForm).startOf('isoWeek').format('YYYY-MM-DD');
+            lstInfos.debut = moment(date1).startOf('isoWeek').format('YYYY-MM-DD');
         }else if (lstInfos.restempo == 'm'){
-            lstInfos.date = moment(dateForm).startOf('Month').format('YYYY-MM-DD');
+            lstInfos.debut = moment(date1).startOf('Month').format('YYYY-MM-DD');
         }else if (lstInfos.restempo == 't'){
-            lstInfos.date = moment(dateForm).startOf('quarter').format('YYYY-MM-DD');
+            lstInfos.debut = moment(date1).startOf('quarter').format('YYYY-MM-DD');
         }else{
-            lstInfos.date=dateForm;
+            lstInfos.debut=date1;
         }
-        $("input[id='date']").val(lstInfos.date);
+        $("input[id='date1']").val(lstInfos.debut);
+    }
+
+    //if ((date2=='') && ((($("#checkboxSr2").prop("checked") == true) && ($("#Option").prop("checked") == false)) || ($("#checkboxS3").prop("checked") == true) || ($("#checkboxS4").prop("checked") == true)){
+        //alert("Erreur ! Aucune date saisie !");
+        //throw new Exception();
+    //
+
+    if (($("#checkboxSr2").prop("checked") == false) && ($("#checkboxS3").prop("checked") == false) && ($("#checkboxS4").prop("checked") == false)){
+        alert("Erreur ! Sélectionner un 2eme type de données !");
+        throw new Exception();
     }
 
     if ($("#checkboxSr2").prop("checked") == true){
@@ -586,6 +595,36 @@ function verifForm(){
     if ($("#checkboxS4").prop("checked") == true){
         if($('#stationsTeom').val() == 'Station'){
             alert("Erreur ! Aucune station Aeronet sélectionnée !");
+            throw new Exception();
+        }
+    }
+    
+    var date2 = $("input[id='date2']").val();
+    if ((date2 == '') && ($("#Option").prop("checked") == false)){
+        alert("Erreur ! Saisir une 2eme date !");
+        throw new Exception();
+    }else{
+        if (lstInfos.restempo == 'w'){
+            lstInfos.fin = moment(date2).startOf('isoWeek').format('YYYY-MM-DD');
+        }else if (lstInfos.restempo == 'm'){
+            lstInfos.fin = moment(date2).startOf('Month').format('YYYY-MM-DD');
+        }else if (lstInfos.restempo == 't'){
+            lstInfos.fin = moment(date2).startOf('quarter').format('YYYY-MM-DD');
+        }else{
+            lstInfos.fin=date1;
+        }
+        $("input[id='date2']").val(lstInfos.fin);      
+    }
+    
+    if (($("#buffer").val() == "Buffer") && (($("#checkboxS3").prop("checked") == true) || ($("#checkboxS4").prop("checked") == true))){
+        alert("Erreur ! Buffer non sélectionné !");
+        throw new Exception();
+    }
+    
+    if (($("#checkboxSr2").prop("checked") == true)){
+        alert($("#ulx").val());
+        if (($("#ulx").val() == "") || ($("#uly").val() == "") || ($("#lrx").val() == "") || ($("#lry").val() == "")){
+            alert("Erreur ! Saisir les coordonnées !");
             throw new Exception();
         }
     }

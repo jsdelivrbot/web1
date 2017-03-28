@@ -1186,38 +1186,52 @@ function layerInfo(l){
 }
 
 
+function onPopupClose(evt) {
+    selectControl.unselect(selectedFeature);
+}
+
+function onFeatureSelect(feature) {
+    selectedFeature = feature;
+    popup = new OpenLayers.Popup.FramedCloud("chicken",
+    feature.geometry.getBounds().getCenterLonLat(),
+    new OpenLayers.Size(100, 100),
+        "<h5>" + feature.attributes.name + "</h5>",
+    null, true, onPopupClose);
+
+    feature.popup = popup;
+    //map.addPopup(popup);
+    map.addPopup(popup, true);
+
+}
+
+function onFeatureUnselect(feature) {
+    map.removePopup(feature.popup);
+    feature.popup.destroy();
+    feature.popup = null;
+}
 
 
+function functionsActivation(){
+    selectControl.activate();
+    map.events.unregister('click', map, getInfosMap);
+    map.events.unregister('click', map, getInfosMapTemporel);      
+}
 
-function selectLayers(){
-    var _selectL = new OpenLayers.Control.Button({
-        title: "Info shapes",
-        text: "I",
-        displayClass: 'selectL',
-        type: OpenLayers.Control.TYPE_TOGGLE,
-        eventListeners: {
-            'activate': function(){
-                selectControl.activate();
-                map.events.unregister('click', map, getInfosMap);
-                map.events.unregister('click', map, getInfosMapTemporel);
-            },
-            'deactivate': function(){
-                selectControl.deactivate();
-                if($("#profil").hasClass('active')){
-                    map.events.register('click', map, getInfosMapTemporel);
-                }else{
-                    map.events.register('click', map, getInfosMap);
-                }
-            }
-        },
-    });
-    
-    return(_selectL);
+function functionsDeactivation(){
+    selectControl.deactivate();
+    if($("#profil").hasClass('active')){
+        map.events.register('click', map, getInfosMapTemporel);
+    }else{
+        map.events.register('click', map, getInfosMap);
+    }   
 }
 
 
 function initMap(){
 
+    //#######################################
+    // carto, fond carto initial
+    //#######################################
     map = new OpenLayers.Map('map',{
         controls: [],
         projection: new OpenLayers.Projection("EPSG:4326"),
@@ -1225,34 +1239,6 @@ function initMap(){
         maxResolution: 0.4,
         minResolution: 0.001,
     });
-    map.addControl(new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}));
-    map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
-    map.addControl(new OpenLayers.Control.PanZoom());
-    OpenLayers.Control.CustomNavToolbar = OpenLayers.Class(OpenLayers.Control.Panel, {					
-        initialize: function(options) {
-            OpenLayers.Control.Panel.prototype.initialize.apply(this, [options]);
-            this.addControls([
-                new OpenLayers.Control.Navigation(),
-                new OpenLayers.Control.ZoomBox({alwaysZoom:true}),
-            ]);
-            this.displayClass = 'olControlNavToolbar'
-        },
-        draw: function() {
-            var div = OpenLayers.Control.Panel.prototype.draw.apply(this, arguments);
-            this.defaultControl = this.controls[0];
-            return div;
-        }
-    });
-    var panel = new OpenLayers.Control.CustomNavToolbar();
-    map.addControl(panel);
-    
-
-    // ajout des bouttons de controle: shape pour coordonnees, info shapes/raster
-    //var drawP = drawPolygon();
-    //panel.addControls(drawP);
-    var selectL = selectLayers();
-    panel.addControls(selectL);
-
     fond = new OpenLayers.Layer.WMS(
         "OSM",
         "http://vmap0.tiles.osgeo.org/wms/vmap0",
@@ -1260,9 +1246,13 @@ function initMap(){
         isBaseLayer: true}
     );
     map.addLayer(fond);
-
-
-    // ajout des layers districts,aires de santé pour chaque pays
+    map.zoomToMaxExtent();
+    
+    
+    
+    //#######################################
+    // ajout des carto district, aires, pays
+    //#######################################
     $.each(geoDist, function(i,g){
         var shp = new OpenLayers.Layer.Vector(g, {
             strategies: [new OpenLayers.Strategy.Fixed()],
@@ -1293,15 +1283,70 @@ function initMap(){
     });
     stt.setVisibility(false);
     map.addLayer(stt);
-
-    // activation selection features layers (stations, districts, aires)
-    selectControl = new OpenLayers.Control.SelectFeature([map.layers[1],map.layers[2],map.layers[3],map.layers[4],map.layers[5]], {
+    
+    
+    //##############################################
+    // outils carto(fonction+boutton) panel + zoom + navigation + selectInfo
+    //##############################################
+    var panel = new OpenLayers.Control.Panel({displayClass: 'panel', allowDepress: false});
+    var navigation = new OpenLayers.Control.Navigation();
+    var zoomBox = new OpenLayers.Control.ZoomBox();
+    var selectControl = new OpenLayers.Control.SelectFeature([map.layers[1],map.layers[2],map.layers[3],map.layers[4],map.layers[5]], {
         onSelect: onFeatureSelect,
         onUnselect: onFeatureUnselect,
     });
-    map.addControl(selectControl);
+    // fonctions de selection des features, affichage dans une popup
+    function onFeatureSelect(feature){
+        selectedFeature = feature;
+        popup = new OpenLayers.Popup.FramedCloud("chicken",
+        feature.geometry.getBounds().getCenterLonLat(),
+        new OpenLayers.Size(100, 100),
+            "<h5>" + feature.attributes.name + "</h5>",
+        null, true, function() { selectControl.unselectAll(); });
+        feature.popup = popup;
+        map.addPopup(popup, true);
+    }
+    function onFeatureUnselect(feature){
+        map.removePopup(feature.popup);
+        feature.popup.destroy();
+        feature.popup = null;
+    }
     
-
+    var navigationBtn = new OpenLayers.Control.Button({displayClass: 'olControlNavigation', type: OpenLayers.Control.TYPE_TOOL,
+        eventListeners: {
+           'activate': function(){navigation.activate(); selectControl.deactivate(); zoomBox.deactivate();}, 
+           'deactivate': function(){navigation.deactivate()}
+        }
+    });
+    var zoomBoxBtn = new OpenLayers.Control.Button({displayClass: 'olControlZoomBox', type: OpenLayers.Control.TYPE_TOOL,
+        eventListeners: {
+           'activate': function(){zoomBox.activate(); navigation.deactivate(); selectControl.deactivate()}, 
+           'deactivate': function(){zoomBox.deactivate()}
+        }
+    });
+    var featureSelectBtn = new OpenLayers.Control.Button({displayClass: 'selectControl', type: OpenLayers.Control.TYPE_TOOL,
+        eventListeners: {
+           'activate': function(){selectControl.activate(); zoomBox.deactivate();selectControl.activate(); map.events.unregister('click', map, getInfosMap); map.events.unregister('click', map, getInfosMapTemporel);   }, 
+           'deactivate': function(){selectControl.deactivate();if($("#profil").hasClass('active')){
+                                                                    map.events.register('click', map, getInfosMapTemporel);
+                                                                }else{
+                                                                    map.events.register('click', map, getInfosMap);
+                                                                }}
+        }
+    });
+    
+    
+    panel.addControls([navigationBtn, zoomBoxBtn, featureSelectBtn]);
+    map.addControls([panel,navigation,zoomBox,selectControl]);
+    map.addControl(new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}));
+    map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
+    //map.addControl(new OpenLayers.Control.PanZoom());
+    navigation.activate();
+    
+    
+    //######################################################
+    // creation couche pour recuperer la bbox pour l'export 
+    //######################################################
     var polygon = new OpenLayers.Layer.Vector('Polygon', {'displayInLayerSwitcher':false});
     polygon.setVisibility(true);
     map.addLayer(polygon);
@@ -1312,10 +1357,9 @@ function initMap(){
             polygon.removeAllFeatures();
         }
     };
-
-    
-    // chargement du fond carto
-    map.zoomToMaxExtent();
+        
+        
+    //##############################################
     // activation de l'interrogation du raster 
     map.events.register('click', map, getInfosMap);
     $('#export').click(function() {
@@ -1341,33 +1385,6 @@ function initMap(){
 
 $("#containerExport").hide();
 
-
-
-
-
-function onPopupClose(evt) {
-    selectControl.unselect(selectedFeature);
-}
-
-function onFeatureSelect(feature) {
-    selectedFeature = feature;
-    popup = new OpenLayers.Popup.FramedCloud("chicken",
-    feature.geometry.getBounds().getCenterLonLat(),
-    new OpenLayers.Size(100, 100),
-        "<h5>" + feature.attributes.name + "</h5>",
-    null, true, onPopupClose);
-
-    feature.popup = popup;
-    //map.addPopup(popup);
-    map.addPopup(popup, true);
-
-}
-
-function onFeatureUnselect(feature) {
-    map.removePopup(feature.popup);
-    feature.popup.destroy();
-    feature.popup = null;
-}
 
 function majLayer(){
     //Récupère les infos saisies par l'utilisateur

@@ -9,7 +9,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^crc/', include('portailCRC.urls', namespace='portailCRC', app_name='portailCRC')),
-    url(r'^crc/teledm/', include('teledm.urls', namespace='teledm', app_name='teledm')),
+    url(r'^teledm/', include('teledm.urls', namespace='teledm', app_name='teledm')),
     #url(r'^user/', include('usermanagement.urls')),
     url(r'^accounts/password_reset/$', password_reset, {'template_name': 'registration/password_reset_form.html'}, name='password_reset'),
     url(r'^accounts/password_reset_complete/$', password_reset_complete, {'template_name': 'registration/password_reset_complete.html'}, name='password_reset_complete'),
