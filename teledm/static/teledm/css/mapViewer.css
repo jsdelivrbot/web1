@@ -1,38 +1,38 @@
 .panel .selectControlItemInactive {
-    background:url(http://robert.szczepanek.pl/icon/0.1/identify.png) no-repeat;
+    background:url('../images/info.png') no-repeat;
     opacity: 0.2;
     width: 24px;
     height: 24px;
 }
 
 .panel .selectControlItemActive {
-    background:url(http://robert.szczepanek.pl/icon/0.1/identify.png) no-repeat;
+    background:url('../images/info.png') no-repeat;
     width: 24px;
     height: 24px;
 }
 
 .panel .olControlNavigationItemInactive {
-    background:url(http://robert.szczepanek.pl/icon/0.1/pan.png) no-repeat;
+    background:url('../images/pan.png') no-repeat;
     opacity: 0.2;
     width: 24px;
     height: 24px;
 }
 
 .panel .olControlNavigationItemActive {
-    background:url(http://robert.szczepanek.pl/icon/0.1/pan.png) no-repeat;
+    background:url('../images/pan.png') no-repeat;
     width: 24px;
     height: 24px;
 }
 
 .panel .olControlZoomBoxItemInactive {
-    background:url(http://robert.szczepanek.pl/icon/0.1/zoom-in.png) no-repeat;
+    background:url('../images/zoomIn.png') no-repeat;
     opacity: 0.2;
     width: 24px;
     height: 24px;
 }
 
 .panel .olControlZoomBoxItemActive {
-    background:url(http://robert.szczepanek.pl/icon/0.1/zoom-in.png) no-repeat;
+    background:url('../images/zoomIn.png') no-repeat;
     width: 24px;
     height: 24px;
 }
