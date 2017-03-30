@@ -394,11 +394,12 @@ function createURL(valueSelected, selector){
     var ind = listSelected.indexOf(valueSelected);
     var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
     if (URL == "/catalog.xml"){
-        var URLCat = ROOT + "/catalog.xml";
+        var URLCat = ROOT + "/CatalogTELEDM.xml";
     }
     else {
         var URLCat = ROOT + '/' + URL;
     }
+    alert(URLCat);
     $.ajax( {
 				type: "GET",
 				url: URLCat,
@@ -1502,8 +1503,8 @@ function setColorbar()
 {
     var nomColorbar = $("#Colorbar").val();
     var nbColorband = $("select[name='colorbandNum']").val();
-    var src_img = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
-    var img = "<img height='200px' width='50px' src='http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
+    var src_img = ROOT + "/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
+    var img = "<img height='200px' width='50px' src='"+ ROOT + "/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
     $("#colorbar").html(img);
     var layers = map.layers;
     if(typeof map.layers[1] !== 'undefined' && map.layers[1].name == 'wms')    //si il existe déja un layer
@@ -1516,8 +1517,8 @@ function setColorbar()
 function setColorband(){
     var nomColorbar = $("#Colorbar").val();
     var nbColorband = $("select[name='colorbandNum']").val();
-    var src_img = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
-    var img = "<img height='200px' width='50px' marging='100px' padding='0px' src='http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
+    var src_img = ROOT + "/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
+    var img = "<img height='200px' width='50px' marging='100px' padding='0px' src='"+ ROOT + "/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
     $("#colorbar").html(img);
     if(typeof map.layers[1] !== 'undefined' && map.layers[1] == 'wms'){    //si il existe déja un layer
         map.layers[1].params.NUMCOLORBANDS = nbColorband;
