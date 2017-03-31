@@ -399,7 +399,6 @@ function createURL(valueSelected, selector){
     else {
         var URLCat = ROOT + '/' + URL;
     }
-    alert(URLCat);
     $.ajax( {
 				type: "GET",
 				url: URLCat,
