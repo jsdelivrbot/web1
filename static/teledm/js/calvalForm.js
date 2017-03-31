@@ -126,7 +126,7 @@ function createURL(valueSelected, selector, selects){
     var ind = listSelected.indexOf(valueSelected);
     var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
     if (URL == "/catalog.xml"){
-        var URLCat = ROOT + "/catalog.xml";
+        var URLCat = ROOT + "/CatalogTELEDM.xml";
     }
     else {
         var URLCat = ROOT + '/' + URL;

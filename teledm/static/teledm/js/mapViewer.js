@@ -50,6 +50,7 @@ var variablesTeom = ["concentration"];
 var stationsMeteo = ["Banizoumbou", "Cinzana", "MBour", "Dedougou"];
 var variablesMeteo = ["wind", "wind_dir", "temp", "relh", "rain"];
 var resoTemp = [['d','quotidien'],['w','hebdomadaire'], ['m','mensuel'], ['t','trimestriel']];
+var domaines = [['01', 'domaine 01'], ['02', 'domaine 02']]
 
 var epidemio = ["meningite"];
 var meningitePays = {
@@ -118,9 +119,12 @@ var lstInfos = {
 
 
 var varInfos = {
-    variables:[],
+    variables:{
+            name:[],
+            dims:[],
+            },
     debut:"",
-    fin:""
+    fin:"",
 };
 
 
@@ -155,7 +159,7 @@ function resetDate(){
     $("[id^='date']").val("");
 }
 
-
+$('#domaineS1').prop('disabled', true);
 function setForm(){
     //type capteur produit variable resospatiale level
     var selectSource1 = $("[id$='S1']");
@@ -164,7 +168,8 @@ function setForm(){
     createURL('', selectSource1[0]);
 
     //choix du type
-    selectSource1[0].onchange =  function(){
+    //selectSource1[0].onchange =  function(){
+    $("#typeS1").on("change", function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 1);
         
@@ -172,28 +177,29 @@ function setForm(){
             return; // absence de choix
         //charge les choix de capteur
         createURL(this.value, selectSource1[1]);
-        };
+        });
     // choix du capteur
-    selectSource1[1].onchange =  function(){
+    $("#capteurS1").on("change", function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 2);
         if (this.selectedIndex < 1)
             return; // absence de choix
         //charge les choix de produit
         createURL(this.value, selectSource1[2]);
-        };
+    });
     // choix du produit
-    selectSource1[2].onchange =  function(){
+    $("#produitS1").on("change", function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 3);
         if (this.selectedIndex < 1)
             return; // absence de choix
         //charge les choix de variables
         createURL(this.value, selectSource1[3]);
-        };
+    });
+    
     // choix de la resolution spatiale
-    selectSource1[3].onchange =  function(){
-        //reinitialise les menus deroulants
+    $("#resospatialeS1").on("change", function(){
+        //reinitialise les menus deroulants suivants
         resetSelect(selectSource1, 4);
         if (this.selectedIndex < 1)
             return; // absence de choix
@@ -202,9 +208,9 @@ function setForm(){
         for (var i=0; i<resoTemp.length; ++i) {
             selectSource1[4].options[selectSource1[4].options.length] = new Option(resoTemp[i][1], resoTemp[i][0]);
             }
-        };
+        });
     // choix reso temporelle
-    selectSource1[4].onchange =  function(){
+    $("#pasdetempsS1").on("change", function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 5);
         if (this.selectedIndex < 1)
@@ -220,15 +226,30 @@ function setForm(){
         var reso = listSelected[3];
         if (listSelected[2]=="seviri_aerus"){
             var fileName = "seviri_r" + reso.replace('res','') +'_'+this.value;
+        }else if (listSelected[2]=="domaine01"){
+            var fileName = "chimere01_r" + reso.replace('res','') +'_'+this.value;
+        }else if (listSelected[2]=="domaine02"){
+            var fileName = "chimere02_r" + reso.replace('res','') +'_'+this.value;
         }else{
             var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
         }
         var urlInfo = ROOT + '/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
         getDateRange(urlInfo);
-        setSelect(varInfos.variables, selectSource1[5]);
+        setSelect(varInfos.variables.name, selectSource1[5]);
         changeDates(varInfos.debut,varInfos.fin,this.value);
+        $("#variableS1").on("change", function(){
+            var id = $(this).find('option:selected').attr('id')
+            alert(id);
+            alert(varInfos.variables.dims[1][1]);
+            $.each(varInfos.variables.dims[id], function (i, item) {
+                $('#levelS1').append($('<option>', { 
+                    value: item,
+                    text : item 
+                }));
+            });   
+        });
         //dates debut/fin     
-    };
+    });
 }
 
 
@@ -345,6 +366,7 @@ function setFormInSitu(){
 
 function getDateRange(url){
     var lstvariables = [];
+    var lstlayers = [];
     $.ajax({
         type: "GET",
         url: url,
@@ -353,14 +375,17 @@ function getDateRange(url){
         success: function(xml) {
             $(xml).find('Layer[queryable="1"]').each(function(){
                 lstvariables.push($(this).find("Name").first().text());
+                varInfos.variables.name = lstvariables;
+                lstlayers.push($(this).find('Dimension[name="elevation"]').text());
+                varInfos.variables.dims = lstlayers;
                 var times = $(this).find('Dimension[name="time"]').text();
                 var ldates = times.split(',');
-                varInfos.variables = lstvariables;
                 varInfos.debut = ldates[1];
                 varInfos.fin = ldates[ldates.length-1];
             })
         }
-    }) 
+    })
+    alert(varInfos.variables.dims);
 }
 
 
@@ -399,6 +424,7 @@ function createURL(valueSelected, selector){
     else {
         var URLCat = ROOT + '/' + URL;
     }
+    //alert(URLCat);
     $.ajax( {
 				type: "GET",
 				url: URLCat,
