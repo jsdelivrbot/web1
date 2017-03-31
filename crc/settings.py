@@ -6,7 +6,7 @@ settings for crc project.
 import os
 
 
-DIRDB = "/home/mers/Bureau/teledm"
+DIRDB = os.path.join(os.path.expanduser("~"),"Bureau/teledm")
 #from django.core.urlresolvers import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -86,7 +86,7 @@ MIDDLEWARE_CLASSES = [
 ]
 
 ROOT_URLCONF = 'crc.urls'
-LOGIN_REDIRECT_URL = '/crc/teledm'
+LOGIN_REDIRECT_URL = '/climdata.u-bourgogne.fr/teledm'
 
 ADMIN_REORDER = (
     'crc',
