@@ -238,15 +238,19 @@ function setForm(){
         setSelect(varInfos.variables.name, selectSource1[5]);
         changeDates(varInfos.debut,varInfos.fin,this.value);
         $("#variableS1").on("change", function(){
-            var id = $(this).find('option:selected').attr('id')
-            alert(id);
-            alert(varInfos.variables.dims[1][1]);
-            $.each(varInfos.variables.dims[id], function (i, item) {
-                $('#levelS1').append($('<option>', { 
-                    value: item,
-                    text : item 
-                }));
-            });   
+            var id = $(this).val();//find('option:selected').attr('id')
+            alert(varInfos.variables.dims[0].length);
+            if (varInfos.variables.dims[0].length > 0){
+                $.each(varInfos.variables.dims[0], function (i, item) {
+                    $('#levelS1').append($('<option>', { 
+                        value: item -1,
+                        text : item 
+                    }));
+                });
+            }
+        });
+        $("#levelS1").on('change', function(){
+            alert($(this).val());        
         });
         //dates debut/fin     
     });
@@ -367,6 +371,7 @@ function setFormInSitu(){
 function getDateRange(url){
     var lstvariables = [];
     var lstlayers = [];
+    alert(url);
     $.ajax({
         type: "GET",
         url: url,
@@ -376,7 +381,8 @@ function getDateRange(url){
             $(xml).find('Layer[queryable="1"]').each(function(){
                 lstvariables.push($(this).find("Name").first().text());
                 varInfos.variables.name = lstvariables;
-                lstlayers.push($(this).find('Dimension[name="elevation"]').text());
+                var layers = $(this).find('Dimension[name="elevation"]').text();
+                lstlayers.push(layers.split(',').map(Number));
                 varInfos.variables.dims = lstlayers;
                 var times = $(this).find('Dimension[name="time"]').text();
                 var ldates = times.split(',');
@@ -424,7 +430,6 @@ function createURL(valueSelected, selector){
     else {
         var URLCat = ROOT + '/' + URL;
     }
-    //alert(URLCat);
     $.ajax( {
 				type: "GET",
 				url: URLCat,
