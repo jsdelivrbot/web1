@@ -114,7 +114,7 @@ def calc_stats(rx,ry,gdf,ndist,trsfm,tps):
 
 
 
-def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape):
+def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,level, shape):
     # traitement des dates
     datedeb = datetime.strptime(deb,"%Y-%m-%d")
     datefin = datetime.strptime(fin,"%Y-%m-%d")
@@ -225,7 +225,10 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,sha
     print "date de debut: ",num2date(serie_dates[0], dates.units)
     print "date de fin: ",num2date(serie_dates[-1], dates.units)
 
-    var = np.array(var_in[iddeb:idfin+1,...])
+    if level == -1:
+        var = np.array(var_in[iddeb:idfin+1,...])
+    else:
+        var = np.array(var_in[iddeb:idfin+1,level,...])
     # traitement de la matrice avec fillvalue, scalefactor et addoffset
     if sat == 'toms':
         var[var==var_in._FillValue]=-999

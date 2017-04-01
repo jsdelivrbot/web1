@@ -102,9 +102,13 @@ def mapDist(request):
             prod = request.POST['produit']
             res_temp = request.POST['pasdetemps']
             res = request.POST['resospatiale']
-            varname = request.POST['variable'] 
+            varname = request.POST['variable']
+            if 'level1' in request.POST.keys():
+                level = int(request.POST['level1']) - 1
+            else:
+                level = -1
             shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
-            ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,shape)
+            ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,level,shape)
             val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
             datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
             list_dates = ldf['vmean'].index.values.tolist()
@@ -170,20 +174,20 @@ def calval(request):
         res_sat1 = request.POST['resospatiale1'][3:]
         variable_sat1 = request.POST['variable1']
         level_sat1 = request.POST['level1']
-        if request.POST['level1'] == 'Layer':
-            level_sat1 = ''
+        if 'level1' in request.POST.keys():
+            level_sat1 = int(request.POST['level1']) - 1
         else:
-            level_sat1 = np.float(request.POST['level1'])
+            level_sat1 = -1
         if 'type2' in request.POST:
             type2 = request.POST['type2']
             sat2 = request.POST['capteur2']
             prd_sat2 = request.POST['produit2']
             res_sat2 = request.POST['resospatiale2'][3:]
             variable_sat2 = request.POST['variable2']
-            if request.POST['level2'] == 'Layer':
-                level_sat2 = ''
+            if 'level2' in request.POST.key():
+                level_sat2 = int(request.POST['level2']) - 1
             else:
-                level_sat2 = np.float(request.POST['level2'])
+                level_sat2 = -1
             if request.POST['action'] == 'scatterTemporel':
                 df = scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
                                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,

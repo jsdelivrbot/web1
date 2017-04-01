@@ -107,6 +107,7 @@ var lstInfos = {
     resspatiale:"",
     restempo:"",
     layer:"",
+    level:"",
     nomFichier:"",
     bbox:"",
     colorbar:"",
@@ -146,6 +147,7 @@ function setSelect(array, bx){
 
 function resetSelect(listSelect, id){
     resetDate();
+    $('#levelS1').prop('disabled', true);
     for (var i = id; i < listSelect.length; i++){
         listSelect[i].length = 1;
         listSelect[i].removeAttribute("selected");
@@ -159,7 +161,7 @@ function resetDate(){
     $("[id^='date']").val("");
 }
 
-$('#domaineS1').prop('disabled', true);
+$('#levelS1').prop('disabled', true);
 function setForm(){
     //type capteur produit variable resospatiale level
     var selectSource1 = $("[id$='S1']");
@@ -172,7 +174,6 @@ function setForm(){
     $("#typeS1").on("change", function(){
         //reinitialise les menus deroulants
         resetSelect(selectSource1, 1);
-        
         if (this.selectedIndex < 1)
             return; // absence de choix
         //charge les choix de capteur
@@ -238,20 +239,20 @@ function setForm(){
         setSelect(varInfos.variables.name, selectSource1[5]);
         changeDates(varInfos.debut,varInfos.fin,this.value);
         $("#variableS1").on("change", function(){
-            var id = $(this).val();//find('option:selected').attr('id')
-            alert(varInfos.variables.dims[0].length);
-            if (varInfos.variables.dims[0].length > 0){
-                $.each(varInfos.variables.dims[0], function (i, item) {
+            var id = $(this).prop('selectedIndex');            
+            if (varInfos.variables.dims[id] != -1){
+                $("#levelS1").prop("disabled", false);
+                $.each(varInfos.variables.dims[id], function (i, item) {
                     $('#levelS1').append($('<option>', { 
-                        value: item -1,
+                        value: item,
                         text : item 
                     }));
                 });
             }
         });
-        $("#levelS1").on('change', function(){
-            alert($(this).val());        
-        });
+        //$("#levelS1").on('change', function(){
+            //alert($(this).val());        
+        //});
         //dates debut/fin     
     });
 }
@@ -371,7 +372,6 @@ function setFormInSitu(){
 function getDateRange(url){
     var lstvariables = [];
     var lstlayers = [];
-    alert(url);
     $.ajax({
         type: "GET",
         url: url,
@@ -381,8 +381,12 @@ function getDateRange(url){
             $(xml).find('Layer[queryable="1"]').each(function(){
                 lstvariables.push($(this).find("Name").first().text());
                 varInfos.variables.name = lstvariables;
-                var layers = $(this).find('Dimension[name="elevation"]').text();
-                lstlayers.push(layers.split(',').map(Number));
+                if ($(this).find('Dimension[name="elevation"]').text()){
+                    var layers = $(this).find('Dimension[name="elevation"]').text();
+                    lstlayers.push(layers.split(',').map(Number));
+                } else{
+                    lstlayers.push([-1]);     
+                }
                 varInfos.variables.dims = lstlayers;
                 var times = $(this).find('Dimension[name="time"]').text();
                 var ldates = times.split(',');
@@ -391,7 +395,6 @@ function getDateRange(url){
             })
         }
     })
-    alert(varInfos.variables.dims);
 }
 
 
@@ -555,7 +558,7 @@ function getInfos()
     }
 
     var level = $('#levelS1').val();
-    if(level=='layer')
+    if((level=='Layer') & ($('#levelS1').is(':disabled') == false))
     {
         
         alert("Erreur ! Aucun niveau de couche sélectionné !");
@@ -597,6 +600,10 @@ function getInfos()
     }
     if (lstInfos.produit == 'seviri_aerus'){
         var nomFichier = "seviri_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
+    }else if (lstInfos.produit == 'domaine01'){
+        var nomFichier = "chimere01_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
+    }else if (lstInfos.produit == 'domaine02'){
+        var nomFichier = "chimere02_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
     }else{
         var nomFichier = produit + "_r" + resospatiale.replace('res','') + "_" + restempo + ".nc";
     }
@@ -759,21 +766,38 @@ function getInfosMapTemporel(e){
             //mise a jour date
             var dateForm= $("input[id='date']").val();
             lstInfos.date=dateForm;
-            var urlInfo = ROOT + "/ncss"
-                        + "/" + lstInfos.nomDataset 
-                        + "/" + lstInfos.capteur
-                        + "/" + lstInfos.produit
-                        + "/" + lstInfos.resspatiale
-                        + "/" + lstInfos.nomFichier
-                        + "?time_start="+ encodeURIComponent(varInfos.debut)
-                        + "&time_end="+ encodeURIComponent(varInfos.fin)
-                        + "&var="+ lstInfos.param
-            
-                        + "&latitude=" + lonlat.lat
-                        + "&longitude=" + lonlat.lon
-            
-                        + "&accept=csv"
-                        ;
+            if (lstInfos.level){
+                var urlInfo = ROOT + "/ncss"
+                    + "/" + lstInfos.nomDataset 
+                    + "/" + lstInfos.capteur
+                    + "/" + lstInfos.produit
+                    + "/" + lstInfos.resspatiale
+                    + "/" + lstInfos.nomFichier
+                    + "?time_start="+ encodeURIComponent(varInfos.debut)
+                    + "&time_end="+ encodeURIComponent(varInfos.fin)
+                    + "&var="+ lstInfos.param
+                    + "&elevation=" + lstInfos.level
+                    + "&latitude=" + lonlat.lat
+                    + "&longitude=" + lonlat.lon
+                    + "&accept=csv"
+                    ;       
+            }else{
+                var urlInfo = ROOT + "/ncss"
+                    + "/" + lstInfos.nomDataset 
+                    + "/" + lstInfos.capteur
+                    + "/" + lstInfos.produit
+                    + "/" + lstInfos.resspatiale
+                    + "/" + lstInfos.nomFichier
+                    + "?time_start="+ encodeURIComponent(varInfos.debut)
+                    + "&time_end="+ encodeURIComponent(varInfos.fin)
+                    + "&var="+ lstInfos.param
+        
+                    + "&latitude=" + lonlat.lat
+                    + "&longitude=" + lonlat.lon
+        
+                    + "&accept=csv"
+                    ;
+                }
             console.log(urlInfo);
             $.ajax({
                 type: "GET",
@@ -850,20 +874,38 @@ function getInfosMap(e){
             //mise a jour date
             var dateForm= $("input[id='date']").val();
             lstInfos.date=dateForm;
-            var URLRequest = 
-                ROOT+"/ncss/"
-                + lstInfos.nomDataset
-                + "/" + lstInfos.capteur
-                + "/" + lstInfos.produit
-                + "/" + lstInfos.resspatiale
-                + "/" + lstInfos.nomFichier
-                + "?time_start="+ encodeURIComponent(lstInfos.date)
-                + "&time_end="+ encodeURIComponent(lstInfos.date)
-                + "&var="+ lstInfos.param
-                + "&latitude=" + lonlat.lat
-                + "&longitude=" + lonlat.lon
-                + "&accept=xml"
-                ;
+            if (lstInfos.level){
+                var URLRequest = 
+                    ROOT+"/ncss/"
+                    + lstInfos.nomDataset
+                    + "/" + lstInfos.capteur
+                    + "/" + lstInfos.produit
+                    + "/" + lstInfos.resspatiale
+                    + "/" + lstInfos.nomFichier
+                    + "?time_start="+ encodeURIComponent(lstInfos.date)
+                    + "&time_end="+ encodeURIComponent(lstInfos.date)
+                    + "&var="+ lstInfos.param
+                    + "&elevation=" + lstInfos.level
+                    + "&latitude=" + lonlat.lat
+                    + "&longitude=" + lonlat.lon
+                    + "&accept=xml"
+                    ;
+            }else {
+                var URLRequest = 
+                    ROOT+"/ncss/"
+                    + lstInfos.nomDataset
+                    + "/" + lstInfos.capteur
+                    + "/" + lstInfos.produit
+                    + "/" + lstInfos.resspatiale
+                    + "/" + lstInfos.nomFichier
+                    + "?time_start="+ encodeURIComponent(lstInfos.date)
+                    + "&time_end="+ encodeURIComponent(lstInfos.date)
+                    + "&var="+ lstInfos.param
+                    + "&latitude=" + lonlat.lat
+                    + "&longitude=" + lonlat.lon
+                    + "&accept=xml"
+                    ;
+            }
             $.ajax({
                 type: "GET",
                 url: URLRequest,
@@ -1428,24 +1470,40 @@ function majLayer(){
         return null;
     }
     autoScale();
-    setMinMax(); //met a jour les valeurs min max du colorbar présent sur la carte
+    setMinMax();//met a jour les valeurs min max du colorbar présent sur la carte
     //setDescLayer();  //mise a jour description du layer
     //pour tout les dataset selectionnés : générer l'URL à parser
-    var URL = ROOT+ "/wms/" +
-        lstInfos.nomDataset +
-        "/" + lstInfos.capteur +
-        "/" + lstInfos.produit +
-        "/" + lstInfos.resspatiale +
-        "/" + lstInfos.nomFichier +
-        "?service=WMS&" +
-        "version=1.3.0" +
-        "&request=GetMap&CRS="+encodeURIComponent("CRS:84") +
-        "&LAYERS=" + lstInfos.param +
-        "&TRANSPARENT=true&FORMAT=image%2Fpng" +
-        "&SRS=EPSG";
-       
-        csr = lstInfos.scaleMin+","+lstInfos.scaleMax;
-        style = "boxfill/"+lstInfos.colorbar;
+    if (lstInfos.level){
+        var URL = ROOT+ "/wms/" +
+            lstInfos.nomDataset +
+            "/" + lstInfos.capteur +
+            "/" + lstInfos.produit +
+            "/" + lstInfos.resspatiale +
+            "/" + lstInfos.nomFichier +
+            "?service=WMS&" +
+            "version=1.3.0" +
+            "&request=GetMap&CRS="+encodeURIComponent("CRS:84") +
+            "&LAYERS=" + lstInfos.param +
+            "&elevation=" +lstInfos.level + 
+            "&TRANSPARENT=true&FORMAT=image%2Fpng" +
+            "&SRS=EPSG";
+    } else{
+        var URL = ROOT+ "/wms/" +
+            lstInfos.nomDataset +
+            "/" + lstInfos.capteur +
+            "/" + lstInfos.produit +
+            "/" + lstInfos.resspatiale +
+            "/" + lstInfos.nomFichier +
+            "?service=WMS&" +
+            "version=1.3.0" +
+            "&request=GetMap&CRS="+encodeURIComponent("CRS:84") +
+            "&LAYERS=" + lstInfos.param +
+            "&TRANSPARENT=true&FORMAT=image%2Fpng" +
+            "&SRS=EPSG";
+    }
+    csr = lstInfos.scaleMin+","+lstInfos.scaleMax;
+    style = "boxfill/"+lstInfos.colorbar;
+    console.log('csr' + lstInfos.scaleMin);
     if (typeof map.layers[1] !== 'undefined'){
         if (map.layers[1].name == 'wms'){
             map.removeLayer(map.layers[1])
@@ -1454,6 +1512,7 @@ function majLayer(){
     if($("#plot").highcharts().series.length !=0){
         $("#plot").highcharts().series[0].remove(true);
     }
+    alert(lstInfos.level);
     var wms = new OpenLayers.Layer.WMS(
         "wms",
         URL,
@@ -1467,7 +1526,7 @@ function majLayer(){
             numcolorbands : $("select[name='colorbandNum']").val(),
             opacity : "100" //lstInfos.opacity
             },
-        {isBaseLayer: false}
+        {isBaseLayer: false},
     );
     map.addLayer(wms);
     map.setLayerIndex(wms, 1);
@@ -1476,6 +1535,7 @@ function majLayer(){
 
 function updateMap()
 {
+    majLayer();
     majLayer();
 }
 
@@ -1487,8 +1547,31 @@ function updateMap()
 
 function autoScale()
 {
-    getInfos();
-    var URLRequest = 
+    //getInfos();
+    console.log(lstInfos);
+    if (lstInfos.level){
+        var URLRequest = 
+            ROOT+"/wms/"
+            + lstInfos.nomDataset
+            + "/" + lstInfos.capteur
+            + "/" + lstInfos.produit
+            + "/" + lstInfos.resspatiale
+            + "/" + lstInfos.nomFichier
+            + "?item=minmax"
+            + "&LAYERS="+ lstInfos.param
+            + "&elevation=" + lstInfos.level
+            + "&TIME=" + encodeURIComponent(lstInfos.date)
+            + "&SRS=EPSG%3A4326"
+            + "&CRS=EPSG%3A4326"
+            + "&REQUEST=GetMetadata"
+            + "&service=WMS"
+            + "&version=1.3.0"
+            + "&BBOX=-25,-0.3,57,51"
+            + "&WIDTH=50"
+            + "&HEIGHT=50"
+            ;
+    }else{
+        var URLRequest = 
         ROOT+"/wms/"
         + lstInfos.nomDataset
         + "/" + lstInfos.capteur
@@ -1506,7 +1589,8 @@ function autoScale()
         + "&BBOX=-25,-0.3,57,51"
         + "&WIDTH=50"
         + "&HEIGHT=50"
-        ;
+        ;        
+    }
     $.ajax({
         type: "GET",
         url: URLRequest,

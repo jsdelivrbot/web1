@@ -64,7 +64,10 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
     lat = nc.variables['latitude'][:]
     lon = nc.variables['longitude'][:]
     mat_var = nc.variables[variable]
-    var_units = mat_var.units
+    try:
+        var_units = mat_var.units
+    except AttributeError:
+        var_units = ""
     #### extraction en fonction du buffer ou des lat/lon
     if not buff:
         lons_idx = np.where((lon > xhg)&(lon < xbd))[0]
@@ -73,8 +76,8 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
         x_max = lons_idx.max()
         y_min = lats_idx.min()
         y_max = lats_idx.max()
-        if lev in range(1,6):
-            vals = mat_var[idj1:idj2+1 , lev-1, y_min:y_max + 1, x_min:x_max + 1]
+        if lev >= 0:
+            vals = mat_var[idj1:idj2+1 , lev, y_min:y_max + 1, x_min:x_max + 1]
         else :
             vals = mat_var[idj1:idj2+1 , y_min:y_max + 1, x_min:x_max + 1]
         colpx = vals.shape[1]*vals.shape[2]
@@ -261,9 +264,12 @@ def scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
     if sat1 == "toms":
         fichier_sat1 = sat1+'_r'+res_sat1+'_d.nc'
         path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    elif prd_sat1 in ["chimere01","chimere02"]:
-        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
+    elif prd_sat1 == "domaine01":
+        fichier_sat1 = 'chimere01_r'+res_sat1+'_d.nc'
+        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+    elif prd_sat1 == "domaine02":
+        fichier_sat1 = 'chimere02_r'+res_sat1+'_d.nc'
+        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
     elif prd_sat1 == 'seviri_aerus':
         fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
         path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
@@ -274,9 +280,12 @@ def scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
     if sat2 == "toms":
         fichier_sat2 = sat2+'_r'+res_sat2+'_d.nc'
         path_sat2 = ddirDB+type2+'/'+sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    elif prd_sat2 in ["chimere01","chimere02"]:
-        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_d.nc'
-        path_sat1 = ddirDB+type2+'/'+sat2+'/'+prd_sat2[:-2]+'/'+'res'+res_sat2+'/'+fichier_sat2
+    elif prd_sat2 == "domaine01":
+        fichier_sat2 = 'chimere01_r'+res_sat2+'_d.nc'
+        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+    elif prd_sat2 == "domaine02":
+        fichier_sat2 = 'chimere02_r'+res_sat2+'_d.nc'
+        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
     elif prd_sat2 == 'seviri_aerus':
         fichier_sat2 = 'seviri_r'+res_sat2+'_d.nc'
         path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
@@ -285,7 +294,8 @@ def scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
         path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
     ###################################################################################
         
-        
+    print path_sat1
+    print path_sat2
     df_sat1, npx1, sat1_units = readNC_box(path_sat1,variable_sat1,ulx,uly,lrx,lry, start,end, prd_sat1, level_sat1, pas_de_temps)
     df_sat2, npx2, sat2_units = readNC_box(path_sat2,variable_sat2,ulx,uly,lrx,lry, start,end, prd_sat2, level_sat2, pas_de_temps)
     df_sat1_2 = df_sat1.join(df_sat2, how='outer')
