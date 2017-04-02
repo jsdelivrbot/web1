@@ -111,9 +111,7 @@
                 <option value="brun2">brun 2</option>
                 <option value="vert">vert</option>
             </select>
-            <div id="load" >
-                <!--<img src="{% static 'teledm/images/load.gif' %}"/>-->
-            </div>
+            <A HREF="{% url 'teledm:stations' %}" onClick="return popup(this, 'notes')">stations Aeronet/teom</A>
         </div>
 {% endblock %}
 
@@ -217,8 +215,9 @@
     <!--<script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>-->
     <!--<script type="text/javascript" src="{% static 'highcharts/js/highcharts.js' %}"></script>-->
     <!--<script type="text/javascript" src="{% static 'highmaps/js/highmaps.js' %}"></script>-->
-    <script type="text/javascript" src="{% static 'highcharts-export-csv/export-csv.js' %}"></script>
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
     <script type="text/javascript" src="{% static 'teledm/js/mapDistForm.js' %}"></script>
     <script type="text/javascript" src="{% static 'teledm/js/distPlot.js' %}"></script>
+    <script type="text/javascript" src="{% static 'teledm/js/home.js' %}"></script>
 {% endblock %}

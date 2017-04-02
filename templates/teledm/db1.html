@@ -1,0 +1,290 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'teledm/css/txtstyle.css' %}"/>
+<br>############################ RE-ANALYSES ECMWF #############################################################################
+<br>### era_interim ###
+<br>###################
+<br>format: netcdf
+<br>résolutions spatiales: 0.75°, 1x1.25°
+<br>zone: -25°W 51°N 57°E -1°S
+<br>résolutions temporelles: journalière, hebdomadaire, mensuelle, trimestrielle
+<br>Période: 1980-01-01/2016-08-31 (actualisation trismestrielle)
+<br>Variables:
+<br>tclw,   standard_name:  Total column liquid water
+<br>tco3,       standard_name:  Total column ozone
+<br>t2m,        standard_name:  2 metre temperature
+<br>ewss,       standard_name:  Eastward turbulent surface stress
+<br>slhf,       standard_name:  Surface latent heat flux
+<br>tcw,        standard_name:  Total column water
+<br>v10,        standard_name:  10 metre V wind component
+<br>sp,         standard_name:  Surface pressure
+<br>tcwv,       standard_name:  Total column water vapour
+<br>iews,       standard_name:  Instantaneous eastward turbulent surface stress
+<br>ishf,       standard_name:  Instantaneous surface sensible heat flux
+<br>inss,       standard_name:  Instantaneous northward turbulent surface stress
+<br>blh,        standard_name:  Boundary layer height
+<br>u10,        standard_name:  10 metre U wind component
+<br>bld,        standard_name:  Boundary layer dissipation
+<br>uvb,        standard_name:  Downward UV radiation at the surface
+<br>ie,         standard_name:  Instantaneous moisture flux
+<br>sshf,       standard_name:  Surface sensible heat flux
+<br>fg10,       standard_name:  10 metre wind gust since previous post-processing
+<br>nsss,       standard_name:  Northward turbulent surface stress
+<br>
+<br>
+<br>#############
+<br>### macc ####
+<br>#############
+<br>format: netcdf
+<br>résolutions spatiales: 0.75°, 1x1.25°
+<br>zone: -25°W 51°N 57°E -1°S
+<br>résolutions temporelles: journalière, hebdomadaire, mensuelle, trimestrielle
+<br>Période: 1980-01-01/2016-08-31
+<br>Variables:
+<br>aod469,         standard_name:  Total Aerosol Optical Depth at 469nm
+<br>suaod550,       standard_name:  Sulphate Aerosol Optical Depth at 550nm
+<br>bcaod550,       standard_name:  Black Carbon Aerosol Optical Depth at 550nm
+<br>ewss,           standard_name:  Eastward turbulent surface stress
+<br>omaod550,       standard_name:  Organic Matter Aerosol Optical Depth at 550nm
+<br>skt,            standard_name:  Skin temperature
+<br>aod550,         standard_name:  Total Aerosol Optical Depth at 550nm
+<br>tcw,            standard_name:  Total column water
+<br>ssaod550,       standard_name:  Sea Salt Aerosol Optical Depth at 550nm
+<br>aerdep,         standard_name:  Dust emission potential
+<br>aod1240,        standard_name:  Total Aerosol Optical Depth at 1240nm
+<br>aod865,         standard_name:  Total Aerosol Optical Depth at 865nm
+<br>blh,            standard_name:  Boundary layer height
+<br>fal,            standard_name:  Forecast albedo
+<br>duaod550,       standard_name:  Dust Aerosol Optical Depth at 550nm
+<br>aod670,         standard_name:  Total Aerosol Optical Depth at 670nm
+<br>bld,            standard_name:  Boundary layer dissipation
+<br>fsr,            standard_name:  Forecast surface roughness
+<br>gtco3,          standard_name:  GEMS Total column ozone
+<br>nsss,           standard_name:  Northward turbulent surface stress
+<br>
+<br>##############################################################################################################################
+<br>##############################################################################################################################
+<br>
+<br>
+<br>
+<br>############################ TELEDETECTION NASA ##############################################################################
+<br>### omaeruv ###
+<br>###############
+<br>format: netcdf
+<br>résolutions spatiales: 0.25°, 0.75°, 1x1.25°
+<br>zone: -25°W 51°N 57°E -1°S
+<br>résolutions temporelles: journalière, hebdomadaire, mensuelle, trimestrielle
+<br>Période: 2004-10-01/2016-08-31 (actualisation trismestrielle)
+<br>
+<br>Variables:
+<br>FinalAerosolOpticalDepth_358_nm             standard_name:  Best Aerosol Optical Depth (tau)_358_nm
+<br>AerosolAbsOpticalDepthVsHeight_500_nm       standard_name:  Aerosol Absorption Optical Depth (tau_abs) at 5 levels_500_nm
+<br>Reflectivity_500_nm                         standard_name:  Lambert Equivalent Reflectivity_500_nm
+<br>FinalAerosolSingleScattAlb_500_nm           standard_name:  Best Aerosol Single Scattering Albedo (omega0)_500_nm
+<br>FinalAlgorithmFlags                         standard_name:  Final Algorithm Flags
+<br>AerosolSingleScattAlbVsHeight_354_nm        standard_name:  Aerosol Single Scattering Albedo (omega0) at 5 levels_354_nm
+<br>Reflectivity_354_nm                         standard_name:  Lambert Equivalent Reflectivity_354_nm
+<br>AIRSL3COvalue                               standard_name:  AIRS CO L3 data
+<br>FinalAerosolAbsOpticalDepth_358_nm          standard_name:  Best Aerosol Absorption Optical Depth (tau_abs)_358_nm
+<br>AerosolSingleScattAlbVsHeight_500_nm        standard_name:  Aerosol Single Scattering Albedo (omega0) at 5 levels_500_nm
+<br>FinalAerosolLayerHeight                     standard_name:  Final Aerosol Layer Height (km)
+<br>AerosolOpticalDepthVsHeight_354_nm          standard_name:  Aerosol Optical Depth (tau) at 5 levels_354_nm
+<br>AerosolSingleScattAlbVsHeight_358_nm        standard_name:  Aerosol Single Scattering Albedo (omega0) at 5 levels_358_nm
+<br>FinalAerosolAbsOpticalDepth_354_nm          standard_name:  Best Aerosol Absorption Optical Depth (tau_abs)_354_nm
+<br>Reflectivity_358_nm                         standard_name:  Lambert Equivalent Reflectivity_358_nm
+<br>AerosolOpticalDepthVsHeight_358_nm          standard_name:  Aerosol Optical Depth (tau) at 5 levels_358_nm
+<br>SurfaceAlbedo_500_nm                        standard_name:  Surface Albedo_500_nm
+<br>FinalAerosolOpticalDepth_354_nm             standard_name:  Best Aerosol Optical Depth (tau)_354_nm
+<br>FinalAerosolSingleScattAlb_354_nm           standard_name:  Best Aerosol Single Scattering Albedo (omega0)_354_nm
+<br>FinalAerosolAbsOpticalDepth_500_nm          standard_name:  Best Aerosol Absorption Optical Depth (tau_abs)_500_nm
+<br>FinalAerosolSingleScattAlb_358_nm           standard_name:  Best Aerosol Single Scattering Albedo (omega0)_358_nm
+<br>SurfaceAlbedo_354_nm                        standard_name:  Surface Albedo_354_nm
+<br>levels                                      standard_name:  Layer_Aerosol_NearUV
+<br>AerosolAbsOpticalDepthVsHeight_358_nm       standard_name:  Aerosol Absorption Optical Depth (tau_abs) at 5 levels_358_nm
+<br>NormRadiance_354_nm                         standard_name:  Normalized Radiance_354_nm
+<br>SurfaceAlbedo_358_nm                        standard_name:  Surface Albedo_358_nm
+<br>NormRadiance_500_nm                         standard_name:  Normalized Radiance_500_nm
+<br>FinalAerosolOpticalDepth_500_nm             standard_name:  Best Aerosol Optical Depth (tau)_500_nm
+<br>UVAerosolIndex                              standard_name:  UV Aerosol Index
+<br>NormRadiance_358_nm                         standard_name:  Normalized Radiance_358_nm
+<br>AerosolOpticalDepthVsHeight_500_nm          standard_name:  Aerosol Optical Depth (tau) at 5 levels_500_nm
+<br>AerosolAbsOpticalDepthVsHeight_354_nm       standard_name:  Aerosol Absorption Optical Depth (tau_abs) at 5 levels_354_nm
+<br>
+<br>##############################################################################################################################
+<br>##############################################################################################################################
+<br>
+<br>
+<br>
+<br>############################ TELEDETECTION ICARE #############################################################################
+<br>### modis MYD04 ###
+<br>###################
+<br>format: netcdf
+<br>résolutions spatiales: 0.09°, 0.25°, 0.75°, 1x1.25°
+<br>zone: -25°W 51°N 57°E -1°S
+<br>résolutions temporelles: journalière, hebdomadaire, mensuelle, trimestrielle
+<br>Période: 2002-07-04/2016-08-31 (actualisation trismestrielle)
+<br>
+<br>Variables:
+<br>Deep_Blue_Surface_Reflectance_Land_412_nm       standard_name:  Deep_Blue_Surface_Reflectance_Land_412_nm
+<br>Deep_Blue_Angstrom_Exponent_Land                standard_name:  Deep_Blue_Angstrom_Exponent_Land
+<br>Cloud_Fraction_Land                             standard_name:  Cloud_Fraction_Land
+<br>Deep_Blue_Surface_Reflectance_Land_470_nm       standard_name:  Deep_Blue_Surface_Reflectance_Land_470_nm
+<br>Deep_Blue_Aerosol_Optical_Depth_550_Land        standard_name:  Deep_Blue_Aerosol_Optical_Depth_550_Land
+<br>Deep_Blue_Single_Scattering_Albedo_Land_660_nm  standard_name:  Deep_Blue_Single_Scattering_Albedo_Land_660_nm
+<br>Deep_Blue_Number_Pixels_Used_Land_412_nm        standard_name:  Deep_Blue_Number_Pixels_Used_Land_412_nm
+<br>Deep_Blue_Surface_Reflectance_Land_660_nm       standard_name:  Deep_Blue_Surface_Reflectance_Land_660_nm
+<br>Deep_Blue_Aerosol_Optical_Depth_550_Land_STD    standard_name:  Deep_Blue_Aerosol_Optical_Depth_550_Land_STD
+<br>Deep_Blue_Number_Pixels_Used_Land_660_nm        standard_name:  Deep_Blue_Number_Pixels_Used_Land_660_nm
+<br>Deep_Blue_Single_Scattering_Albedo_Land_412_nm  standard_name:  Deep_Blue_Single_Scattering_Albedo_Land_412_nm
+<br>Deep_Blue_Number_Pixels_Used_Land_470_nm        standard_name:  Deep_Blue_Number_Pixels_Used_Land_470_nm
+<br>Deep_Blue_Single_Scattering_Albedo_Land_470_nm  standard_name:  Deep_Blue_Single_Scattering_Albedo_Land_470_nm
+<br>
+<br>###################
+<br>### modis MYD05 ###
+<br>###################
+<br>format: netcdf
+<br>résolutions spatiales: 0.05°, 0.09°, 0.25°, 0.75°, 1x1.25°
+<br>zone: -25°W 51°N 57°E -1°S
+<br>résolutions temporelles: journalière, hebdomadaire, mensuelle, trimestrielle
+<br>Période: 2002-07-04/2016-08-31 (actualisation trismestrielle)
+<br>
+<br>Variables:
+<br>Water_Vapor_Infrared      standard_name:  Water_Vapor_Infrared
+<br>
+<br>###################
+<br>### modis MYD07 ###
+<br>###################
+<br>format: netcdf
+<br>résolutions spatiales: 0.09°, 0.25°, 0.75°, 1x1.25°
+<br>zone: -25°W 51°N 57°E -1°S
+<br>résolutions temporelles: journalière, hebdomadaire, mensuelle, trimestrielle
+<br>Période: 2002-07-04/2016-08-31 (actualisation trismestrielle)
+<br>
+<br>Variables:
+<br>Total_Ozone               standard_name:  Total_Ozone
+<br>Lifted_Index              standard_name:  Lifted_Index
+<br>Surface_Temperature       standard_name:  Surface_Temperature
+<br>
+<br>
+<br>
+<br>#################
+<br>### msg seviri ##
+<br>#################
+<br>format: netcdf
+<br>résolutions spatiales: 0.03°, 0.05°, 0.09°, 0.25°, 0.75°, 1x1.25°
+<br>zone: -25°W 51°N 57°E -1°S
+<br>résolutions temporelles: journalière, hebdomadaire, mensuelle, trimestrielle
+<br>Période: 2014-01-01/2016-08-31 (actualisation trismestrielle)
+<br>
+<br>Variables:
+<br>ANGS_06_16       standard_name:  Aerosol Optical Depth - 650nm
+<br>AOD_VIS06        standard_name:  Aerosol Optical Depth - 650nm
+<br>CK_VIS06         standard_name:  Aerosol Optical Depth - 650nm
+<br>
+<br>#############
+<br>### toms ####
+<br>#############
+<br>format: netcdf
+<br>résolutions spatiales: 0.09°, 0.25°, 0.75°, 1x1.25°
+<br>zone: -22°W 50.5°N 55.5°E 0.5°S
+<br>résolutions temporelles: journalière, hebdomadaire, mensuelle, trimestrielle
+<br>Période: 1996-01-01/2005-12-31
+<br>
+<br>Variables:
+<br>UVAerosolIndex       standard_name:  UVAerosolIndex
+<br>
+<br>
+<br>#####################
+<br>### calipso caliop ##
+<br>#####################
+<br>En cours de traitement
+<br>
+<br>
+<br>#########################################################################################################################
+<br>#########################################################################################################################
+<br>
+<br>
+<br>
+<br>
+<br>############################ MESURES METEO ##############################################################################
+<br>format: csv
+<br>stations: Banizoumbou, Cinzana, Dakar
+<br>resolutions temporelles: 5min, horaire, 3h, 6h, 12h, quotidien, hebdomadaire, mensuelle, trismestrielle
+<br>
+<br>periode:
+<br>Banizoubou 2006-01-01/2014-12-29
+<br>Cinzana    2006-01-01/2014-12-29
+<br>MBour      2006-01-01/2012-07-16
+<br>Dedougou   2014-01-01/2015-12-31
+<br>
+<br>variables: wind, wind_dir, temp, relh, rain
+<br>#########################################################################################################################
+<br>#########################################################################################################################
+<br>
+<br>
+<br>############################ MESURES AERONET ############################################################################
+<br>format: csv
+<br>stations: Banizoumbou, Cinzana, Dakar
+<br>resolutions temporelles: 15min, quotidien, hebdomadaire, mensuelle, trismestrielle
+<br>
+<br>niveau de traitement 1.5:
+<br>periode:
+<br>Banizoubou 1995-10-16/2016-05-06
+<br>Cinzana    2004-06-01/2016-05-09
+<br>Dakar      1996-12-04/2016-05-10
+<br>
+<br>niveau de traitement 2:
+<br>periode:
+<br>Banizoubou 1995-10-16/2016-05-06
+<br>Cinzana    2008-06-12/2009-03-04
+<br>Dakar      2008-10-30/2015-12-07
+<br>
+<br>#########################################################################################################################
+<br>#########################################################################################################################
+<br>
+<br>
+<br>
+<br>
+<br>############################ MESURES TEOM ###############################################################################
+<br>format: csv
+<br>stations: Banizoumbou, Cinzana, Dakar
+<br>
+<br>resolutions temporelles (diurnes et h24): 15min, quotidien, hebdomadaire, mensuelle, trismestrielle
+<br>periode:
+<br>Banizoubou 2006-01-04/2014-12-31
+<br>Cinzana    2006-01-01/2014-12-31
+<br>Dedougou   2012-03-29/2016-03-31
+<br>
+<br>variables: concentration
+<br>#########################################################################################################################
+<br>#########################################################################################################################
+<br>
+<br>
+<br>
+<br>############################ DONNEES EPIDEMIOLOGIQUES OMS ###############################################################
+<br>### meningite ##
+<br>################
+<br>format: csv
+<br>Burkina Faso, Mali, Niger
+<br>resolutions spatiales: pays, district   
+<br>resolutions temporelles: hebdomadaire au niveau district      Période: Burkina Faso 1996
+<br>						 hebdomadaire au niveau du pays       Période: 2004-2014
+<br>						 annuelle auniveau du pays(16 pays)   Période: depuis 1960
+<br>Période:
+<br>districts Burkina Faso 1996-12-30/2007-11-26
+<br>		  Mali         2001-01-01/2007-11-26
+<br>		  Niger        2001-12-31/2008-05-12
+<br>
+<br>variables: cas, décès, population, incidence
+<br>
+<br>
+<br>#########################################################################################################################
+<br>#########################################################################################################################
+<br>
+<br>
+<br>arborescence base de données TELEDM
+<br>
+<div class="row">
+    <img src="{% static 'teledm/images/base1.png' %}"/>
+    <br><img src="{% static 'teledm/images/base2.png' %}"/>
+    <br><img src="{% static 'teledm/images/base3.png' %}"/>
+</div>

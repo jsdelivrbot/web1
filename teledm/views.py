@@ -41,7 +41,18 @@ def home(request):
     else:
         logger.debug("this is a debug message!")
         return render_to_response('teledm/home.html', context_instance=RequestContext(request))
-    
+
+def DB(request):
+    return render_to_response('teledm/db.html', context_instance=RequestContext(request))
+def tutoMap(request):
+    return render_to_response('teledm/tutoMap.html', context_instance=RequestContext(request))
+def tutoCalVal(request):
+    return render_to_response('teledm/tutoCalVal.html', context_instance=RequestContext(request))
+def tutoExtraction(request):
+    return render_to_response('teledm/tutoExtraction.html', context_instance=RequestContext(request))
+def stations(request):
+    return render_to_response('teledm/stations.html', context_instance=RequestContext(request))
+
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapViewer(request):

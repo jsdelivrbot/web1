@@ -52,15 +52,12 @@ function verifForm(){
         alert("Erreur ! Aucune variable selectionnée !");
         throw new Exception();
     }
+    var level = $("#levelS1").val();
     if((level=='Layer') & ($('#levelS1').is(':disabled') == false))
     {
         
         alert("Erreur ! Aucun niveau de couche sélectionné !");
         throw new Exception();
-    }
-    else
-    {
-        lstInfos.level = level;
     }
     var date1 = $("#date1").val();
     if(date1 == '' || isNaN(Date.parse(date1)) == true){
