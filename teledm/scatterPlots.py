@@ -86,7 +86,7 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
         idlon = np.abs(lon-station_lon).argmin()
         idlat = np.abs(lat-station_lat).argmin()
         if lev in range(1,6):
-            vals = mat_var[idj1:idj2+1, lev-1, idlat-(z//2):idlat+(z//2)+1,idlon-(z//2):idlon+(z//2)+1]
+            vals = mat_var[idj1:idj2+1, lev, idlat-(z//2):idlat+(z//2)+1,idlon-(z//2):idlon+(z//2)+1]
         else:
             vals = mat_var[idj1:idj2+1, idlat-(z//2):idlat+(z//2)+1,idlon-(z//2):idlon+(z//2)+1]
 
@@ -171,9 +171,10 @@ def tempo(freq,debut,fin,df_in,prdsat1, insitu, prdsat2):
 
 def heure_passage(station_aeronet):
     # calcul de l'heure de passage du satellite en fonction de la staton aeronet étudiée
-    coord_st=pd.read_csv(ddirDB+'in_situ/aeronet/carto_aeronet/coord_aeronet.csv', sep='\t', header=0)
-    latst=np.asarray(coord_st[coord_st['name'].isin([station_aeronet])].lat)
-    lonst=np.asarray(coord_st[coord_st['name'].isin([station_aeronet])].lon)
+    coord_st=pd.read_csv(ddirDB+'in_situ/aeronet/carto_aeronet/coord_aeronet.csv', sep=',', header=0)
+    print coord_st
+    latst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lat)
+    lonst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lon)
     if np.round(lonst[0]) in np.arange(-25.,-8.):
         heure = 14
     if np.round(lonst[0]) in np.arange(-8.,20.):

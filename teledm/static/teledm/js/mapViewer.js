@@ -239,8 +239,8 @@ function setForm(){
         setSelect(varInfos.variables.name, selectSource1[5]);
         changeDates(varInfos.debut,varInfos.fin,this.value);
         $("#variableS1").on("change", function(){
-            var id = $(this).prop('selectedIndex');            
-            if (varInfos.variables.dims[id] != -1){
+            var id = $(this).prop('selectedIndex');
+            if (($("#capteurS1").val() == "chimere") | ($("#capteurS1").val() == "wrf")){
                 $("#levelS1").prop("disabled", false);
                 $.each(varInfos.variables.dims[id], function (i, item) {
                     $('#levelS1').append($('<option>', { 
@@ -256,6 +256,99 @@ function setForm(){
         //dates debut/fin     
     });
 }
+
+
+function getDateRange(url){
+    var lstvariables = [];
+    var lstlayers = [];
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "xml",
+        async: false,
+        success: function(xml) {
+            $(xml).find('Layer[queryable="1"]').each(function(){
+                lstvariables.push($(this).find("Name").first().text());
+                varInfos.variables.name = lstvariables;
+                if ($(this).find('Dimension[name="elevation"]').text()){
+                    var layers = $(this).find('Dimension[name="elevation"]').text();
+                    lstlayers.push(layers.split(',').map(Number));
+                } else{
+                    lstlayers.push([-1]);     
+                }
+                varInfos.variables.dims = lstlayers;
+                var times = $(this).find('Dimension[name="time"]').text();
+                var ldates = times.split(',');
+                varInfos.debut = ldates[1];
+                varInfos.fin = ldates[ldates.length-1];
+            })
+        }
+    })
+}
+
+
+function changeDates(start,end,period){
+    $("[id^='date']").datepicker('destroy');
+    $( "[id^='date']" ).datepicker({
+        yearRange: '1979:2025',
+        dateFormat: 'yy-mm-dd',
+        changeMonth: true,
+        changeYear: true,
+        showMonthAfterYear: true,
+        defaultDate: new Date(start),
+        minDate: new Date(start),
+        maxDate: new Date (end),
+    });
+}
+
+
+var urlPath = [];
+
+function createURL(valueSelected, selector){
+    var selectSource1 = $("[id$='S1']");
+    var listSelected = [];
+    var titre = [];
+    
+    $.each(selectSource1, function(value){
+        if (this.selectedIndex != 0){
+            listSelected.push(this.value);
+        }
+    });
+    var ind = listSelected.indexOf(valueSelected);
+    var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
+    if (URL == "/catalog.xml"){
+        var URLCat = ROOT + "/CatalogTELEDM.xml";
+    }
+    else {
+        var URLCat = ROOT + '/' + URL;
+    }
+    $.ajax( {
+				type: "GET",
+				url: URLCat,
+				dataType: "xml",
+				async: false,
+				success: function(xml) {
+        				if($(xml).find('catalogRef')!=0)  //Si catalogue(s) présent
+        				{
+        					$(xml).find('catalogRef').each( function(){  //Pour tout les catalogues
+        						titre.push($(this).attr('xlink:title'));   //Titre du catalogue
+        					})
+        				}
+                            if($(xml).find('dataset')!=0)   //Si data(s) présente(s)
+                            {
+        					$(xml).find('dataset').each( function(){  //Pour toutes les datas
+                                      if ($(this).attr('urlPath')){
+            						urlPath.push($(this).attr('urlPath'));  //URL du dataset
+                                      }
+        					}) //Fin each
+        				}//Fin if
+				}//Fin success AJAX
+			})//Fin AJAX
+    if (selector != ''){
+        setSelect(titre, selector);
+    }
+}
+
 
 
 function setFormInSitu(){
@@ -369,96 +462,7 @@ function setFormInSitu(){
     });
 }
 
-function getDateRange(url){
-    var lstvariables = [];
-    var lstlayers = [];
-    $.ajax({
-        type: "GET",
-        url: url,
-        dataType: "xml",
-        async: false,
-        success: function(xml) {
-            $(xml).find('Layer[queryable="1"]').each(function(){
-                lstvariables.push($(this).find("Name").first().text());
-                varInfos.variables.name = lstvariables;
-                if ($(this).find('Dimension[name="elevation"]').text()){
-                    var layers = $(this).find('Dimension[name="elevation"]').text();
-                    lstlayers.push(layers.split(',').map(Number));
-                } else{
-                    lstlayers.push([-1]);     
-                }
-                varInfos.variables.dims = lstlayers;
-                var times = $(this).find('Dimension[name="time"]').text();
-                var ldates = times.split(',');
-                varInfos.debut = ldates[1];
-                varInfos.fin = ldates[ldates.length-1];
-            })
-        }
-    })
-}
 
-
-function changeDates(start,end,period){
-    $("[id^='date']").datepicker('destroy');
-    $( "[id^='date']" ).datepicker({
-        yearRange: '1979:2025',
-        dateFormat: 'yy-mm-dd',
-        changeMonth: true,
-        changeYear: true,
-        showMonthAfterYear: true,
-        defaultDate: new Date(start),
-        minDate: new Date(start),
-        maxDate: new Date (end),
-    });
-}
-
-
-var urlPath = [];
-
-function createURL(valueSelected, selector){
-    var selectSource1 = $("[id$='S1']");
-    var listSelected = [];
-    var titre = [];
-    
-    $.each(selectSource1, function(value){
-        if (this.selectedIndex != 0){
-            listSelected.push(this.value);
-        }
-    });
-    var ind = listSelected.indexOf(valueSelected);
-    var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
-    if (URL == "/catalog.xml"){
-        var URLCat = ROOT + "/CatalogTELEDM.xml";
-    }
-    else {
-        var URLCat = ROOT + '/' + URL;
-    }
-    $.ajax( {
-				type: "GET",
-				url: URLCat,
-				dataType: "xml",
-				async: false,
-				success: function(xml) {
-        				if($(xml).find('catalogRef')!=0)  //Si catalogue(s) présent
-        				{
-        					$(xml).find('catalogRef').each( function(){  //Pour tout les catalogues
-        						titre.push($(this).attr('xlink:title'));   //Titre du catalogue
-        					})
-        				}
-                            if($(xml).find('dataset')!=0)   //Si data(s) présente(s)
-                            {
-        					$(xml).find('dataset').each( function(){  //Pour toutes les datas
-                                      if ($(this).attr('urlPath')){
-            						urlPath.push($(this).attr('urlPath'));  //URL du dataset
-                                      }
-        					}) //Fin each
-        				}//Fin if
-				}//Fin success AJAX
-			})//Fin AJAX
-    if (selector != ''){
-        setSelect(titre, selector);
-    }
-}
 // #######################################################################################
 
 
@@ -798,7 +802,7 @@ function getInfosMapTemporel(e){
                     + "&accept=csv"
                     ;
                 }
-            console.log(urlInfo);
+            alert(urlInfo);
             $.ajax({
                 type: "GET",
                 url: urlInfo,
@@ -834,7 +838,11 @@ function getInfosMapTemporel(e){
                                 dataset.lon = items[2];
                             }
                         }else{
-                            dataset.variable = items[3];
+                            if ((lstInfos.level) & (items[3] = parseFloat(lstInfos.level))){
+                                dataset.variable = items[4];
+                            }else{
+                                dataset.variable = items[3];        
+                            }
                         }
                     });
                     updatePlot(dataset);
@@ -906,6 +914,7 @@ function getInfosMap(e){
                     + "&accept=xml"
                     ;
             }
+            alert(URLRequest);
             $.ajax({
                 type: "GET",
                 url: URLRequest,
@@ -1536,7 +1545,6 @@ function majLayer(){
 function updateMap()
 {
     majLayer();
-    majLayer();
 }
 
 
@@ -1566,7 +1574,7 @@ function autoScale()
             + "&REQUEST=GetMetadata"
             + "&service=WMS"
             + "&version=1.3.0"
-            + "&BBOX=-25,-0.3,57,51"
+            + "&BBOX=-27,-0.5,58,52"
             + "&WIDTH=50"
             + "&HEIGHT=50"
             ;
@@ -1586,11 +1594,12 @@ function autoScale()
         + "&REQUEST=GetMetadata"
         + "&service=WMS"
         + "&version=1.3.0"
-        + "&BBOX=-25,-0.3,57,51"
+        + "&BBOX=-27,-0.5,58,52"
         + "&WIDTH=50"
         + "&HEIGHT=50"
         ;        
     }
+    alert(URLRequest);
     $.ajax({
         type: "GET",
         url: URLRequest,

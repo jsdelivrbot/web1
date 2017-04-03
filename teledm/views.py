@@ -163,7 +163,7 @@ def mapDist(request):
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def calval(request):
     if request.is_ajax():
-        print request.POST
+        print sorted(request.POST)
         if request.POST['ulx']:
             ulx = float(request.POST['ulx'])
             uly = float(request.POST['uly'])
@@ -184,8 +184,7 @@ def calval(request):
         prd_sat1 = request.POST['produit1']
         res_sat1 = request.POST['resospatiale1'][3:]
         variable_sat1 = request.POST['variable1']
-        level_sat1 = request.POST['level1']
-        if 'level1' in request.POST.keys():
+        if 'level1' in request.POST:
             level_sat1 = int(request.POST['level1']) - 1
         else:
             level_sat1 = -1
@@ -195,21 +194,24 @@ def calval(request):
             prd_sat2 = request.POST['produit2']
             res_sat2 = request.POST['resospatiale2'][3:]
             variable_sat2 = request.POST['variable2']
-            if 'level2' in request.POST.key():
+            if 'level2' in request.POST:
                 level_sat2 = int(request.POST['level2']) - 1
             else:
                 level_sat2 = -1
             if request.POST['action'] == 'scatterTemporel':
+                print 'scatter plot temporel'
                 df = scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
                                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
                                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2
                                  )
             else:
+                print 'scatter plot spatial'
                 df = scatter2Sat_Spatial(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,datedebut, datefin,
                                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
                                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2
                                  )
         else:
+            print 'integration'
             periode = request.POST['integration']
             if 'stationsaeronet' in request.POST:
                 inSitu = "aeronet"
@@ -221,13 +223,12 @@ def calval(request):
                 station = request.POST['stationsteom']
                 varStation = request.POST['variablesteom']
                 niveau = ''
-            print (ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,
-                                   type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
-                                   inSitu, station, varStation, niveau)
+            print ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1, inSitu, station, varStation, niveau
             df = scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,
                                    type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
                                    inSitu, station, varStation, niveau
                                    )
+            
         for k in ['a', 'prd', 'dates', 'b', 'prdVar_units', 'zone', 'satVar', 'prdVar', 'satVar_units', 'line', 'rCarre', 'sat']:
             print('%s, %s' % (k,df[k]))
         print type(df['dates'])

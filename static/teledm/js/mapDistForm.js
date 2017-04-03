@@ -213,7 +213,7 @@ function setForm(){
         changeDates2(varInfos.debut,varInfos.fin,this.value);
         $("#variableSel").on("change", function(){
             var id = $(this).prop('selectedIndex');            
-            if (varInfos.variables.dims[id] != -1){
+            if (($("#capteurSel").val() == "chimere") | ($("#capteurSel").val() == "wrf")){
                 $("#levelSel").prop("disabled", false);
                 $.each(varInfos.variables.dims[id], function (i, item) {
                     $('#levelSel').append($('<option>', { 

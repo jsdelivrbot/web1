@@ -111,6 +111,18 @@ function resetSelect(listSelect, id){
 }
 
 
+function resetSelect2(listSelect, id){
+    resetDate();
+    $('#levelSr2').prop('disabled', true);
+    document.getElementById("levelSr2").options.length = 1;
+    //$('#levelSr2').remove();
+    for (var i = id; i < listSelect.length; i++){
+        listSelect[i].length = 1;
+        listSelect[i].removeAttribute("selected");
+    }
+    listSelect.slice(id,listSelect.length).select2().select2('');
+}
+
 function resetDate(){
     $('#date').datepicker('destroy');
     $('#date').val("");
@@ -153,7 +165,7 @@ function createURL(valueSelected, selector, selects){
                             {
         					$(xml).find('dataset').each( function(){  //Pour toutes les datas
                                       if ($(this).attr('urlPath')){
-            						urlPath.push($(this).attr('urlPath'));  //URL du dataset
+                    						urlPath.push($(this).attr('urlPath'));  //URL du dataset
                                       }
         					}) //Fin each
         				}//Fin if
@@ -239,7 +251,7 @@ function setForm(){
         changeDates2(varInfos.debut,varInfos.fin,this.value);
         $("#variableS1").on("change", function(){
             var id = $(this).prop('selectedIndex');            
-            if (varInfos.variables.dims[id] != -1){
+            if (($("#capteurS1").val() == "chimere") | ($("#capteurS1").val() == "wrf")){
                 $("#levelS1").prop("disabled", false);
                 $.each(varInfos.variables.dims[id], function (i, item) {
                     $('#levelS1').append($('<option>', { 
@@ -270,6 +282,10 @@ function setForm(){
             alert("La longitude EST ne peut pas être inférieure à la longitude OUEST");
             $("#lrx").val("");
         }
+        if (($(this).val()<-90) | ($(this).val()>90)){ 
+            alert("La longitude doit être comprise entre -90 et 90");
+            $(this).val("");
+        }
     });
 
     // est
@@ -277,6 +293,10 @@ function setForm(){
         if (($("#ulx").val()) && (parseInt($("#lrx").val()) < parseInt($("#ulx").val()))){
             alert("La longitude EST ne peut pas être inférieure à la longitude OUEST");
             $("#lrx").val("");
+        }
+        if (($(this).val()<-90) | ($(this).val()>90)){ 
+            alert("La longitude doit être comprise entre -90 et 90");
+            $(this).val("");
         }
     });
 
@@ -286,6 +306,10 @@ function setForm(){
             alert("La latitude SUD ne peut pas être inférieure à la latitude NORD");
             $("#lry").val("");
         }
+        if (($(this).val()<-180) | ($(this).val()>180)){ 
+            alert("La latitude doit être comprise entre -180 et +180");
+            $(this).val("");
+        }
     });
 
     // sud
@@ -293,6 +317,10 @@ function setForm(){
         if ( ($("#uly").val()) && (parseInt($("#lry").val()) > parseInt($("#uly").val()))){
             alert("La latitude SUD ne peut pas être inférieure à la latitude NORD");
             $("#lry").val("");
+        }
+        if (($(this).val()<-180) | ($(this).val()>180)){ 
+            alert("La latitude doit être comprise entre -180 et +180");
+            $(this).val("");
         }
     });
 
@@ -311,18 +339,21 @@ $('#Option').prop('disabled', true);
 $('#levelS2').prop('disabled', true);
 function setFormS2(){
     //type capteur produit variable resospatiale level
-    $('#Option').prop('checked', false);
-    $('#Option').prop('disabled', true);
+    //$('#Option').prop('checked', false);
     var selectSource2 = $("[id$='S2']");
-    createURL('', selectSource2[0], selectSource2); //chargement du type1
-    if(document.getElementById('checkboxSr2').checked){
+    if($('#checkboxSr2').is(':checked')){
+        createURL('', selectSource2[0], selectSource2); //chargement du type1
         $('#Option').prop('disabled', false);
+        $('#levelSr2').prop('disabled', true);
+        //$("#buffer").prop('disabled', true);
+        //$("#buffer").prop('selectedIndex', 0).change();
+        document.getElementById("buffer").options.length = 1;
         for (i = 0; i < selectSource2.length; i++){
             selectSource2[i].disabled=false;
         }
         //choix du type
         selectSource2[0].onchange =  function(){
-            resetSelect(selectSource2, 1);  //reinitialise les menus deroulants
+            resetSelect2(selectSource2, 1);  //reinitialise les menus deroulants
             if (this.selectedIndex < 1)
                 return; // absence de choix
             createURL(this.value, selectSource2[1], selectSource2);  //charge les choix de capteur
@@ -331,7 +362,7 @@ function setFormS2(){
         // choix du capteur
         selectSource2[1].onchange =  function(){
             //reinitialise les menus deroulants
-            resetSelect(selectSource2, 2);
+            resetSelect2(selectSource2, 2);
             if (this.selectedIndex < 1)
                 return; // absence de choix
             //charge les choix de produit
@@ -340,7 +371,7 @@ function setFormS2(){
         // choix du produit
         selectSource2[2].onchange =  function(){
             //reinitialise les menus deroulants
-            resetSelect(selectSource2, 3);
+            resetSelect2(selectSource2, 3);
             if (this.selectedIndex < 1)
                 return; // absence de choix
             //charge les choix de la resolution spatiale
@@ -349,16 +380,10 @@ function setFormS2(){
         // choix de la resolution spatiale
         selectSource2[3].onchange =  function(){
             //reinitialise les menus deroulants
-            resetSelect(selectSource2, 4);
+            resetSelect2(selectSource2, 4);
             if (this.selectedIndex < 1)
                 return; // absence de choix
             //charge les choix de pas de temps
-            if( ($("#Option").prop("checked") == true )){
-                if ($('#resospatialeS1').val() != $('#resospatialeS2').val()){
-                    alert("L'option sélectionnées nécessite la même résolution spatiale pour chacune des couches.\nIl est possible que le produit sélectionné ne propose pas de résolution adéquate.");
-                    throw new Exception();
-                }
-            }
             createURL(this.value, '', selectSource2);
             for (var i=0; i<resoTemp.length; ++i) {
                 selectSource2[4].options[selectSource2[4].options.length] = new Option(resoTemp[i][1], resoTemp[i][0]);
@@ -367,7 +392,7 @@ function setFormS2(){
         // choix reso temporelle
         $("#pasdetempsS2").on("change", function(){
              //reinitialise les menus deroulants
-            resetSelect(selectSource2, 5);
+            resetSelect2(selectSource2, 5);
             if (this.selectedIndex < 1)
                 return; // absence de choix
             //charge les choix de variables
@@ -389,14 +414,15 @@ function setFormS2(){
                 var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
             }
             var urlInfo = ROOT + '/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+            alert('ok');
             getDateRange(urlInfo);
-            setSelect(varInfos.variables, selectSource2[5]);
+            setSelect(varInfos.variables.name, selectSource2[5]);
             $("#variableS2").on("change", function(){
                 var id = $(this).prop('selectedIndex');            
-                if (varInfos.variables.dims[id] != -1){
-                    $("#levelS2").prop("disabled", false);
+                if (($("#capteurS2").val() == "chimere") | ($("#capteurS2").val() == "wrf")){
+                    $("#levelSr2").prop("disabled", false);
                     $.each(varInfos.variables.dims[id], function (i, item) {
-                        $('#levelS2').append($('<option>', { 
+                        $('#levelSr2').append($('<option>', { 
                             value: item,
                             text : item 
                         }));
@@ -406,10 +432,11 @@ function setFormS2(){
             
         });
     }else{
-        for (i = 0; i < selectSource2.length; i++){
-            selectSource2[i].disabled=true;
-        }
-        resetSelect(selectSource2, 0)
+        $("[id$='S2']").find("option:gt(0)").remove();
+        $("[id$='S2']").prop("disabled", true);
+        $("#Option").prop("disabled", true);
+        $("#levelSr2").prop("disabled", true);
+        $("#levelSr2").find("option:gt(0)").remove();
     }
 }
 
@@ -499,6 +526,8 @@ function getDateRange(url){
             })
         }
     })
+    alert(varInfos.debut);
+    alert(varInfos.fin);
 }
 
 
@@ -626,10 +655,17 @@ function verifForm(){
             alert("Erreur ! Aucune couche sélectionnée !");
             throw new Exception();
         }
-        if($('#levelS2').val() == 'layer'){
+        if($('#levelSr2').val() == 'layer'){
             alert("Erreur ! Aucun niveau de couche sélectionné !");
             throw new Exception();
         }
+    }
+    if( ($("#Option").prop("checked") == true )){
+        if ($('#resospatialeS1').val() != $('#resospatialeS2').val()){
+            alert("L'option sélectionnées nécessite la même résolution spatiale pour chacune des couches.\nIl est possible que le produit sélectionné ne propose pas de résolution adéquate.");
+            throw new Exception();
+        }
+        
     }
 
 
@@ -662,7 +698,7 @@ function verifForm(){
         }else if (lstInfos.restempo == 't'){
             lstInfos.fin = moment(date2).startOf('quarter').format('YYYY-MM-DD');
         }else{
-            lstInfos.fin=date1;
+            lstInfos.fin=date2;
         }
         $("input[id='date2']").val(lstInfos.fin);      
     }
@@ -684,7 +720,6 @@ function verifForm(){
 window.onload = function(){
     $('select').select2();
     setForm();
-    setFormS2;
 }
 
 
