@@ -138,6 +138,7 @@
                 </div>
             </div>
         </div>
+        <A HREF="{% url 'teledm:localisation' %}" onClick="return popup(this, 'notes')">localisation</A>
     </div>
     <div class="row" id="InSitu">
         <div class="row">
@@ -189,6 +190,33 @@
                     </select>
                 </div>
             </div>
+            <div class="row">
+                    <div class="row">
+                        <label><input type="checkbox" id="checkboxS5" value="S5" onclick=""><em>Epidemiologie</em></label>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <select class="form-control" name="epidemio" id="epidemioEP" >
+                                <option selected hidden>Type</option>
+                            </select>
+                            <select class="form-control" name="pays" id="paysEP" >
+                                <option selected hidden>Pays</option>
+                            </select>
+                            <select class="form-control" name="echelle" id="echelleEP" >
+                                <option selected hidden>Echelle</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6">
+                            <select class="form-control" name="district" id="districtEP" >
+                                <option selected hidden>District</option>
+                            </select>
+                            <select class="form-control" name="variable" id="variableEP" >
+                                <option selected hidden>Variable</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </br>
@@ -214,4 +242,5 @@
     <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
     <script type="text/javascript" src="http://highcharts.github.io/export-csv/export-csv.js"></script>
     <script type="text/javascript" src="{% static 'teledm/js/calvalForm.js' %}"></script>
+    <script type="text/javascript" src="{% static 'teledm/js/localisation.js' %}"></script>
 {% endblock %}

@@ -44,6 +44,8 @@ def home(request):
 
 def DB(request):
     return render_to_response('teledm/db.html', context_instance=RequestContext(request))
+def traitementsData(request):
+    return render_to_response('teledm/traitementsData.html', context_instance=RequestContext(request))
 def tutoMap(request):
     return render_to_response('teledm/tutoMap.html', context_instance=RequestContext(request))
 def tutoCalVal(request):
@@ -236,3 +238,6 @@ def calval(request):
         return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
     else:
         return render_to_response('teledm/calval.html',{},context_instance=RequestContext(request))
+
+def localisation(request):
+    return render_to_response('teledm/localisation.html', context_instance=RequestContext(request))

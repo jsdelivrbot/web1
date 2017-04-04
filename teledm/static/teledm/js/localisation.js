@@ -3,8 +3,6 @@ function popup(mylink, windowname) {
     var href;
     if (typeof(mylink) == 'string') href=mylink;
     else href=mylink.href; 
-    page = window.open(href, windowname, 'width=600,height=400,scrollbars=yes'); 
-    //page.document.write("<input type='button' value='accept' onclick='gotoreserve()'>");
+    page = window.open(href, windowname, 'width=900,height=680,scrollbars=yes'); 
     return false; 
 }
-     
