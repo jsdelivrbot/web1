@@ -802,7 +802,6 @@ function getInfosMapTemporel(e){
                     + "&accept=csv"
                     ;
                 }
-            alert(urlInfo);
             $.ajax({
                 type: "GET",
                 url: urlInfo,
@@ -914,7 +913,6 @@ function getInfosMap(e){
                     + "&accept=xml"
                     ;
             }
-            alert(URLRequest);
             $.ajax({
                 type: "GET",
                 url: URLRequest,
@@ -1521,7 +1519,6 @@ function majLayer(){
     if($("#plot").highcharts().series.length !=0){
         $("#plot").highcharts().series[0].remove(true);
     }
-    alert(lstInfos.level);
     var wms = new OpenLayers.Layer.WMS(
         "wms",
         URL,
@@ -1599,7 +1596,6 @@ function autoScale()
         + "&HEIGHT=50"
         ;        
     }
-    alert(URLRequest);
     $.ajax({
         type: "GET",
         url: URLRequest,

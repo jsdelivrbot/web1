@@ -25,8 +25,8 @@ tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))
 ddirDB = os.path.expanduser('~') + "/Bureau/teledm"
 ddir = ddirDB + "/donnees/in_situ/"
 
-#@login_required
-#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def home(request):
     if request.is_ajax():
         dates = [d.strftime('%Y-%m-%d') for d in pd.date_range('2014-01-01','2014-01-31', freq='D')]
@@ -55,8 +55,8 @@ def tutoExtraction(request):
 def stations(request):
     return render_to_response('teledm/stations.html', context_instance=RequestContext(request))
 
-#@login_required
-#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapViewer(request):
     print request.POST
     if request.is_ajax():
@@ -99,8 +99,8 @@ def mapViewer(request):
         logger.critical("Critical message!")
         return render_to_response('teledm/mapViewer.html',context_instance=RequestContext(request))
 
-#@login_required
-#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapDist(request):
     print request.POST
     if request.is_ajax():
@@ -161,8 +161,8 @@ def mapDist(request):
         else:
             return render_to_response('teledm/mapDist.html',context_instance=RequestContext(request))
 
-#@login_required
-#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+@login_required
+@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def calval(request):
     if request.is_ajax():
         print sorted(request.POST)

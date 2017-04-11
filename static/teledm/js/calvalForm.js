@@ -260,11 +260,7 @@ function setForm(){
                     }));
                 });
             }
-        });
-        //$("#levelS1").on('change', function(){
-            //alert($(this).val());        
-        //});
-        //dates debut/fin     
+        }); 
     });
 
     $('.input-small').keypress(function(event) {
@@ -414,7 +410,6 @@ function setFormS2(){
                 var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
             }
             var urlInfo = ROOT + '/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
-            alert('ok');
             getDateRange(urlInfo);
             setSelect(varInfos.variables.name, selectSource2[5]);
             $("#variableS2").on("change", function(){
@@ -526,8 +521,6 @@ function getDateRange(url){
             })
         }
     })
-    alert(varInfos.debut);
-    alert(varInfos.fin);
 }
 
 
@@ -619,11 +612,6 @@ function verifForm(){
         }
         $("input[id='date1']").val(lstInfos.debut);
     }
-
-    //if ((date2=='') && ((($("#checkboxSr2").prop("checked") == true) && ($("#Option").prop("checked") == false)) || ($("#checkboxS3").prop("checked") == true) || ($("#checkboxS4").prop("checked") == true)){
-        //alert("Erreur ! Aucune date saisie !");
-        //throw new Exception();
-    //
 
     if (($("#checkboxSr2").prop("checked") == false) && ($("#checkboxS3").prop("checked") == false) && ($("#checkboxS4").prop("checked") == false)){
         alert("Erreur ! Sélectionner un 2eme type de données !");

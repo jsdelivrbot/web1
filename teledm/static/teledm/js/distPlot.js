@@ -306,7 +306,6 @@ $("#addIS").on('click', function(e){
 
 $("#addEP").on('click', function(e){
     e.preventDefault();
-    alert('ok');
     if($("#epidemioEP").val() == 'Type'){
         alert("Erreur ! Aucun type de mesure sélectionné !");
         throw new Exception();
