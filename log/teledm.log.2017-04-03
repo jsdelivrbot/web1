@@ -1,0 +1,16 @@
+[03/Apr/2017 07:58:10] DEBUG [django.db.backends:89] (0.001) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[03/Apr/2017 07:58:10] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[03/Apr/2017 07:58:23] WARNING [django.request:170] Not Found: /favicon.ico
+[03/Apr/2017 07:58:23] WARNING [django.request:170] Not Found: /favicon.ico
+[03/Apr/2017 07:58:25] DEBUG [teledm.views:42] this is a debug message!
+[03/Apr/2017 08:00:20] WARNING [django.request:170] Not Found: /climdata.u-bourgogne.fr/teledm/mapDist/
+[03/Apr/2017 08:05:12] DEBUG [teledm.views:93] Debug message!
+[03/Apr/2017 08:05:12] INFO [teledm.views:94] Info message!
+[03/Apr/2017 08:05:12] WARNING [teledm.views:95] Warning message!
+[03/Apr/2017 08:05:12] ERROR [teledm.views:96] Error message!
+[03/Apr/2017 08:05:12] CRITICAL [teledm.views:97] Critical message!
+[03/Apr/2017 08:05:26] DEBUG [teledm.views:93] Debug message!
+[03/Apr/2017 08:05:26] INFO [teledm.views:94] Info message!
+[03/Apr/2017 08:05:26] WARNING [teledm.views:95] Warning message!
+[03/Apr/2017 08:05:26] ERROR [teledm.views:96] Error message!
+[03/Apr/2017 08:05:26] CRITICAL [teledm.views:97] Critical message!

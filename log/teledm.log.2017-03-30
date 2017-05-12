@@ -1,0 +1,96 @@
+[30/Mar/2017 12:09:25] DEBUG [django.db.backends:89] (0.012) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[30/Mar/2017 12:09:25] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[30/Mar/2017 12:16:38] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 12:16:40] DEBUG [teledm.views:42] this is a debug message!
+[30/Mar/2017 12:16:43] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 12:16:43] INFO [teledm.views:83] Info message!
+[30/Mar/2017 12:16:43] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 12:16:43] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 12:16:43] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 12:16:50] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 12:16:50] INFO [teledm.views:83] Info message!
+[30/Mar/2017 12:16:50] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 12:16:50] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 12:16:50] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 12:17:15] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 12:17:15] INFO [teledm.views:83] Info message!
+[30/Mar/2017 12:17:15] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 12:17:15] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 12:17:15] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 12:17:39] DEBUG [teledm.views:42] this is a debug message!
+[30/Mar/2017 12:17:40] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 12:17:40] INFO [teledm.views:83] Info message!
+[30/Mar/2017 12:17:40] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 12:17:40] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 12:17:40] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 12:18:31] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 12:18:31] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 12:18:34] DEBUG [teledm.views:42] this is a debug message!
+[30/Mar/2017 12:18:37] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 12:18:37] INFO [teledm.views:83] Info message!
+[30/Mar/2017 12:18:37] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 12:18:37] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 12:18:37] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 12:20:04] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 12:20:04] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 12:20:06] DEBUG [teledm.views:42] this is a debug message!
+[30/Mar/2017 12:20:08] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 12:20:08] INFO [teledm.views:83] Info message!
+[30/Mar/2017 12:20:08] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 12:20:08] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 12:20:08] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 12:38:28] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 12:38:29] DEBUG [teledm.views:42] this is a debug message!
+[30/Mar/2017 12:38:31] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 12:38:31] INFO [teledm.views:83] Info message!
+[30/Mar/2017 12:38:31] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 12:38:31] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 12:38:31] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 12:38:41] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 12:38:41] INFO [teledm.views:83] Info message!
+[30/Mar/2017 12:38:41] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 12:38:41] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 12:38:41] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 12:39:54] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 12:39:54] INFO [teledm.views:83] Info message!
+[30/Mar/2017 12:39:54] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 12:39:54] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 12:39:54] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 13:12:54] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 13:12:54] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 13:19:40] DEBUG [teledm.views:42] this is a debug message!
+[30/Mar/2017 13:45:26] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 13:46:18] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 13:46:18] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 13:46:23] DEBUG [teledm.views:42] this is a debug message!
+[30/Mar/2017 13:46:25] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 13:46:25] INFO [teledm.views:83] Info message!
+[30/Mar/2017 13:46:25] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 13:46:25] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 13:46:25] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 13:46:30] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 13:46:30] INFO [teledm.views:83] Info message!
+[30/Mar/2017 13:46:30] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 13:46:30] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 13:46:30] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 13:47:44] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 13:47:44] INFO [teledm.views:83] Info message!
+[30/Mar/2017 13:47:44] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 13:47:44] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 13:47:44] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 13:49:28] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 13:49:28] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 13:49:29] DEBUG [teledm.views:42] this is a debug message!
+[30/Mar/2017 13:49:33] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 13:49:33] INFO [teledm.views:83] Info message!
+[30/Mar/2017 13:49:33] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 13:49:33] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 13:49:33] CRITICAL [teledm.views:86] Critical message!
+[30/Mar/2017 13:52:41] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 13:52:41] WARNING [django.request:170] Not Found: /favicon.ico
+[30/Mar/2017 13:52:42] DEBUG [teledm.views:42] this is a debug message!
+[30/Mar/2017 13:52:45] DEBUG [teledm.views:82] Debug message!
+[30/Mar/2017 13:52:45] INFO [teledm.views:83] Info message!
+[30/Mar/2017 13:52:45] WARNING [teledm.views:84] Warning message!
+[30/Mar/2017 13:52:45] ERROR [teledm.views:85] Error message!
+[30/Mar/2017 13:52:45] CRITICAL [teledm.views:86] Critical message!

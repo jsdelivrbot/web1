@@ -1,17 +1,19 @@
 #-*- coding: utf-8 -*-
 
-from django.shortcuts import render_to_response, HttpResponse
+from django.shortcuts import render_to_response, HttpResponse, render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from sendfile import sendfile
 import json, simplejson
+import httplib2, requests
+import base64
 import os
 import pandas as pd
 import numpy as np
 from datetime import datetime
-
+from owslib.wms import WebMapService
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
 from scatterPlots import scatterSatStation, scatter2Sat_Temporel, scatter2Sat_Spatial
@@ -25,8 +27,52 @@ tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))
 ddirDB = os.path.expanduser('~') + "/Bureau/teledm"
 ddir = ddirDB + "/donnees/in_situ/"
 
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+#@login_required
+def test2(request, path):
+    print('path %s' % path)
+    url = 'http://localhost:8080/thredds/wms/satellite/modis/MYD04/res009/MYD04_r009_d.nc?service=WMS'
+    wms = WebMapService(url, version='1.3.0')
+    layer = wms.contents.keys()[0]
+    bbox = wms[layer].boundingBoxWGS84
+    args = [[layer], ['boxfill/rainbow'], 'EPSG:4326', bbox, (300, 250), 'image/png', True]
+    img = wms.getmap(layers=[layer], styles=['boxfill/rainbow'], srs='EPSG:4326', bbox=bbox, size=(300, 250), format='image/png', transparent=True)
+    response = requests.request('GET', url)
+    return HttpResponse(img, content_type='teledm/test.html')
+
+def test(request, path):
+    print path
+    username = "se5780me"
+    password = "erg54erg55"
+    if request.is_ajax():
+        #print request.POST
+        url = "https://climdata.u-bourgogne.fr:8443/thredds/" + request.POST['url']
+        #print url
+        httplib2.debuglevel = 1
+        h = httplib2.Http()
+        auth = base64.encodestring( username + ':' + password )
+        resp, content = h.request(url, 'GET', headers = { 'Authorization' : 'Basic ' + auth })
+        print content
+        response = requests.get(url, auth=requests.auth.HTTPBasicAuth(username, password))
+        return HttpResponse(content, content_type='teledm/test.html')
+        #return render(request, 'index.html', {content})
+    else:
+        url = 'http://localhost:8080/thredds/wms/satellite/modis/MYD04/res009/MYD04_r009_d.nc?service=WMS'
+        wms = WebMapService(url, version='1.3.0')
+        layer = wms.contents.keys()[0]
+        bbox = wms[layer].boundingBoxWGS84
+        img = wms.getmap(layers=[layer], styles=['boxfill/rainbow'], srs='EPSG:4326', bbox=bbox, size=(300, 250), format='image/png', transparent=True)
+    return render_to_response("teledm/test.html", context_instance=RequestContext(request))
+
+
+
+def test1(request, path):
+    remoteurl = 'https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/' + path
+    response = requests.request('GET', remoteurl)
+    return HttpResponse(response.content, content_type='teledm/test.html')
+
+
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def home(request):
     if request.is_ajax():
         dates = [d.strftime('%Y-%m-%d') for d in pd.date_range('2014-01-01','2014-01-31', freq='D')]
@@ -55,8 +101,8 @@ def tutoExtraction(request):
 def stations(request):
     return render_to_response('teledm/stations.html', context_instance=RequestContext(request))
 
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapViewer(request):
     print request.POST
     if request.is_ajax():
@@ -99,8 +145,8 @@ def mapViewer(request):
         logger.critical("Critical message!")
         return render_to_response('teledm/mapViewer.html',context_instance=RequestContext(request))
 
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapDist(request):
     print request.POST
     if request.is_ajax():
@@ -161,8 +207,8 @@ def mapDist(request):
         else:
             return render_to_response('teledm/mapDist.html',context_instance=RequestContext(request))
 
-@login_required
-@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
+#@login_required
+#@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def calval(request):
     if request.is_ajax():
         print sorted(request.POST)

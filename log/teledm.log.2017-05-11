@@ -1,0 +1,4 @@
+[11/May/2017 16:15:02] DEBUG [django.db.backends:89] (0.006) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[11/May/2017 16:15:02] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[11/May/2017 16:15:08] WARNING [django.request:170] Not Found: /favicon.ico
+[11/May/2017 16:15:08] WARNING [django.request:170] Not Found: /favicon.ico

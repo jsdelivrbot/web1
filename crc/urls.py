@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login, logout, password_reset, password_reset_confirm, password_reset_complete, password_reset_done
 from django.views.generic import TemplateView
 
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^climdata.u-bourgogne.fr/Catalogues', include('portailCRC.urls', namespace='portailCRC', app_name='portailCRC')),

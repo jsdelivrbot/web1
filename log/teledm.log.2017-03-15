@@ -1,0 +1,468 @@
+[15/Mar/2017 08:18:41] DEBUG [django.db.backends:89] (0.012) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 08:18:41] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 09:14:59] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 09:14:59] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 09:15:04] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 09:15:05] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 09:15:06] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 09:15:09] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:15:09] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:15:09] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:15:09] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:15:09] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:15:49] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:15:49] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:15:49] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:15:49] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:15:49] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:21:11] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 09:21:11] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 09:21:20] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 09:21:22] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 09:21:24] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:21:24] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:21:24] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:21:24] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:21:24] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:21:41] DEBUG [teledm.views:49] Debug message!
+[15/Mar/2017 09:21:41] INFO [teledm.views:50] Info message!
+[15/Mar/2017 09:21:41] WARNING [teledm.views:51] Warning message!
+[15/Mar/2017 09:21:41] ERROR [teledm.views:52] Error message!
+[15/Mar/2017 09:21:41] CRITICAL [teledm.views:53] Critical message!
+[15/Mar/2017 09:21:54] DEBUG [teledm.views:49] Debug message!
+[15/Mar/2017 09:21:54] INFO [teledm.views:50] Info message!
+[15/Mar/2017 09:21:54] WARNING [teledm.views:51] Warning message!
+[15/Mar/2017 09:21:54] ERROR [teledm.views:52] Error message!
+[15/Mar/2017 09:21:54] CRITICAL [teledm.views:53] Critical message!
+[15/Mar/2017 09:25:49] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 09:25:50] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 09:25:52] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:25:52] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:25:52] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:25:52] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:25:52] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:27:57] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:27:57] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:27:57] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:27:57] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:27:57] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:28:08] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:28:08] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:28:08] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:28:08] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:28:08] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:28:20] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:28:20] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:28:20] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:28:20] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:28:20] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:28:36] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:28:36] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:28:36] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:28:36] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:28:36] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:28:50] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:28:50] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:28:50] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:28:50] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:28:50] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:29:37] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:29:37] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:29:37] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:29:37] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:29:37] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:31:38] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:31:38] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:31:38] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:31:38] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:31:38] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:31:54] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:31:54] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:31:54] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:31:54] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:31:54] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:33:50] DEBUG [teledm.views:81] Debug message!
+[15/Mar/2017 09:33:50] INFO [teledm.views:82] Info message!
+[15/Mar/2017 09:33:50] WARNING [teledm.views:83] Warning message!
+[15/Mar/2017 09:33:50] ERROR [teledm.views:84] Error message!
+[15/Mar/2017 09:33:50] CRITICAL [teledm.views:85] Critical message!
+[15/Mar/2017 09:44:00] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 09:44:00] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 09:44:01] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 09:47:02] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 09:47:03] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 09:54:05] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 09:54:07] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 10:19:39] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 10:19:41] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 10:20:18] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 10:20:19] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 10:30:12] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 10:30:12] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 10:30:13] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 10:41:59] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 10:42:00] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 11:09:55] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 11:09:56] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 11:15:08] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 11:15:09] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 11:23:13] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 11:23:14] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 11:30:29] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 11:30:29] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 13:54:40] ERROR [django.request:256] Internal Server Error: /crc/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 119, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 365, in resolve
+    for pattern in self.url_patterns:
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 401, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 395, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib64/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "/home/mers/dev/crc/crc/urls.py", line 12, in <module>
+    url(r'^crc/teledm/', include('teledm.urls', namespace='teledm', app_name='teledm')),
+  File "/home/mers/.local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 33, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib64/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "/home/mers/dev/crc/teledm/urls.py", line 4, in <module>
+    from . import views
+  File "/home/mers/dev/crc/teledm/views.py", line 17, in <module>
+    from scatterPlots import scatterSatStation, scatter2Sat
+ImportError: cannot import name scatter2Sat
+[15/Mar/2017 13:54:41] ERROR [django.request:256] Internal Server Error: /favicon.ico
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 108, in get_response
+    response = middleware_method(request)
+  File "/home/mers/.local/lib/python2.7/site-packages/django/middleware/common.py", line 74, in process_request
+    if (not urlresolvers.is_valid_path(request.path_info, urlconf) and
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 646, in is_valid_path
+    resolve(path, urlconf)
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 521, in resolve
+    return get_resolver(urlconf).resolve(path)
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 365, in resolve
+    for pattern in self.url_patterns:
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 401, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 395, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib64/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "/home/mers/dev/crc/crc/urls.py", line 12, in <module>
+    url(r'^crc/teledm/', include('teledm.urls', namespace='teledm', app_name='teledm')),
+  File "/home/mers/.local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 33, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib64/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "/home/mers/dev/crc/teledm/urls.py", line 4, in <module>
+    from . import views
+  File "/home/mers/dev/crc/teledm/views.py", line 17, in <module>
+    from scatterPlots import scatterSatStation, scatter2Sat
+ImportError: cannot import name scatter2Sat
+[15/Mar/2017 13:55:17] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 13:55:17] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 13:55:32] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 14:00:42] WARNING [django.request:170] Not Found: /favicon.ico
+[15/Mar/2017 14:00:50] DEBUG [teledm.views:41] this is a debug message!
+[15/Mar/2017 14:02:41] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 212, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:07:28] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:07:28] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:07:39] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 213, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:10:13] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:10:13] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:10:17] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 213, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:11:29] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 213, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:14:52] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:14:52] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:14:57] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 212, in calval
+    print df['date']
+KeyError: 'date'
+[15/Mar/2017 14:15:27] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:15:27] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:15:30] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 213, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:15:52] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:15:52] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:15:55] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 213, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:16:12] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:16:12] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:16:15] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 213, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:20:42] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:20:42] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:20:53] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 119, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 365, in resolve
+    for pattern in self.url_patterns:
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 401, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/urlresolvers.py", line 395, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/usr/lib64/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "/home/mers/dev/crc/crc/urls.py", line 12, in <module>
+    url(r'^crc/teledm/', include('teledm.urls', namespace='teledm', app_name='teledm')),
+  File "/home/mers/.local/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 33, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/usr/lib64/python2.7/importlib/__init__.py", line 37, in import_module
+    __import__(name)
+  File "/home/mers/dev/crc/teledm/urls.py", line 4, in <module>
+    from . import views
+  File "/home/mers/dev/crc/teledm/views.py", line 213
+    print('%s, %s' % (k,df[k]))
+        ^
+IndentationError: expected an indented block
+[15/Mar/2017 14:21:12] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 214, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:23:27] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:23:27] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:23:31] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 214, in calval
+    sjs = simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:23:46] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:23:46] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:23:48] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 214, in calval
+    sjs = simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:25:44] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:25:44] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:27:55] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:27:55] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:28:03] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 214, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 268, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: datetime.datetime(2006, 7, 4, 0, 0) is not JSON serializable
+[15/Mar/2017 14:30:27] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:30:27] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:30:47] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 214, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:32:08] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 214, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:32:41] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:32:41] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:32:45] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 214, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'datetime.date'
+[15/Mar/2017 14:33:26] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 189, in calval
+    type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 255, in scatter2Sat_Temporel
+    end = datetime.strptime(datefin, "%Y-%m-%d")
+  File "/usr/lib64/python2.7/_strptime.py", line 332, in _strptime
+    (data_string, format))
+ValueError: time data '' does not match format '%Y-%m-%d'
+[15/Mar/2017 14:35:10] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:35:10] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:35:19] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 214, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:37:43] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:37:43] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:37:56] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 216, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:38:32] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:38:32] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[15/Mar/2017 14:38:35] ERROR [django.request:256] Internal Server Error: /crc/teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 216, in calval
+    return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/__init__.py", line 397, in dumps
+    **kw).encode(obj)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 291, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/home/mers/.local/lib/python2.7/site-packages/simplejson/encoder.py", line 373, in iterencode
+    return _iterencode(o, 0)
+TypeError: descriptor 'isoformat' requires a 'datetime.datetime' object but received a 'numpy.ndarray'
+[15/Mar/2017 14:51:41] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[15/Mar/2017 14:51:41] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()

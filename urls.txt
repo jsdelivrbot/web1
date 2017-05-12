@@ -1,0 +1,12 @@
+TELEDM     thredds/catalogRefs/CatalogTELEDEM.html
+satellite  thredds/catalog/satellite/catalog.html
+modis      thredds/catalog/satellite/modis/catalog.html
+MYD04      thredds/catalog/satellite/modis/MYD04/catalog.html
+
+TELEDM     thredds/catalog.html
+           thredds/CatalogTELEDM.html
+satellite  thredds/catalog/satellite/catalog.html
+           thredds/catalog/satellite/catalog.html
+modis      thredds/catalog/satellite/modis/catalog.html
+MYD04      thredds/catalog/satellite/modis/MYD04/catalog.html
+res009     thredds/catalog/satellite/modis/MYD04/res009/catalog.html

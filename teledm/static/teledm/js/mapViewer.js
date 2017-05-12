@@ -322,6 +322,7 @@ function createURL(valueSelected, selector){
     else {
         var URLCat = ROOT + '/' + URL;
     }
+    alert(URLCat);
     $.ajax( {
 				type: "GET",
 				url: URLCat,
@@ -1218,7 +1219,7 @@ $("#download").on('click', function(){
         "&timeStride=" + 1 +
         "&addLatLon=true" + 
         "&accept=netcdf";
-    console.log(URL);
+    alert(URL);
     var link = document.createElement("a");
     link.download = 'test.nc';
     link.href = URL;
@@ -1519,6 +1520,10 @@ function majLayer(){
     if($("#plot").highcharts().series.length !=0){
         $("#plot").highcharts().series[0].remove(true);
     }
+    alert($("select[name='colorbandNum']").val());
+    alert(csr);
+    alert(lstInfos.date);
+    alert(URL)
     var wms = new OpenLayers.Layer.WMS(
         "wms",
         URL,

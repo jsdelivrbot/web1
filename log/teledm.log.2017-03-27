@@ -1,0 +1,464 @@
+[27/Mar/2017 11:19:44] DEBUG [django.db.backends:89] (0.012) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[27/Mar/2017 11:19:44] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[27/Mar/2017 11:19:47] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 11:19:47] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 11:19:48] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 11:19:57] DEBUG [django.db.backends:89] (0.001) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."username" = %s' - PARAMS = (u'admin',); args=(u'admin',)
+[27/Mar/2017 11:19:57] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "django_session" WHERE "django_session"."session_key" = %s LIMIT 1' - PARAMS = (u'dv7ebav4z8885p4xgjrcwqgfs9yw793a',); args=(u'dv7ebav4z8885p4xgjrcwqgfs9yw793a',)
+[27/Mar/2017 11:19:57] DEBUG [django.db.backends:89] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[27/Mar/2017 11:19:57] DEBUG [django.db.backends:89] (0.000) QUERY = u'INSERT INTO "django_session" ("session_key", "session_data", "expire_date") SELECT %s AS "session_key", %s AS "session_data", %s AS "expire_date"' - PARAMS = (u'dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'M2Q0NDliOGFjOTg2NTgwMDZkODk0ZGNiMDQ2OTNlMjM1MDJhNTcyYjp7fQ==', u'2017-04-10 11:19:57.628982'); args=(u'dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'M2Q0NDliOGFjOTg2NTgwMDZkODk0ZGNiMDQ2OTNlMjM1MDJhNTcyYjp7fQ==', u'2017-04-10 11:19:57.628982')
+[27/Mar/2017 11:19:57] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE "django_session"."session_key" = %s' - PARAMS = (u'dv7ebav4z8885p4xgjrcwqgfs9yw793a',); args=(u'dv7ebav4z8885p4xgjrcwqgfs9yw793a',)
+[27/Mar/2017 11:19:57] DEBUG [django.db.backends:89] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[27/Mar/2017 11:19:57] DEBUG [django.db.backends:89] (0.000) QUERY = u'DELETE FROM "django_session" WHERE "django_session"."session_key" IN (%s)' - PARAMS = (u'dv7ebav4z8885p4xgjrcwqgfs9yw793a',); args=(u'dv7ebav4z8885p4xgjrcwqgfs9yw793a',)
+[27/Mar/2017 11:19:57] DEBUG [django.db.backends:89] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[27/Mar/2017 11:19:57] DEBUG [django.db.backends:89] (0.000) QUERY = u'UPDATE "auth_user" SET "last_login" = %s WHERE "auth_user"."id" = %s' - PARAMS = (u'2017-03-27 11:19:57.956060', 1); args=(u'2017-03-27 11:19:57.956060', 1)
+[27/Mar/2017 11:19:58] DEBUG [django.db.backends:89] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[27/Mar/2017 11:19:58] DEBUG [django.db.backends:89] (0.000) QUERY = u'UPDATE "django_session" SET "session_data" = %s, "expire_date" = %s WHERE "django_session"."session_key" = %s' - PARAMS = (u'MTVjYjRmYjZlNmVkYzM2YTc3ZDA2MzdlYjU0YWU5M2VkZjQwYTg2Yjp7Il9hdXRoX3VzZXJfaGFzaCI6ImRmMTBhNzA3NDFiZGI0OWNlMGJlNWFjNjI4Y2JlMmEyMzE0Y2I4MTUiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=', u'2017-04-10 11:19:58.097248', u'dv7ebav4z8885p4xgjrcwqgfs9yw793a'); args=(u'MTVjYjRmYjZlNmVkYzM2YTc3ZDA2MzdlYjU0YWU5M2VkZjQwYTg2Yjp7Il9hdXRoX3VzZXJfaGFzaCI6ImRmMTBhNzA3NDFiZGI0OWNlMGJlNWFjNjI4Y2JlMmEyMzE0Y2I4MTUiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=', u'2017-04-10 11:19:58.097248', u'dv7ebav4z8885p4xgjrcwqgfs9yw793a')
+[27/Mar/2017 11:19:58] DEBUG [django.db.backends:89] (0.000) QUERY = u'INSERT INTO "django_session" ("session_key", "session_data", "expire_date") SELECT %s AS "session_key", %s AS "session_data", %s AS "expire_date"' - PARAMS = (u'dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'MTVjYjRmYjZlNmVkYzM2YTc3ZDA2MzdlYjU0YWU5M2VkZjQwYTg2Yjp7Il9hdXRoX3VzZXJfaGFzaCI6ImRmMTBhNzA3NDFiZGI0OWNlMGJlNWFjNjI4Y2JlMmEyMzE0Y2I4MTUiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=', u'2017-04-10 11:19:58.097248'); args=(u'dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'MTVjYjRmYjZlNmVkYzM2YTc3ZDA2MzdlYjU0YWU5M2VkZjQwYTg2Yjp7Il9hdXRoX3VzZXJfaGFzaCI6ImRmMTBhNzA3NDFiZGI0OWNlMGJlNWFjNjI4Y2JlMmEyMzE0Y2I4MTUiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=', u'2017-04-10 11:19:58.097248')
+[27/Mar/2017 11:19:58] DEBUG [django.db.backends:89] (0.002) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."session_key" = %s AND "django_session"."expire_date" > %s)' - PARAMS = (u'dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'2017-03-27 11:19:58.208787'); args=('dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'2017-03-27 11:19:58.208787')
+[27/Mar/2017 11:19:58] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = %s' - PARAMS = (1,); args=(1,)
+[27/Mar/2017 11:19:58] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "auth_group" INNER JOIN "auth_user_groups" ON ( "auth_group"."id" = "auth_user_groups"."group_id" ) WHERE ("auth_user_groups"."user_id" = %s AND "auth_group"."name" = %s) LIMIT 1' - PARAMS = (1, u'teledm'); args=(1, 'teledm')
+[27/Mar/2017 11:19:58] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 11:19:58] INFO [teledm.views:82] Info message!
+[27/Mar/2017 11:19:58] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 11:19:58] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 11:19:58] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 11:20:36] DEBUG [django.db.backends:89] (0.002) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."session_key" = %s AND "django_session"."expire_date" > %s)' - PARAMS = (u'dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'2017-03-27 11:20:36.068900'); args=('dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'2017-03-27 11:20:36.068900')
+[27/Mar/2017 11:20:36] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = %s' - PARAMS = (1,); args=(1,)
+[27/Mar/2017 11:20:36] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "auth_group" INNER JOIN "auth_user_groups" ON ( "auth_group"."id" = "auth_user_groups"."group_id" ) WHERE ("auth_user_groups"."user_id" = %s AND "auth_group"."name" = %s) LIMIT 1' - PARAMS = (1, u'teledm'); args=(1, 'teledm')
+[27/Mar/2017 11:20:36] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 11:20:36] INFO [teledm.views:82] Info message!
+[27/Mar/2017 11:20:36] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 11:20:36] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 11:20:36] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 11:22:15] DEBUG [django.db.backends:89] (0.002) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."session_key" = %s AND "django_session"."expire_date" > %s)' - PARAMS = (u'dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'2017-03-27 11:22:15.865896'); args=('dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'2017-03-27 11:22:15.865896')
+[27/Mar/2017 11:22:15] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = %s' - PARAMS = (1,); args=(1,)
+[27/Mar/2017 11:22:15] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "auth_group" INNER JOIN "auth_user_groups" ON ( "auth_group"."id" = "auth_user_groups"."group_id" ) WHERE ("auth_user_groups"."user_id" = %s AND "auth_group"."name" = %s) LIMIT 1' - PARAMS = (1, u'teledm'); args=(1, 'teledm')
+[27/Mar/2017 11:22:15] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 11:22:15] INFO [teledm.views:82] Info message!
+[27/Mar/2017 11:22:15] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 11:22:15] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 11:22:15] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 12:04:09] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 12:04:11] DEBUG [django.db.backends:89] (0.001) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."session_key" = %s AND "django_session"."expire_date" > %s)' - PARAMS = (u'dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'2017-03-27 12:04:11.703224'); args=('dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'2017-03-27 12:04:11.703224')
+[27/Mar/2017 12:04:11] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = %s' - PARAMS = (1,); args=(1,)
+[27/Mar/2017 12:04:11] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "auth_group" INNER JOIN "auth_user_groups" ON ( "auth_group"."id" = "auth_user_groups"."group_id" ) WHERE ("auth_user_groups"."user_id" = %s AND "auth_group"."name" = %s) LIMIT 1' - PARAMS = (1, u'teledm'); args=(1, 'teledm')
+[27/Mar/2017 12:04:11] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 12:04:11] INFO [teledm.views:82] Info message!
+[27/Mar/2017 12:04:11] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 12:04:11] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 12:04:11] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 12:07:20] DEBUG [django.db.backends:89] (0.001) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."session_key" = %s AND "django_session"."expire_date" > %s)' - PARAMS = (u'dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'2017-03-27 12:07:19.999298'); args=('dv7ebav4z8885p4xgjrcwqgfs9yw793a', u'2017-03-27 12:07:19.999298')
+[27/Mar/2017 12:07:20] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = %s' - PARAMS = (1,); args=(1,)
+[27/Mar/2017 12:07:20] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "auth_group" INNER JOIN "auth_user_groups" ON ( "auth_group"."id" = "auth_user_groups"."group_id" ) WHERE ("auth_user_groups"."user_id" = %s AND "auth_group"."name" = %s) LIMIT 1' - PARAMS = (1, u'teledm'); args=(1, 'teledm')
+[27/Mar/2017 12:07:20] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 12:07:20] INFO [teledm.views:82] Info message!
+[27/Mar/2017 12:07:20] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 12:07:20] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 12:07:20] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 13:44:34] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 14:22:22] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.002) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."username" = %s' - PARAMS = (u'admin',); args=(u'admin',)
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "django_session" WHERE "django_session"."session_key" = %s LIMIT 1' - PARAMS = (u'uv2f8cg669454zinggok44bjrnusrmzz',); args=(u'uv2f8cg669454zinggok44bjrnusrmzz',)
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'INSERT INTO "django_session" ("session_key", "session_data", "expire_date") SELECT %s AS "session_key", %s AS "session_data", %s AS "expire_date"' - PARAMS = (u'uv2f8cg669454zinggok44bjrnusrmzz', u'M2Q0NDliOGFjOTg2NTgwMDZkODk0ZGNiMDQ2OTNlMjM1MDJhNTcyYjp7fQ==', u'2017-04-10 14:22:31.512116'); args=(u'uv2f8cg669454zinggok44bjrnusrmzz', u'M2Q0NDliOGFjOTg2NTgwMDZkODk0ZGNiMDQ2OTNlMjM1MDJhNTcyYjp7fQ==', u'2017-04-10 14:22:31.512116')
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE "django_session"."session_key" = %s' - PARAMS = (u'uv2f8cg669454zinggok44bjrnusrmzz',); args=(u'uv2f8cg669454zinggok44bjrnusrmzz',)
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'DELETE FROM "django_session" WHERE "django_session"."session_key" IN (%s)' - PARAMS = (u'uv2f8cg669454zinggok44bjrnusrmzz',); args=(u'uv2f8cg669454zinggok44bjrnusrmzz',)
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'UPDATE "auth_user" SET "last_login" = %s WHERE "auth_user"."id" = %s' - PARAMS = (u'2017-03-27 14:22:31.784091', 1); args=(u'2017-03-27 14:22:31.784091', 1)
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'BEGIN' - PARAMS = (); args=None
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'UPDATE "django_session" SET "session_data" = %s, "expire_date" = %s WHERE "django_session"."session_key" = %s' - PARAMS = (u'MTVjYjRmYjZlNmVkYzM2YTc3ZDA2MzdlYjU0YWU5M2VkZjQwYTg2Yjp7Il9hdXRoX3VzZXJfaGFzaCI6ImRmMTBhNzA3NDFiZGI0OWNlMGJlNWFjNjI4Y2JlMmEyMzE0Y2I4MTUiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=', u'2017-04-10 14:22:31.861599', u'uv2f8cg669454zinggok44bjrnusrmzz'); args=(u'MTVjYjRmYjZlNmVkYzM2YTc3ZDA2MzdlYjU0YWU5M2VkZjQwYTg2Yjp7Il9hdXRoX3VzZXJfaGFzaCI6ImRmMTBhNzA3NDFiZGI0OWNlMGJlNWFjNjI4Y2JlMmEyMzE0Y2I4MTUiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=', u'2017-04-10 14:22:31.861599', u'uv2f8cg669454zinggok44bjrnusrmzz')
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'INSERT INTO "django_session" ("session_key", "session_data", "expire_date") SELECT %s AS "session_key", %s AS "session_data", %s AS "expire_date"' - PARAMS = (u'uv2f8cg669454zinggok44bjrnusrmzz', u'MTVjYjRmYjZlNmVkYzM2YTc3ZDA2MzdlYjU0YWU5M2VkZjQwYTg2Yjp7Il9hdXRoX3VzZXJfaGFzaCI6ImRmMTBhNzA3NDFiZGI0OWNlMGJlNWFjNjI4Y2JlMmEyMzE0Y2I4MTUiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=', u'2017-04-10 14:22:31.861599'); args=(u'uv2f8cg669454zinggok44bjrnusrmzz', u'MTVjYjRmYjZlNmVkYzM2YTc3ZDA2MzdlYjU0YWU5M2VkZjQwYTg2Yjp7Il9hdXRoX3VzZXJfaGFzaCI6ImRmMTBhNzA3NDFiZGI0OWNlMGJlNWFjNjI4Y2JlMmEyMzE0Y2I4MTUiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=', u'2017-04-10 14:22:31.861599')
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.001) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."session_key" = %s AND "django_session"."expire_date" > %s)' - PARAMS = (u'uv2f8cg669454zinggok44bjrnusrmzz', u'2017-03-27 14:22:31.955330'); args=('uv2f8cg669454zinggok44bjrnusrmzz', u'2017-03-27 14:22:31.955330')
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = %s' - PARAMS = (1,); args=(1,)
+[27/Mar/2017 14:22:31] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "auth_group" INNER JOIN "auth_user_groups" ON ( "auth_group"."id" = "auth_user_groups"."group_id" ) WHERE ("auth_user_groups"."user_id" = %s AND "auth_group"."name" = %s) LIMIT 1' - PARAMS = (1, u'teledm'); args=(1, 'teledm')
+[27/Mar/2017 14:22:31] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 14:22:31] INFO [teledm.views:82] Info message!
+[27/Mar/2017 14:22:31] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 14:22:31] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 14:22:31] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 14:22:46] DEBUG [django.db.backends:89] (0.001) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."session_key" = %s AND "django_session"."expire_date" > %s)' - PARAMS = (u'uv2f8cg669454zinggok44bjrnusrmzz', u'2017-03-27 14:22:46.971233'); args=('uv2f8cg669454zinggok44bjrnusrmzz', u'2017-03-27 14:22:46.971233')
+[27/Mar/2017 14:22:46] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = %s' - PARAMS = (1,); args=(1,)
+[27/Mar/2017 14:22:46] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "auth_group" INNER JOIN "auth_user_groups" ON ( "auth_group"."id" = "auth_user_groups"."group_id" ) WHERE ("auth_user_groups"."user_id" = %s AND "auth_group"."name" = %s) LIMIT 1' - PARAMS = (1, u'teledm'); args=(1, 'teledm')
+[27/Mar/2017 14:22:46] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 14:22:46] INFO [teledm.views:82] Info message!
+[27/Mar/2017 14:22:46] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 14:22:46] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 14:22:46] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 14:24:17] DEBUG [django.db.backends:89] (0.001) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."session_key" = %s AND "django_session"."expire_date" > %s)' - PARAMS = (u'uv2f8cg669454zinggok44bjrnusrmzz', u'2017-03-27 14:24:17.730846'); args=('uv2f8cg669454zinggok44bjrnusrmzz', u'2017-03-27 14:24:17.730846')
+[27/Mar/2017 14:24:17] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = %s' - PARAMS = (1,); args=(1,)
+[27/Mar/2017 14:24:17] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "auth_group" INNER JOIN "auth_user_groups" ON ( "auth_group"."id" = "auth_user_groups"."group_id" ) WHERE ("auth_user_groups"."user_id" = %s AND "auth_group"."name" = %s) LIMIT 1' - PARAMS = (1, u'teledm'); args=(1, 'teledm')
+[27/Mar/2017 14:24:17] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 14:24:17] INFO [teledm.views:82] Info message!
+[27/Mar/2017 14:24:17] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 14:24:17] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 14:24:17] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 14:27:16] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 14:27:18] DEBUG [django.db.backends:89] (0.001) QUERY = u'SELECT "django_session"."session_key", "django_session"."session_data", "django_session"."expire_date" FROM "django_session" WHERE ("django_session"."session_key" = %s AND "django_session"."expire_date" > %s)' - PARAMS = (u'uv2f8cg669454zinggok44bjrnusrmzz', u'2017-03-27 14:27:18.371904'); args=('uv2f8cg669454zinggok44bjrnusrmzz', u'2017-03-27 14:27:18.371904')
+[27/Mar/2017 14:27:18] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."id" = %s' - PARAMS = (1,); args=(1,)
+[27/Mar/2017 14:27:18] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT (1) AS "a" FROM "auth_group" INNER JOIN "auth_user_groups" ON ( "auth_group"."id" = "auth_user_groups"."group_id" ) WHERE ("auth_user_groups"."user_id" = %s AND "auth_group"."name" = %s) LIMIT 1' - PARAMS = (1, u'teledm'); args=(1, 'teledm')
+[27/Mar/2017 14:27:18] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 14:27:18] INFO [teledm.views:82] Info message!
+[27/Mar/2017 14:27:18] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 14:27:18] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 14:27:18] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 14:28:36] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 14:28:36] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 14:28:38] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 14:30:00] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[27/Mar/2017 14:30:00] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[27/Mar/2017 14:30:09] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 14:30:09] INFO [teledm.views:82] Info message!
+[27/Mar/2017 14:30:09] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 14:30:09] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 14:30:09] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 14:30:39] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 14:30:39] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 14:30:40] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 14:30:42] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 14:30:42] INFO [teledm.views:82] Info message!
+[27/Mar/2017 14:30:42] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 14:30:42] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 14:30:42] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 14:49:15] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 14:49:15] INFO [teledm.views:82] Info message!
+[27/Mar/2017 14:49:15] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 14:49:15] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 14:49:15] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 14:49:41] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 14:49:41] INFO [teledm.views:82] Info message!
+[27/Mar/2017 14:49:41] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 14:49:41] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 14:49:41] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 14:50:42] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 14:50:42] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 14:50:43] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 14:50:45] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 14:50:45] INFO [teledm.views:82] Info message!
+[27/Mar/2017 14:50:45] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 14:50:45] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 14:50:45] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 16:46:06] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[27/Mar/2017 16:46:06] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[27/Mar/2017 16:48:58] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 16:49:00] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 16:49:03] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 16:49:03] INFO [teledm.views:82] Info message!
+[27/Mar/2017 16:49:03] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 16:49:03] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 16:49:03] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 16:49:55] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 210, in calval
+    inSitu, station, varStation, niveau
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 190, in scatterSatStation
+    end = datetime.strptime(datefin, "%Y-%m-%d")
+  File "/usr/lib64/python2.7/_strptime.py", line 332, in _strptime
+    (data_string, format))
+ValueError: time data '' does not match format '%Y-%m-%d'
+[27/Mar/2017 16:56:40] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 210, in calval
+    inSitu, station, varStation, niveau
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 190, in scatterSatStation
+    end = datetime.strptime(datefin, "%Y-%m-%d")
+  File "/usr/lib64/python2.7/_strptime.py", line 332, in _strptime
+    (data_string, format))
+ValueError: time data '' does not match format '%Y-%m-%d'
+[27/Mar/2017 16:56:56] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 210, in calval
+    inSitu, station, varStation, niveau
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 213, in scatterSatStation
+    hours1,long_st1, lat_st1 = heure_passage(station)
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 172, in heure_passage
+    latst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lat)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/frame.py", line 2059, in __getitem__
+    return self._getitem_column(key)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/frame.py", line 2066, in _getitem_column
+    return self._get_item_cache(key)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/generic.py", line 1386, in _get_item_cache
+    values = self._data.get(item)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/internals.py", line 3543, in get
+    loc = self.items.get_loc(item)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/indexes/base.py", line 2136, in get_loc
+    return self._engine.get_loc(self._maybe_cast_indexer(key))
+  File "pandas/index.pyx", line 132, in pandas.index.IndexEngine.get_loc (pandas/index.c:4433)
+  File "pandas/index.pyx", line 154, in pandas.index.IndexEngine.get_loc (pandas/index.c:4279)
+  File "pandas/src/hashtable_class_helper.pxi", line 732, in pandas.hashtable.PyObjectHashTable.get_item (pandas/hashtable.c:13742)
+  File "pandas/src/hashtable_class_helper.pxi", line 740, in pandas.hashtable.PyObjectHashTable.get_item (pandas/hashtable.c:13696)
+KeyError: 'nom'
+[27/Mar/2017 17:03:45] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 17:03:45] INFO [teledm.views:82] Info message!
+[27/Mar/2017 17:03:45] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 17:03:45] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 17:03:45] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 17:03:56] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:03:56] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:04:00] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 17:04:02] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 17:04:02] INFO [teledm.views:82] Info message!
+[27/Mar/2017 17:04:02] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 17:04:02] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 17:04:02] CRITICAL [teledm.views:85] Critical message!
+[27/Mar/2017 17:04:57] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 210, in calval
+    inSitu, station, varStation, niveau
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 213, in scatterSatStation
+    hours1,long_st1, lat_st1 = heure_passage(station)
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 172, in heure_passage
+    latst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lat)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/frame.py", line 2059, in __getitem__
+    return self._getitem_column(key)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/frame.py", line 2066, in _getitem_column
+    return self._get_item_cache(key)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/generic.py", line 1386, in _get_item_cache
+    values = self._data.get(item)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/internals.py", line 3543, in get
+    loc = self.items.get_loc(item)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/indexes/base.py", line 2136, in get_loc
+    return self._engine.get_loc(self._maybe_cast_indexer(key))
+  File "pandas/index.pyx", line 132, in pandas.index.IndexEngine.get_loc (pandas/index.c:4433)
+  File "pandas/index.pyx", line 154, in pandas.index.IndexEngine.get_loc (pandas/index.c:4279)
+  File "pandas/src/hashtable_class_helper.pxi", line 732, in pandas.hashtable.PyObjectHashTable.get_item (pandas/hashtable.c:13742)
+  File "pandas/src/hashtable_class_helper.pxi", line 740, in pandas.hashtable.PyObjectHashTable.get_item (pandas/hashtable.c:13696)
+KeyError: 'nom'
+[27/Mar/2017 17:08:53] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[27/Mar/2017 17:08:53] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[27/Mar/2017 17:08:57] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 213, in calval
+    inSitu, station, varStation, niveau
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 213, in scatterSatStation
+    hours1,long_st1, lat_st1 = heure_passage(station)
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 172, in heure_passage
+    latst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lat)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/frame.py", line 2059, in __getitem__
+    return self._getitem_column(key)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/frame.py", line 2066, in _getitem_column
+    return self._get_item_cache(key)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/generic.py", line 1386, in _get_item_cache
+    values = self._data.get(item)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/core/internals.py", line 3543, in get
+    loc = self.items.get_loc(item)
+  File "/home/mers/.local/lib/python2.7/site-packages/pandas/indexes/base.py", line 2136, in get_loc
+    return self._engine.get_loc(self._maybe_cast_indexer(key))
+  File "pandas/index.pyx", line 132, in pandas.index.IndexEngine.get_loc (pandas/index.c:4433)
+  File "pandas/index.pyx", line 154, in pandas.index.IndexEngine.get_loc (pandas/index.c:4279)
+  File "pandas/src/hashtable_class_helper.pxi", line 732, in pandas.hashtable.PyObjectHashTable.get_item (pandas/hashtable.c:13742)
+  File "pandas/src/hashtable_class_helper.pxi", line 740, in pandas.hashtable.PyObjectHashTable.get_item (pandas/hashtable.c:13696)
+KeyError: 'nom'
+[27/Mar/2017 17:09:24] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[27/Mar/2017 17:09:24] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[27/Mar/2017 17:15:01] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 213, in calval
+    inSitu, station, varStation, niveau
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 222, in scatterSatStation
+    line_station1, rCarre_1, a1,b1, scatterValues1 = scatter_stats(dfout,prd_sat1, inSitu)
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 129, in scatter_stats
+    slope, intercept, r_value, p_value, std_err = linregress(df[['moy_'+prd2,'moy_'+prd1]][mask])
+  File "/home/mers/.local/lib/python2.7/site-packages/scipy/stats/_stats_mstats_common.py", line 72, in linregress
+    raise ValueError("Inputs must not be empty.")
+ValueError: Inputs must not be empty.
+[27/Mar/2017 17:17:18] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[27/Mar/2017 17:17:18] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[27/Mar/2017 17:20:33] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[27/Mar/2017 17:20:33] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[27/Mar/2017 17:26:28] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 213, in calval
+    inSitu, station, varStation, niveau
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 222, in scatterSatStation
+    line_station1, rCarre_1, a1,b1, scatterValues1 = scatter_stats(dfout,prd_sat1, inSitu)
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 129, in scatter_stats
+    slope, intercept, r_value, p_value, std_err = linregress(df[['moy_'+prd2,'moy_'+prd1]][mask])
+  File "/home/mers/.local/lib/python2.7/site-packages/scipy/stats/_stats_mstats_common.py", line 72, in linregress
+    raise ValueError("Inputs must not be empty.")
+ValueError: Inputs must not be empty.
+[27/Mar/2017 17:26:57] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:26:57] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:26:58] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 17:27:20] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 17:27:44] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 17:28:08] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 213, in calval
+    inSitu, station, varStation, niveau
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 222, in scatterSatStation
+    line_station1, rCarre_1, a1,b1, scatterValues1 = scatter_stats(dfout,prd_sat1, inSitu)
+  File "/home/mers/dev/crc/teledm/scatterPlots.py", line 129, in scatter_stats
+    slope, intercept, r_value, p_value, std_err = linregress(df[['moy_'+prd2,'moy_'+prd1]][mask])
+  File "/home/mers/.local/lib/python2.7/site-packages/scipy/stats/_stats_mstats_common.py", line 72, in linregress
+    raise ValueError("Inputs must not be empty.")
+ValueError: Inputs must not be empty.
+[27/Mar/2017 17:29:37] DEBUG [django.db.backends:89] (0.002) QUERY = "\n            SELECT name, type FROM sqlite_master\n            WHERE type in ('table', 'view') AND NOT name='sqlite_sequence'\n            ORDER BY name" - PARAMS = (); args=None
+[27/Mar/2017 17:29:37] DEBUG [django.db.backends:89] (0.000) QUERY = u'SELECT "django_migrations"."app", "django_migrations"."name" FROM "django_migrations"' - PARAMS = (); args=()
+[27/Mar/2017 17:33:02] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:33:02] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:33:03] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 17:33:36] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 17:37:53] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:37:53] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:37:54] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 17:38:30] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 17:40:03] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:40:03] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:40:04] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 17:57:09] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 17:57:13] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 18:06:19] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:06:19] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:06:24] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 18:09:53] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:17:49] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:17:49] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:17:53] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 18:18:27] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:19:20] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:19:38] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:19:38] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:19:41] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 18:19:46] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 18:20:08] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:24:04] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:24:07] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 18:25:05] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:26:10] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:26:10] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:26:13] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 18:26:41] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:28:33] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:28:33] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:28:34] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 18:29:04] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:30:16] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:30:16] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:30:20] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 18:30:49] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:30:53] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:30:54] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:30:54] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:30:54] ERROR [django.request:256] Internal Server Error: /teledm/calval/
+Traceback (most recent call last):
+  File "/home/mers/.local/lib/python2.7/site-packages/django/core/handlers/base.py", line 132, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/mers/dev/crc/teledm/views.py", line 158, in calval
+    z_buffer = int(request.POST['buffer'])
+ValueError: invalid literal for int() with base 10: 'Buffer'
+[27/Mar/2017 18:32:46] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:32:46] WARNING [django.request:170] Not Found: /favicon.ico
+[27/Mar/2017 18:32:47] DEBUG [teledm.views:41] this is a debug message!
+[27/Mar/2017 18:54:17] DEBUG [teledm.views:81] Debug message!
+[27/Mar/2017 18:54:17] INFO [teledm.views:82] Info message!
+[27/Mar/2017 18:54:17] WARNING [teledm.views:83] Warning message!
+[27/Mar/2017 18:54:17] ERROR [teledm.views:84] Error message!
+[27/Mar/2017 18:54:17] CRITICAL [teledm.views:85] Critical message!

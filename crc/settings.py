@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'sendfile',
     'teledm',
     'portailCRC',
+    'httpproxy',
 ]
 
 #BOWER_PATH = '/usr/local/bin/bower'

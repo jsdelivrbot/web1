@@ -2,6 +2,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from django.contrib.auth.decorators import login_required
+from httpproxy.views import HttpProxy
 
 from . import views
 
@@ -18,4 +19,6 @@ urlpatterns = [
     url(r'^mapDist/$', views.mapDist, name='mapDist'),#login_required(views.mapDist), name='mapDist'),
     url(r'^calval/$', views.calval, name='calval'),#login_required(views.calval), name='calval'),
     url(r'^localisation/$', views.localisation, name='localisation'),#login_required(views.calval), name='calval'),
+    #url(r'^test/$', views.test, name='test'),
+    url(r'^test/(?P<path>.*)$', views.test, name='test'),
 ]
