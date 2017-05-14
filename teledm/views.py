@@ -39,8 +39,8 @@ def test2(request, path):
     response = requests.request('GET', url)
     return HttpResponse(img, content_type='teledm/test.html')
 
-def test(request, path):
-    print path
+def test(request):
+    #print request.path
     username = "se5780me"
     password = "erg54erg55"
     if request.is_ajax():
@@ -69,6 +69,21 @@ def test1(request, path):
     remoteurl = 'https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/' + path
     response = requests.request('GET', remoteurl)
     return HttpResponse(response.content, content_type='teledm/test.html')
+
+def test3(request):
+    return render_to_response('teledm/test3.html', context_instance=RequestContext(request))
+
+def test4(request, path):
+    print('path: %s' % request.path)
+    print('request: %s' % request.GET)
+    if "wms" in path:
+        url = 'http://localhost:8080/thredds/wms/satellite/modis/MYD04/res009/MYD04_r009_d.nc?service=WMS'
+        wms = WebMapService(url, version='1.3.0')
+        layer = wms.contents.keys()[0]
+        bbox = wms[layer].boundingBoxWGS84
+        img = wms.getmap(layers=[layer], styles=['boxfill/rainbow'], srs='EPSG:4326', bbox=bbox, size=(300, 250), format='image/png', transparent=True)
+        print('ok')
+    return HttpResponse(img)
 
 
 #@login_required

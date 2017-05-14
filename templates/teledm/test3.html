@@ -1,0 +1,36 @@
+{% load staticfiles %}
+<html lang=fr>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        
+        <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'select2/dist/css/select2.min.css' %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static 'teledm/css/base.css' %}"/>
+        {% block css %}
+            <link rel="stylesheet" type="text/css" href="http://openlayers.org/en/v3.18.2/css/ol.css" type="text/css"/>
+        {% endblock %}
+        {% block form %}
+            {% csrf_token %}
+            <form action="" method="POST">
+                <div>
+                    <input type="text" class="input-small" name="lrx" id="lrx" placeholder="East"/>
+                </div>
+                <div id="panel" type="button" id="update" class="btn btn-primary" onclick="majLayer()">Update Map</div>
+                
+            </form>
+            {{ path }}
+        {% endblock %}
+        
+        {% block content1 %}
+            </br>
+            <div id="map" class="map" ></div>
+        {% endblock %}
+        {% block js %}
+            <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+            <script type="text/javascript" src="{% static 'teledm/js/test3.js' %}"></script> 
+        {% endblock %}
+    </body>
+</html>
