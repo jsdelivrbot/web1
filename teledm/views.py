@@ -7,7 +7,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from sendfile import sendfile
 import json, simplejson
+from xml.etree import ElementTree as ET
 import httplib2, requests
+from bs4 import BeautifulSoup
 import base64
 import os
 import pandas as pd
@@ -51,7 +53,7 @@ def test(request):
         h = httplib2.Http()
         auth = base64.encodestring( username + ':' + password )
         resp, content = h.request(url, 'GET', headers = { 'Authorization' : 'Basic ' + auth })
-        print content
+        print('catalogue: %s' % content)
         response = requests.get(url, auth=requests.auth.HTTPBasicAuth(username, password))
         return HttpResponse(content, content_type='teledm/test.html')
         #return render(request, 'index.html', {content})
@@ -65,15 +67,50 @@ def test(request):
 
 
 
-def test1(request, path):
-    remoteurl = 'https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/' + path
-    response = requests.request('GET', remoteurl)
-    return HttpResponse(response.content, content_type='teledm/test.html')
+def testProxyAjax(request, path):    
+    username = "se5780me"
+    password = "erg54erg55"
+    #path  = 're_analyse/ecmwf/era_interim/catalog.xml'
+    print(path)
+    url = "https://climdata.u-bourgogne.fr:8443/thredds/catalog/" + path
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(username, password))
+    tree = BeautifulSoup(response.text, 'lxml')
+    cats = tree.find_all("catalogref")
+    ids = [i.attrs['xlink:title'] for i in cats][:2]
+    return HttpResponse(json.dumps({'id1': ids[0], 'id2':ids[1]}), content_type='teledm/test.html')
 
-def test3(request):
-    return render_to_response('teledm/test3.html', context_instance=RequestContext(request))
+def testProxyWMS(request, path):
+    username = "se5780me"
+    password = "erg54erg55"
+    print(request.GET)
+    LAYERS = request.GET['LAYERS']
+    CRS = request.GET['CRS']
+    elevation = request.GET['elevation']
+    service = request.GET['service']
+    FORMAT = request.GET['FORMAT']
+    req = request.GET['request']
+    OPACITY = request.GET['OPACITY']
+    HEIGHT = request.GET['HEIGHT']
+    STYLES = request.GET['STYLES']
+    SRS = request.GET['SRS']
+    version = request.GET['version']
+    BBOX = request.GET['BBOX']
+    NUMCOLORBANDS = request.GET['NUMCOLORBANDS']
+    TIME = request.GET['TIME']
+    COLORSCALERANGE = request.GET['COLORSCALERANGE']
+    TRANSPARENT = request.GET['TRANSPARENT']
+    WIDTH =request.GET['WIDTH']
+    url = "https://se5780me:erg54erg55@climdata.u-bourgogne.fr/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS={}&elevation={}&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG&STYLES=boxfill%2Frainbow&COLORSCALERANGE=270%2C350&TIME=2007-01-02&NUMCOLORBANDS=250&OPACITY=100&BBOX={}&WIDTH=256&HEIGHT=256".format(LAYERS, elevation, BBOX)
+    params = '?service={}&version={}&request={}&CRS=CRS%3A84&LAYERS={}&elevation={}&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG&STYLES=boxfill%2Frainbow&COLORSCALERANGE={}&TIME={}&NUMCOLORBANDS={}&OPACITY=100&BBOX={}&WIDTH=256&HEIGHT=256'.format(service,version,req,LAYERS,elevation,COLORSCALERANGE.replace(',','%2C'),TIME,NUMCOLORBANDS,BBOX)
+    #url = "https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/wms/" + path
+    url = "https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/wms/" + path + params
+    print('url %s' % url)
+    #response, content = conn.request(url, 'GET')
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(username, password), verify=False)
+    print('status: %s' % response.status_code)
+    return HttpResponse(response.content, status=int(response.status_code), content_type='teledm/test.html')
 
-def test4(request, path):
+def test3(request, path):
     print('path: %s' % request.path)
     print('request: %s' % request.GET)
     if "wms" in path:

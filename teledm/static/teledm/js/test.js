@@ -56,8 +56,8 @@ function initMap(){
     );
     map.addLayer(fond);
     map.zoomToMaxExtent();
-    //var URL = "http://localhost:8000/climdata.u-bourgogne.fr/teledm/test/https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
-    var URL = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
+    var URL = "https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
+    //var URL = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
     var date = new Date("2007-01-01");
     var date1 = formatDate(date);
     var wms = new OpenLayers.Layer.WMS(
@@ -73,17 +73,18 @@ function initMap(){
             numcolorbands : "250",
             opacity : "100" //lstInfos.opacity
             },
-        {isBaseLayer: false},
+        {singleTile: true, ratio: 1},
+        {isBaseLayer: true},
     );
     map.addLayer(wms);
     
 }
 
 function majLayer(date){
-    var URL = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
+    //var URL = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
     //var URL = "https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
     //var URL = "https://climdata.u-bourgogne.fr:8443/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
-    //var URL = "http://localhost:8080/teledm/test/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
+    var URL = "http://localhost:8000/climdata.u-bourgogne.fr/teledm/proxywms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
     var date = new Date("2007-01-01");
     date.setDate(date.getDate() + 1);
     var date1 = formatDate(date);
@@ -100,6 +101,11 @@ function majLayer(date){
             numcolorbands : "250",
             opacity : "100" //lstInfos.opacity
             },
+        {
+            tileOptions: {crossOriginKeyword: 'anonymous'},
+            transitionEffect: null      
+        },
+        {singleTile: true, ratio: 1},
         {isBaseLayer: false},
     );
     map.addLayer(wms);        
@@ -109,20 +115,20 @@ function majLayer(date){
 function readCat(){
     //var URLCat = "https://climdata.u-bourgogne.fr:8443/thredds/satellite/modis/catalog.xml";
     //var URLCat = "http://localhost:8080/thredds/satellite/modis/catalog.xml";
-    var URLCat = "satellite/modis/catalog.xml";
+    var URLCat = "http://localhost:8000/climdata.u-bourgogne.fr/teledm/proxyajax/re_analyse/ecmwf/era_interim/catalog.xml";
     alert(URLCat);
     var auth = 'Basic ' + "se5780me:erg54erg55";
     $.ajax( {
 				type: "POST",
-				url: "",
-                data: {'url':URLCat},
-				dataType: "xml",
+				url: URLCat,
+				dataType: "json",
 				async: false,
                 beforeSend: function(xhr, settings) {
                     xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
                 },
-				success: function(xml) {
-					console.log('ok');
+				success: function(json) {
+					alert(json);
+                    $("#cat").val(json.id1);
 				},
 			});
 }

@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'djangobower',    
     #'admin_reorder',
-    'wms',
+    #'wms',
     'sendfile',
     'teledm',
     'portailCRC',
