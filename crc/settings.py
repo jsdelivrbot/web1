@@ -4,14 +4,15 @@ settings for crc project.
 """
 
 import os
-from setting_keys import *
+import setting_keys
+
 DIRDB = os.path.join(os.path.expanduser("~"),"Bureau/teledm")
 #from django.core.urlresolvers import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+TDS_USER = setting_keys.username
+TDS_PWD = setting_keys.password
 
-THREDDS_USERNAME = username
-THREDDS_PASSWORD = password
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'fo9r1bxde8io8jz_9fr3*%93m3zf+p^)acos)9#@%(oe1+@a@z'
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -33,7 +34,6 @@ INSTALLED_APPS = [
     'sendfile',
     'teledm',
     'portailCRC',
-    'httpproxy',
 ]
 
 #BOWER_PATH = '/usr/local/bin/bower'

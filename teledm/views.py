@@ -10,6 +10,7 @@ import json, simplejson
 from xml.etree import ElementTree as ET
 import httplib2, requests
 from bs4 import BeautifulSoup
+from StringIO import StringIO
 import base64
 import os
 import pandas as pd
@@ -29,43 +30,37 @@ tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))
 ddirDB = os.path.expanduser('~') + "/Bureau/teledm"
 ddir = ddirDB + "/donnees/in_situ/"
 
-#@login_required
-def test2(request, path):
-    print('path %s' % path)
-    url = 'http://localhost:8080/thredds/wms/satellite/modis/MYD04/res009/MYD04_r009_d.nc?service=WMS'
-    wms = WebMapService(url, version='1.3.0')
-    layer = wms.contents.keys()[0]
-    bbox = wms[layer].boundingBoxWGS84
-    args = [[layer], ['boxfill/rainbow'], 'EPSG:4326', bbox, (300, 250), 'image/png', True]
-    img = wms.getmap(layers=[layer], styles=['boxfill/rainbow'], srs='EPSG:4326', bbox=bbox, size=(300, 250), format='image/png', transparent=True)
-    response = requests.request('GET', url)
-    return HttpResponse(img, content_type='teledm/test.html')
 
-def test(request):
-    return render(request, "teledm/test.html")
+def proxyNCSS(request, path):
+    elevation = request.GET['elevation']
+    time_end = request.GET['time_end']
+    longitude = request.GET['longitude']
+    latitude = request.GET['latitude']
+    accept = request.GET['accept']
+    var = request.GET['var']
+    time_start = request.GET['time_start']
+    param = 'time_start={}&time_end={}&var={}&elevation={}&latitude={}&longitude={}&accept={}'.format(time_start,time_end,var,elevation,latitude,longitude,accept)
+    url = "https://climdata.u-bourgogne.fr:8443/thredds/{}?{}".format(path,param)
+    print url
+    #url = 'https://climdata.u-bourgogne.fr:8443/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?time_start=2006-07-06&time_end=2006-07-06&var=Surface_Temperature&elevation=Layer&latitude=25.6&longitude=10.266674804688&accept=csv'
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD))
+    #response = requests.get(url, auth=requests.auth.HTTPBasicAuth('se5780me','erg54erg55'))
+    csv = pd.read_csv(StringIO(response.content), parse_dates={'datetime':['time']})
+    print(csv)
+    return HttpResponse(json.dumps({'date':csv.datetime.ix[0],'lon':csv['longitude[unit="degrees_east"]'].ix[0],'lat':csv['latitude[unit="degrees_north"]'].ix[0], 'val':csv['Surface_Temperature[unit="K"]'].ix[0], 'name': csv.columns[-1]}, cls=DjangoJSONEncoder))
 
 
-def testProxyNCSS(request):
-    url = 
-    return HttpResponse()
-
-
-def testProxyAjax(request, path):    
-    username = "se5780me"
-    password = "erg54erg55"
+def proxyAjax(request, path):    
     #path  = 're_analyse/ecmwf/era_interim/catalog.xml'
     print(path)
     url = "https://climdata.u-bourgogne.fr:8443/thredds/catalog/" + path
-    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(username, password))
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD))
     tree = BeautifulSoup(response.text, 'lxml')
     cats = tree.find_all("catalogref")
     ids = [i.attrs['xlink:title'] for i in cats][:2]
     return HttpResponse(json.dumps({'id1': ids[0], 'id2':ids[1]}), content_type='teledm/test.html')
 
-def testProxyWMS(request, path):
-    username = "se5780me"
-    password = "erg54erg55"
-    print(request.GET)
+def proxyWMS(request, path):
     LAYERS = request.GET['LAYERS']
     CRS = request.GET['CRS']
     elevation = request.GET['elevation']
@@ -83,27 +78,12 @@ def testProxyWMS(request, path):
     COLORSCALERANGE = request.GET['COLORSCALERANGE']
     TRANSPARENT = request.GET['TRANSPARENT']
     WIDTH =request.GET['WIDTH']
-    url = "https://se5780me:erg54erg55@climdata.u-bourgogne.fr/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS={}&elevation={}&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG&STYLES=boxfill%2Frainbow&COLORSCALERANGE=270%2C350&TIME=2007-01-02&NUMCOLORBANDS=250&OPACITY=100&BBOX={}&WIDTH=256&HEIGHT=256".format(LAYERS, elevation, BBOX)
     params = '?service={}&version={}&request={}&CRS=CRS%3A84&LAYERS={}&elevation={}&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG&STYLES=boxfill%2Frainbow&COLORSCALERANGE={}&TIME={}&NUMCOLORBANDS={}&OPACITY=100&BBOX={}&WIDTH=256&HEIGHT=256'.format(service,version,req,LAYERS,elevation,COLORSCALERANGE.replace(',','%2C'),TIME,NUMCOLORBANDS,BBOX)
-    #url = "https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/wms/" + path
-    url = "https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/wms/" + path + params
-    print('url %s' % url)
+    url = "https://{}:{}@climdata.u-bourgogne.fr:8443/thredds/wms/{}/{}".format(settings.TDS_USER, settings.TDS_PWD,path,params)
     #response, content = conn.request(url, 'GET')
-    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(username, password), verify=False)
-    print('status: %s' % response.status_code)
+    url = 'https://climdata.u-bourgogne.fr:8443/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?time_start=2006-07-06&time_end=2006-07-06&var=Surface_Temperature&elevation=Layer&latitude=25.6&longitude=10.266674804688&accept=csv'
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
     return HttpResponse(response.content, status=int(response.status_code), content_type='teledm/test.html')
-
-def test3(request, path):
-    print('path: %s' % request.path)
-    print('request: %s' % request.GET)
-    if "wms" in path:
-        url = 'http://localhost:8080/thredds/wms/satellite/modis/MYD04/res009/MYD04_r009_d.nc?service=WMS'
-        wms = WebMapService(url, version='1.3.0')
-        layer = wms.contents.keys()[0]
-        bbox = wms[layer].boundingBoxWGS84
-        img = wms.getmap(layers=[layer], styles=['boxfill/rainbow'], srs='EPSG:4326', bbox=bbox, size=(300, 250), format='image/png', transparent=True)
-        print('ok')
-    return HttpResponse(img)
 
 
 #@login_required
@@ -123,18 +103,6 @@ def home(request):
         logger.debug("this is a debug message!")
         return render(request, 'teledm/home.html')
 
-def DB(request):
-    return render(request, 'teledm/db.html')
-def traitementsData(request):
-    return render(request, 'teledm/traitementsData.html')
-def tutoMap(request):
-    return render(request, 'teledm/tutoMap.html')
-def tutoCalVal(request):
-    return render(request, 'teledm/tutoCalVal.html')
-def tutoExtraction(request):
-    return render(request, 'teledm/tutoExtraction.html')
-def stations(request):
-    return render(request, 'teledm/stations.html')
 
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
