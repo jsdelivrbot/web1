@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-from django.shortcuts import render_to_response, HttpResponse, render
+from django.shortcuts import HttpResponse, render
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
@@ -42,29 +42,12 @@ def test2(request, path):
     return HttpResponse(img, content_type='teledm/test.html')
 
 def test(request):
-    #print request.path
-    username = "se5780me"
-    password = "erg54erg55"
-    if request.is_ajax():
-        #print request.POST
-        url = "https://climdata.u-bourgogne.fr:8443/thredds/" + request.POST['url']
-        #print url
-        httplib2.debuglevel = 1
-        h = httplib2.Http()
-        auth = base64.encodestring( username + ':' + password )
-        resp, content = h.request(url, 'GET', headers = { 'Authorization' : 'Basic ' + auth })
-        print('catalogue: %s' % content)
-        response = requests.get(url, auth=requests.auth.HTTPBasicAuth(username, password))
-        return HttpResponse(content, content_type='teledm/test.html')
-        #return render(request, 'index.html', {content})
-    else:
-        url = 'http://localhost:8080/thredds/wms/satellite/modis/MYD04/res009/MYD04_r009_d.nc?service=WMS'
-        wms = WebMapService(url, version='1.3.0')
-        layer = wms.contents.keys()[0]
-        bbox = wms[layer].boundingBoxWGS84
-        img = wms.getmap(layers=[layer], styles=['boxfill/rainbow'], srs='EPSG:4326', bbox=bbox, size=(300, 250), format='image/png', transparent=True)
-    return render_to_response("teledm/test.html", context_instance=RequestContext(request))
+    return render(request, "teledm/test.html")
 
+
+def testProxyNCSS(request):
+    url = 
+    return HttpResponse()
 
 
 def testProxyAjax(request, path):    
@@ -138,20 +121,20 @@ def home(request):
         return HttpResponse(json.dumps(datas), content_type='teledm/home.html')
     else:
         logger.debug("this is a debug message!")
-        return render_to_response('teledm/home.html', context_instance=RequestContext(request))
+        return render(request, 'teledm/home.html')
 
 def DB(request):
-    return render_to_response('teledm/db.html', context_instance=RequestContext(request))
+    return render(request, 'teledm/db.html')
 def traitementsData(request):
-    return render_to_response('teledm/traitementsData.html', context_instance=RequestContext(request))
+    return render(request, 'teledm/traitementsData.html')
 def tutoMap(request):
-    return render_to_response('teledm/tutoMap.html', context_instance=RequestContext(request))
+    return render(request, 'teledm/tutoMap.html')
 def tutoCalVal(request):
-    return render_to_response('teledm/tutoCalVal.html', context_instance=RequestContext(request))
+    return render(request, 'teledm/tutoCalVal.html')
 def tutoExtraction(request):
-    return render_to_response('teledm/tutoExtraction.html', context_instance=RequestContext(request))
+    return render(request, 'teledm/tutoExtraction.html')
 def stations(request):
-    return render_to_response('teledm/stations.html', context_instance=RequestContext(request))
+    return render(request, 'teledm/stations.html')
 
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
@@ -195,7 +178,7 @@ def mapViewer(request):
         logger.warning("Warning message!")
         logger.error("Error message!")
         logger.critical("Critical message!")
-        return render_to_response('teledm/mapViewer.html',context_instance=RequestContext(request))
+        return render(request, 'teledm/mapViewer.html')
 
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
@@ -257,7 +240,7 @@ def mapDist(request):
             filename = request.POST['filename']
             return sendfile(request, tmpDir + '/' + filename)
         else:
-            return render_to_response('teledm/mapDist.html',context_instance=RequestContext(request))
+            return render(request, 'teledm/mapDist.html')
 
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
@@ -335,7 +318,7 @@ def calval(request):
         print type(df['scatterValues'])
         return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
     else:
-        return render_to_response('teledm/calval.html',{},context_instance=RequestContext(request))
+        return render(request,'teledm/calval.html')
 
 def localisation(request):
-    return render_to_response('teledm/localisation.html', context_instance=RequestContext(request))
+    return render(request, 'teledm/localisation.html')

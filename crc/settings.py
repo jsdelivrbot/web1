@@ -1,15 +1,17 @@
 """
-Django 1.8.5
+Django 1.11.1
 settings for crc project.
 """
 
 import os
-
-
+from setting_keys import *
 DIRDB = os.path.join(os.path.expanduser("~"),"Bureau/teledm")
 #from django.core.urlresolvers import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
+THREDDS_USERNAME = username
+THREDDS_PASSWORD = password
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'fo9r1bxde8io8jz_9fr3*%93m3zf+p^)acos)9#@%(oe1+@a@z'
 # SECURITY WARNING: don't run with debug turned on in production!

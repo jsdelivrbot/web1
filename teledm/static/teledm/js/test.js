@@ -147,6 +147,80 @@ function download(){
 }
 
 
+
+// info ponctuelle lat/lon/data
+function getInfosMap(e){
+    var lonLat = map.getLonLatFromViewPortPx(e.xy);  //latitude/longitude du clic
+    if(map.layers[1].name !== 'wms'){ //si pas de layers wms
+        var errorPopup = new OpenLayers.Popup (
+            "error",
+            lonLat,
+            new OpenLayers.Size(100, 50),
+            "Pas de couche sélectionnée",
+            true, //ajout un bouton "fermer la fenetre"
+            null  //action apres close
+            );
+        errorPopup.autoSize = true;
+        map.addPopup(errorPopup);
+    }else{
+        if(map.maxExtent.containsLonLat(lonLat)){
+            var tempPopup = new OpenLayers.Popup (
+                "temp",
+                lonLat,
+                new OpenLayers.Size(100, 50),
+                "Loading...",
+                true, //ajout un bouton "fermer la fenetre"
+                null  //action apres close
+			);
+            var lonlat = map.getLonLatFromViewPortPx(e.xy);
+            //mise a jour date
+            var URLRequest = "http://localhost:8000/climdata.u-bourgogne.fr/teledm/proxyncss/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?time_start=2006-07-06&time_end=2006-07-06&var=Surface_Temperature&elevation=Layer&latitude=25.6&longitude=10.266674804688&accept=xml";
+            alert(URLRequest);
+            $.ajax({
+                type: "GET",
+                url: URLRequest,
+                dataType: "xml",
+                async: false,
+                success: function(xml) {
+                    var lon = parseFloat($(xml).find('data[name="lon"]').text());
+                    var lat = parseFloat($(xml).find('data[name="lat"]').text());
+                    var val = parseFloat($(xml).find('data[name="Surface_Temperature"]').text());
+                    var res = "";
+                    if (lon){
+                        // We have a successful result
+                        var truncVal = val.toPrecision(3);
+                        if(truncVal > 200)  //Kelvin -> Celsius
+                        {
+                            //truncVal-=273,15
+                        }
+                        res = "Lon: "+ lon.toFixed(6) + 
+                              " </br>Lat: " + lat.toFixed(6) +
+        				   " </br>Value: " + truncVal;
+                    } 
+                    else{
+                        res = "Impossible d'obtenir les informations demandées";
+                    }
+                    //map.removePopup(tempPopup);   //supprime le popup temporaire
+                    var popup = new OpenLayers.Popup(
+                        "id",
+                        lonlat,
+                        new OpenLayers.Size(200, 75),
+                        res,
+                        true,
+                        null
+                    );
+                    popup.AutoSize = true;
+                    map.addPopup(popup);
+                },
+                error: function(e){
+                    console.log('error');
+                }
+            });
+        }
+    }//fin else
+}
+
+
 var date = "2007-01-01";
 window.onload = function(){
     initMap();

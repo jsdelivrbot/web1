@@ -322,7 +322,7 @@ function createURL(valueSelected, selector){
     else {
         var URLCat = ROOT + '/' + URL;
     }
-    alert(URLCat);
+    //alert(URLCat);
     $.ajax( {
 				type: "GET",
 				url: URLCat,
@@ -914,6 +914,7 @@ function getInfosMap(e){
                     + "&accept=xml"
                     ;
             }
+            alert(URLRequest);
             $.ajax({
                 type: "GET",
                 url: URLRequest,
