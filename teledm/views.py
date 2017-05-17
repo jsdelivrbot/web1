@@ -44,46 +44,90 @@ def proxyNCSS(request, path):
     print url
     #url = 'https://climdata.u-bourgogne.fr:8443/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?time_start=2006-07-06&time_end=2006-07-06&var=Surface_Temperature&elevation=Layer&latitude=25.6&longitude=10.266674804688&accept=csv'
     response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD))
-    #response = requests.get(url, auth=requests.auth.HTTPBasicAuth('se5780me','erg54erg55'))
     csv = pd.read_csv(StringIO(response.content), parse_dates={'datetime':['time']})
     print(csv)
     return HttpResponse(json.dumps({'date':csv.datetime.ix[0],'lon':csv['longitude[unit="degrees_east"]'].ix[0],'lat':csv['latitude[unit="degrees_north"]'].ix[0], 'val':csv['Surface_Temperature[unit="K"]'].ix[0], 'name': csv.columns[-1]}, cls=DjangoJSONEncoder))
 
 
+#def proxyAjax1(request, path):    
+#    #path  = 're_analyse/ecmwf/era_interim/catalog.xml'
+#    url =  os.path.join(settings.TDS_URL + "catalog" + path)
+#    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD))
+#    tree = BeautifulSoup(response.text, 'lxml')
+#    cats = tree.find_all("catalogref")
+#    ids = [i.attrs['xlink:title'] for i in cats][:2]
+#    return HttpResponse(json.dumps({'id1': ids[0], 'id2':ids[1]}), content_type='teledm/test.html')
+
+
 def proxyAjax(request, path):    
     #path  = 're_analyse/ecmwf/era_interim/catalog.xml'
-    print(path)
-    url = "https://climdata.u-bourgogne.fr:8443/thredds/catalog/" + path
+    #print(path)
+    
+    url = os.path.join(settings.TDS_URL % (''), path)
     response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD))
-    tree = BeautifulSoup(response.text, 'lxml')
-    cats = tree.find_all("catalogref")
-    ids = [i.attrs['xlink:title'] for i in cats][:2]
-    return HttpResponse(json.dumps({'id1': ids[0], 'id2':ids[1]}), content_type='teledm/test.html')
+    #print url
+    #print response.content
+    return HttpResponse(response.content)
 
-def proxyWMS(request, path):
-    LAYERS = request.GET['LAYERS']
+
+def colorbar(request, path):
+    #COLORBARONLY': [u'true'], u'LAYER': [u'Surface_Temperature'], u'REQUEST': [u'GetLegendGraphic'], u'PALETTE': [u'rainbow'], u'NUMCOLORBANDS': [u'10']
+    params = "?REQUEST={}&LAYER={}&NUMCOLORBANDS={}&PALETTE={}&COLORBARONLY={}".format(request.GET['REQUEST'],request.GET['LAYER'],request.GET['NUMCOLORBANDS'],request.GET['PALETTE'],request.GET['COLORBARONLY'])
+    url = os.path.join(settings.TDS_URL % (''), path+params)
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
+    return HttpResponse(response.content, status=int(response.status_code))
+
+def dates(request, path):
+    params = "?service={}&version={}&request={}".format(request.GET['service'], request.GET['version'], request.GET['request'])
+    url = os.path.join(settings.TDS_URL % (''), path + params)
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
+    return HttpResponse(response.content, status=int(response.status_code))
+
+
+def minmax(request, path):
+    print request.GET
+    LAYER = request.GET['LAYERS']
     CRS = request.GET['CRS']
     elevation = request.GET['elevation']
     service = request.GET['service']
-    FORMAT = request.GET['FORMAT']
-    req = request.GET['request']
-    OPACITY = request.GET['OPACITY']
+    REQUEST = request.GET['REQUEST']
     HEIGHT = request.GET['HEIGHT']
-    STYLES = request.GET['STYLES']
     SRS = request.GET['SRS']
+    version = request.GET['version']
+    BBOX = request.GET['BBOX']
+    TIME = request.GET['TIME']
+    WIDTH =request.GET['WIDTH']
+    params = '?item=minmax&LAYERS={}&elevation={}&TIME={}&SRS={}&CRS={}&REQUEST={}&service={}&version={}&BBOX={}&WIDTH={}&HEIGHT={}'.format(LAYER,elevation,TIME,SRS,CRS,REQUEST,service,version,BBOX,WIDTH,HEIGHT)
+    url = os.path.join(settings.TDS_URL % (''), path + params)
+    print url
+    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
+    return HttpResponse(response.content, status=int(response.status_code))
+
+
+def proxyWMS(request, path):
+    LAYER = request.GET['LAYERS']
+    #CRS = request.GET['CRS']
+    elevation = request.GET['elevation']
+    service = request.GET['service']
+    #FORMAT = request.GET['FORMAT']
+    req = request.GET['request']
+    HEIGHT = request.GET['HEIGHT']
+    #STYLES = request.GET['STYLES']
+    #SRS = request.GET['SRS']
     version = request.GET['version']
     BBOX = request.GET['BBOX']
     NUMCOLORBANDS = request.GET['NUMCOLORBANDS']
     TIME = request.GET['TIME']
     COLORSCALERANGE = request.GET['COLORSCALERANGE']
-    TRANSPARENT = request.GET['TRANSPARENT']
+    #TRANSPARENT = request.GET['TRANSPARENT']
     WIDTH =request.GET['WIDTH']
-    params = '?service={}&version={}&request={}&CRS=CRS%3A84&LAYERS={}&elevation={}&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG&STYLES=boxfill%2Frainbow&COLORSCALERANGE={}&TIME={}&NUMCOLORBANDS={}&OPACITY=100&BBOX={}&WIDTH=256&HEIGHT=256'.format(service,version,req,LAYERS,elevation,COLORSCALERANGE.replace(',','%2C'),TIME,NUMCOLORBANDS,BBOX)
-    url = "https://{}:{}@climdata.u-bourgogne.fr:8443/thredds/wms/{}/{}".format(settings.TDS_USER, settings.TDS_PWD,path,params)
+    params = '?service={}&version={}&request={}&CRS=CRS%3A84&LAYERS={}&elevation={}&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG&STYLES=boxfill%2Frainbow&COLORSCALERANGE={}&TIME={}&NUMCOLORBANDS={}&OPACITY=100&BBOX={}&WIDTH={}&HEIGHT={}'.format(service,version,req,LAYER,elevation,COLORSCALERANGE.replace(',','%2C'),TIME,NUMCOLORBANDS,BBOX,WIDTH,HEIGHT)
+    #url = "https://{}:{}@climdata.u-bourgogne.fr:8443/thredds/wms/{}/{}".format(settings.TDS_USER, settings.TDS_PWD,path,params)
+    url = os.path.join(settings.TDS_URL % (settings.TDS_USER+':'+settings.TDS_PWD+'@'),path+params)
     #response, content = conn.request(url, 'GET')
-    url = 'https://climdata.u-bourgogne.fr:8443/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?time_start=2006-07-06&time_end=2006-07-06&var=Surface_Temperature&elevation=Layer&latitude=25.6&longitude=10.266674804688&accept=csv'
+    #url = 'https://climdata.u-bourgogne.fr:8443/thredds/ncss/satellite/modis/MYD07/res009/MYD07_r009_d.nc?time_start=2006-07-06&time_end=2006-07-06&var=Surface_Temperature&elevation=Layer&latitude=25.6&longitude=10.266674804688&accept=csv'
     response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD), verify=False)
-    return HttpResponse(response.content, status=int(response.status_code), content_type='teledm/test.html')
+    return HttpResponse(response.content, status=int(response.status_code))
 
 
 #@login_required
@@ -107,7 +151,6 @@ def home(request):
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapViewer(request):
-    print request.POST
     if request.is_ajax():
         logger.debug("Debug message!")
         logger.info("Info message!")

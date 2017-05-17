@@ -10,6 +10,7 @@ DIRDB = os.path.join(os.path.expanduser("~"),"Bureau/teledm")
 #from django.core.urlresolvers import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+TDS_URL = "https://%sclimdata.u-bourgogne.fr:8443/thredds" % ('%s')
 TDS_USER = setting_keys.username
 TDS_PWD = setting_keys.password
 

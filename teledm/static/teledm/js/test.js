@@ -136,7 +136,6 @@ function initMap(){
     map.addControls([navigation,zoomBox]);
     map.addControl(new OpenLayers.Control.MousePosition({prefix: 'Lon/Lat: ',separator: ', ',numDigits: 2,emptyString: ''}));
 
-    var URL = "https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
     //var URL = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
     var date = new Date("2007-01-01");
     var date1 = formatDate(date);
@@ -162,7 +161,6 @@ function initMap(){
 
 function majLayer(date){
     //var URL = "http://localhost:8080/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
-    //var URL = "https://se5780me:erg54erg55@climdata.u-bourgogne.fr:8443/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
     //var URL = "https://climdata.u-bourgogne.fr:8443/thredds/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?service=WMS&version=1.3.0&request=GetMap&CRS=CRS%3A84&LAYERS=Surface_Temperature&elevation=Layer&TRANSPARENT=true&FORMAT=image%2Fpng&SRS=EPSG";
     if (typeof map.layers[1] !== 'undefined'){
         if (map.layers[1].name == 'wms'){
@@ -202,7 +200,6 @@ function readCat(){
     //var URLCat = "http://localhost:8080/thredds/satellite/modis/catalog.xml";
     var URLCat = "http://localhost:8000/climdata.u-bourgogne.fr/teledm/proxyajax/re_analyse/ecmwf/era_interim/catalog.xml";
     alert(URLCat);
-    var auth = 'Basic ' + "se5780me:erg54erg55";
     $.ajax( {
 				type: "POST",
 				url: URLCat,

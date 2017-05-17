@@ -234,7 +234,7 @@ function setForm(){
         }else{
             var fileName = listSelected[2] + "_r" + reso.replace('res','') +'_'+this.value;
         }
-        var urlInfo = ROOT + '/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
+        var urlInfo = ROOT + '/dates/wms/' + listSelected.slice(0,ind).join('/') + '/' + fileName + '.nc?service=WMS&version=1.3.0&request=GetCapabilities';
         getDateRange(urlInfo);
         setSelect(varInfos.variables.name, selectSource1[5]);
         changeDates(varInfos.debut,varInfos.fin,this.value);
@@ -317,12 +317,11 @@ function createURL(valueSelected, selector){
     var ind = listSelected.indexOf(valueSelected);
     var URL = listSelected.slice(0,ind+1).join('/') + '/catalog.xml';
     if (URL == "/catalog.xml"){
-        var URLCat = ROOT + "/CatalogTELEDM.xml";
+        var URLCat = ROOT + "/proxyajax/catalogRefs/CatalogTELEDEM.xml";
     }
     else {
-        var URLCat = ROOT + '/' + URL;
+        var URLCat = ROOT + '/proxyajax/catalog/' + URL;
     }
-    //alert(URLCat);
     $.ajax( {
 				type: "GET",
 				url: URLCat,
@@ -1483,7 +1482,7 @@ function majLayer(){
     //setDescLayer();  //mise a jour description du layer
     //pour tout les dataset selectionnés : générer l'URL à parser
     if (lstInfos.level){
-        var URL = ROOT+ "/wms/" +
+        var URL = ROOT+ "/proxywms/wms/" +
             lstInfos.nomDataset +
             "/" + lstInfos.capteur +
             "/" + lstInfos.produit +
@@ -1497,7 +1496,7 @@ function majLayer(){
             "&TRANSPARENT=true&FORMAT=image%2Fpng" +
             "&SRS=EPSG";
     } else{
-        var URL = ROOT+ "/wms/" +
+        var URL = ROOT+ "/proxywms/" +
             lstInfos.nomDataset +
             "/" + lstInfos.capteur +
             "/" + lstInfos.produit +
@@ -1521,9 +1520,6 @@ function majLayer(){
     if($("#plot").highcharts().series.length !=0){
         $("#plot").highcharts().series[0].remove(true);
     }
-    alert($("select[name='colorbandNum']").val());
-    alert(csr);
-    alert(lstInfos.date);
     alert(URL)
     var wms = new OpenLayers.Layer.WMS(
         "wms",
@@ -1562,7 +1558,7 @@ function autoScale()
     console.log(lstInfos);
     if (lstInfos.level){
         var URLRequest = 
-            ROOT+"/wms/"
+            ROOT+"/minmax/wms/"
             + lstInfos.nomDataset
             + "/" + lstInfos.capteur
             + "/" + lstInfos.produit
@@ -1583,7 +1579,7 @@ function autoScale()
             ;
     }else{
         var URLRequest = 
-        ROOT+"/wms/"
+        ROOT+"/minmax/wms/"
         + lstInfos.nomDataset
         + "/" + lstInfos.capteur
         + "/" + lstInfos.produit
@@ -1628,8 +1624,8 @@ function setColorbar()
 {
     var nomColorbar = $("#Colorbar").val();
     var nbColorband = $("select[name='colorbandNum']").val();
-    var src_img = ROOT + "/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
-    var img = "<img height='200px' width='50px' src='"+ ROOT + "/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
+    //var src_img = ROOT + "/proxywms/catalog/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
+    var img = "<img height='200px' width='50px' src='"+ ROOT + "/colorbar/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
     $("#colorbar").html(img);
     var layers = map.layers;
     if(typeof map.layers[1] !== 'undefined' && map.layers[1].name == 'wms')    //si il existe déja un layer
@@ -1642,8 +1638,8 @@ function setColorbar()
 function setColorband(){
     var nomColorbar = $("#Colorbar").val();
     var nbColorband = $("select[name='colorbandNum']").val();
-    var src_img = ROOT + "/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
-    var img = "<img height='200px' width='50px' marging='100px' padding='0px' src='"+ ROOT + "/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
+    //var src_img = ROOT + "/proxywms/catalog/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true"
+    var img = "<img height='200px' width='50px' marging='100px' padding='0px' src='"+ ROOT + "/colorbar/wms/satellite/modis/MYD07/res009/MYD07_r009_d.nc?REQUEST=GetLegendGraphic&LAYER=Surface_Temperature&NUMCOLORBANDS=" + nbColorband + "&PALETTE=" + nomColorbar + "&COLORBARONLY=true'/>";
     $("#colorbar").html(img);
     if(typeof map.layers[1] !== 'undefined' && map.layers[1] == 'wms'){    //si il existe déja un layer
         map.layers[1].params.NUMCOLORBANDS = nbColorband;
