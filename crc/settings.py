@@ -6,7 +6,7 @@ settings for crc project.
 import os
 import setting_keys
 
-DIRDB = os.path.join(os.path.expanduser("~"),"Bureau/teledm")
+DIRDB = os.path.join(os.path.expanduser("~"),"Bureau/teledm/donnees/in_situ")#/data/cimdata/TELEDM/in_situ
 #from django.core.urlresolvers import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

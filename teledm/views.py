@@ -7,16 +7,12 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from sendfile import sendfile
 import json, simplejson
-from xml.etree import ElementTree as ET
-import httplib2, requests
-from bs4 import BeautifulSoup
+import requests
 from StringIO import StringIO
-import base64
 import os
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from owslib.wms import WebMapService
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
 from scatterPlots import scatterSatStation, scatter2Sat_Temporel, scatter2Sat_Spatial
@@ -27,8 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'teledm/tmp')
-ddirDB = os.path.expanduser('~') + "/Bureau/teledm"
-ddir = ddirDB + "/donnees/in_situ/"
+
 
 
 def proxyNCSS(request, path):
@@ -164,9 +159,11 @@ def mapViewer(request):
             resoTempo = request.POST['resoTempo']
             try:
                 niveau = request.POST['niveau']
-                df = pd.read_csv(ddir + mesure + '/niveau_'+niveau+'/'+station+'_aeronet_'+niveau+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+                fcsv = os.path.join(settings.DIRDB, mesure + '/niveau_'+niveau+'/'+station+'_aeronet_'+niveau+'_'+resoTempo+'.csv')
+                df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
             except KeyError:
-                df = pd.read_csv(ddir + mesure + '/'+station+'_'+mesure+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+                fcsv = os.path.join(settings.DIRDB, mesure + '/'+station+'_'+mesure+'_'+resoTempo+'.csv')
+                df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
             geo = station
         else:
             epidemio = request.POST['epidemio']
@@ -175,11 +172,13 @@ def mapViewer(request):
             variable = str(request.POST['variable'])
             try:
                 district = request.POST['district']
-                csv = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
+                fcsv = os.path.join(settings.DIRDB, epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv')
+                csv = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
                 df = csv[csv.district==district]
                 geo = district
             except KeyError:
-                df = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+                fcsv = os.path.join(settings.DIRDB, epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv')
+                df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
                 geo = pays
         dictdatas = {'header':geo, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}        
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='text/json')
@@ -194,7 +193,6 @@ def mapViewer(request):
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def mapDist(request):
-    print request.POST
     if request.is_ajax():
         if 'capteur' in request.POST.keys():
             ddirout = settings.MEDIA_ROOT
@@ -227,29 +225,31 @@ def mapDist(request):
             resoTempo = request.POST['resoTempo']
             try:
                 niveau = request.POST['niveau']
-                df = pd.read_csv(ddir + mesure + '/niveau_'+niveau+'/'+station+'_aeronet_'+niveau+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+                fcsv = os.path.join(settings.DIRDB, mesure + '/niveau_'+niveau+'/'+station+'_aeronet_'+niveau+'_'+resoTempo+'.csv')
+                df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
             except KeyError:
-                df = pd.read_csv(ddir + mesure + '/'+station+'_'+mesure+'_'+resoTempo+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+                fcsv = os.path.join(settings.DIRDB, mesure + '/'+station+'_'+mesure+'_'+resoTempo+'.csv')
+                df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
             dictdatas = {'header':station, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
         else:
             epidemio = request.POST['epidemio']
             pays = request.POST['pays']
             echelle = request.POST['echelle']
             variable = str(request.POST['variable'])
-            print variable
             try:
                 district = request.POST['district']
-                csv = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
+                fcsv = os.path.join(settings.DIRDB, epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv')
+                csv = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', 'district', variable])
                 df = csv[csv.district==district]
             except KeyError:
-                print 'keyError'
-                df = pd.read_csv(ddir + epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
+                fcsv = os.path.join(settings.DIRDB, epidemio + '/'+pays+'_'+epidemio+'_'+echelle+'.csv')
+                df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
             dictdatas = {'header':pays, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='application/json')
     else:
         if 'submit' in request.POST.keys():
-            filename = request.POST['filename']
-            return sendfile(request, tmpDir + '/' + filename)
+            filesend = os.path.join(tmpDir, request.POST['filename'])
+            return sendfile(request, filesend)
         else:
             return render(request, 'teledm/mapDist.html')
 
@@ -257,7 +257,6 @@ def mapDist(request):
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def calval(request):
     if request.is_ajax():
-        print sorted(request.POST)
         if request.POST['ulx']:
             ulx = float(request.POST['ulx'])
             uly = float(request.POST['uly'])
