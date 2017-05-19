@@ -1,11 +1,12 @@
 """crc URL Configuration"""
 
-from django.conf.urls import include, url
-from django.contrib import admin
+from django.conf.urls import include, url, handler500
+from django.contrib import admin 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login, logout, password_reset, password_reset_confirm, password_reset_complete, password_reset_done
 from django.views.generic import TemplateView
 
+#handler500 = "teledm.views.server_error"
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

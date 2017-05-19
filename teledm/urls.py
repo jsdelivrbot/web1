@@ -1,8 +1,14 @@
-from django.conf.urls import url
+from django.conf.urls import url, handler400, handler403, handler404, handler500
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 
 from . import views
+
+
+
+
+handler500 = 'teledm.views.server_error'
+
 
 app_name = 'teledm'
 urlpatterns = [

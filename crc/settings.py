@@ -14,12 +14,16 @@ TDS_URL = "https://%sclimdata.u-bourgogne.fr:8443/thredds" % ('%s')
 TDS_USER = setting_keys.username
 TDS_PWD = setting_keys.password
 
+#TDS_URL = "http://localhost:8080%s/thredds" % ('%s')
+#TDS_USER = ''
+#TDS_PWD = ''
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'fo9r1bxde8io8jz_9fr3*%93m3zf+p^)acos)9#@%(oe1+@a@z'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 # Application definition
 INSTALLED_APPS = [

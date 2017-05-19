@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 
-from django.shortcuts import HttpResponse, render
+from django.shortcuts import HttpResponse, render, redirect
+from django.http import Http404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
 from django.core.serializers.json import DjangoJSONEncoder
@@ -24,7 +25,10 @@ logger = logging.getLogger(__name__)
 
 tmpDir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'teledm/tmp')
 
-
+def server_error(request):
+    response = render('teledm/500.html',context_instance=RequestContext(request))
+    response.status_code = 500
+    return response
 
 def proxyNCSS(request, path):
     elevation = request.GET['elevation']
@@ -59,11 +63,15 @@ def proxyAjax(request, path):
     #print(path)
     
     url = os.path.join(settings.TDS_URL % (''), path)
-    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD))
-    #print url
-    #print response.content
+    print url
+    try:
+        response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD))
+    except requests.ConnectionError:
+        print(url)
+        return render('500.html', {'erreur':'Connexion Impossible'})
+#    response = requests.get(url, auth=requests.auth.HTTPBasicAuth(settings.TDS_USER, settings.TDS_PWD))
     return HttpResponse(response.content)
-
+    
 
 def colorbar(request, path):
     #COLORBARONLY': [u'true'], u'LAYER': [u'Surface_Temperature'], u'REQUEST': [u'GetLegendGraphic'], u'PALETTE': [u'rainbow'], u'NUMCOLORBANDS': [u'10']
@@ -128,19 +136,7 @@ def proxyWMS(request, path):
 #@login_required
 #@user_passes_test(lambda u: u.groups.filter(name='teledm').exists())
 def home(request):
-    if request.is_ajax():
-        dates = [d.strftime('%Y-%m-%d') for d in pd.date_range('2014-01-01','2014-01-31', freq='D')]
-        datas = np.random.randint(0,3,31).tolist()
-        datas = {'dates':dates, 'datas':datas}
-        logger.debug("Debug message!")
-        logger.info("Info message!")
-        logger.warning("Warning message!")
-        logger.error("Error message!")
-        logger.critical("Critical message!")
-        return HttpResponse(json.dumps(datas), content_type='teledm/home.html')
-    else:
-        logger.debug("this is a debug message!")
-        return render(request, 'teledm/home.html')
+    return render(request, 'teledm/home.html')
 
 
 #@login_required
