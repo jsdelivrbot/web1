@@ -6,11 +6,11 @@ settings for crc project.
 import os
 import setting_keys
 
-DIRDB = os.path.join(os.path.expanduser("~"),"Bureau/teledm/donnees/in_situ")#/data/cimdata/TELEDM/in_situ
+DIRDB = os.path.join(os.path.expanduser("~"),"Bureau/teledm/donnees")#/data/cimdata/TELEDM/in_situ
 #from django.core.urlresolvers import reverse_lazy
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-TDS_URL = "https://%sclimdata.u-bourgogne.fr:8443/thredds" % ('%s')
+TDS_URL = "https://%sclimdata.u-bourgogne.fr/thredds" % ('%s')
 TDS_USER = setting_keys.username
 TDS_PWD = setting_keys.password
 
@@ -21,9 +21,9 @@ TDS_PWD = setting_keys.password
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'fo9r1bxde8io8jz_9fr3*%93m3zf+p^)acos)9#@%(oe1+@a@z'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [

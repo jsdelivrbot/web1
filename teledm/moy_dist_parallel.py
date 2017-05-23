@@ -19,66 +19,9 @@ warnings.filterwarnings("ignore")
 try:
     ddirDB = getattr(settings, "DIRDB", None)
 except ImproperlyConfigured:
-    ddirDB = os.path.expanduser('~') + "/Bureau/teledm/"
+    ddirDB = os.path.expanduser('~') + "/Bureau/teledm/donnees"
 
 
-######################################################################################################################
-######################################################################################################################
-######################################################################################################################
-######################################################################################################################
-################### liste des variables
-
-### prod: omaeruv
-#5d 'AerosolOpticalDepthVsHeight','AerosolSingleScattAlbVsHeight','AerosolAbsOpticalDepthVsHeight'
-#4d 'SurfaceAlbedo','Reflectivity','NormRadiance','FinalAerosolSingleScattAlb','FinalAerosolAbsOpticalDepth','FinalAerosolOpticalDepth']
-#3d 'UVAerosolIndex','AIRSL3COvalue', 'FinalAerosolLayerHeight'
-
-### prod: MYD04
-#3d 'Deep_Blue_Aerosol_Optical_Depth_550_Land','Deep_Blue_Angstrom_Exponent_Land'
-
-### prod: MYD05
-#3d 'Water_Vapor_Infrared'
-
-### prod: MYD07
-#3d 'Total_Ozone','Lifted_Index','Skin_Temperature'
-
-### prod: seviri_aerus
-#3d 'ANGS_06_16','AOD_VIS06','CK_VIS06'
-
-### prod: macc
-#3d 'tcw','bld','blh','ewss','nsss','gtco3','aod550','ssaod550','duaod550','omaod550','bcaod550','suaod550','aod469','aod670','aod865','aod1240','skt','fal','fsr','aerdep'
-
-### prod: era_interim
-#3d 'sp','tcw','tcwv','bld','sshf','slhf','blh','u10','v10','t2m','ewss','nsss','tco3','iews','inss','ishf','ie','fg10','uvb','tclw'
-
-
-######################################################################################################################
-######################################################################################################################
-######################################################################################################################
-######################################################################################################################
-
-#deb = sys.argv[1]
-#fin = sys.argv[2]
-#varname = sys.argv[3]
-#
-#niveau = "aire"    #"pays","district","aire"
-#shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
-#pays = "burkina"       #"burkina","mali","niger","senegal"
-##deb = "2003-07-01"     #"1979" a ...
-##fin = "2004-06-30"
-#res_temp = "t"         #"d","w","m","t"
-#types = "re_analyse"    #"satellite","re_analyse"
-#sat = "ecmwf"          #"modis","aura_omi","ecmwf","msg"
-#prod = "era_interim"         #"MYD04","MYD05","MYD07","omaeruv","seviri_aerus","macc","era_interim"
-#res = "075"            #"003","005","009","025","075","125"
-##varname = 'Deep_Blue_Aerosol_Optical_Depth_550_Land'
-#level = ''             #"","0","1","2","3","4" levels ou paliers à renseigner pour les variables 5d du produit omaeruv
-#onde = ''              #"","0","1","2" longueur d'onde (1=354nm, 2=358nm, 3=500nm) à renseigner pour les variables 4d et 5d du produit omaeruv
-#ddirout = "/work/crct/se5780me/calculs_aires_sante_burkina/"+shape+"/"
-######################################################################################################################
-######################################################################################################################
-######################################################################################################################
-######################################################################################################################
 
 def calc_stats(rx,ry,gdf,ndist,trsfm,tps):
         # fonction calculant les stats à partir de la géodatabase(gdf). rx,ry = reso spatiale, ndist=nb de districts, trsfm=géométrie de la matrice de la variable, tps=matrice des dates
@@ -121,7 +64,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,lev
     anfin = datetime.strptime(fin,"%Y-%m-%d").strftime("%Y")
     
     
-    ddirin = os.path.join(ddirDB, 'donnees', types, sat, prod, res)
+    ddirin = os.path.join(ddirDB, types, sat, prod, res)
     os.chdir(ddirin)
     files = sorted(glob.glob('*'+res_temp+'.nc'))#liste des fichiers .nc
     

@@ -671,7 +671,7 @@ function getInfosMapTemporel(e){
             var dateForm= $("input[id='date']").val();
             lstInfos.date=dateForm;
             if (lstInfos.level){
-                var urlInfo = ROOT + "/ncss"
+                var urlInfo = ROOT + "/proxyncss"
                     + "/" + lstInfos.nomDataset 
                     + "/" + lstInfos.capteur
                     + "/" + lstInfos.produit
@@ -686,7 +686,7 @@ function getInfosMapTemporel(e){
                     + "&accept=csv"
                     ;       
             }else{
-                var urlInfo = ROOT + "/ncss"
+                var urlInfo = ROOT + "/proxyncss"
                     + "/" + lstInfos.nomDataset 
                     + "/" + lstInfos.capteur
                     + "/" + lstInfos.produit
@@ -783,7 +783,7 @@ function getInfosMap(e){
             lstInfos.date=dateForm;
             if (lstInfos.level){
                 var URLRequest = 
-                    ROOT+"/ncss/"
+                    ROOT+"/proxyncss/"
                     + lstInfos.nomDataset
                     + "/" + lstInfos.capteur
                     + "/" + lstInfos.produit
@@ -799,7 +799,7 @@ function getInfosMap(e){
                     ;
             }else {
                 var URLRequest = 
-                    ROOT+"/ncss/"
+                    ROOT+"/proxyncss/"
                     + lstInfos.nomDataset
                     + "/" + lstInfos.capteur
                     + "/" + lstInfos.produit
@@ -813,7 +813,6 @@ function getInfosMap(e){
                     + "&accept=xml"
                     ;
             }
-            alert(URLRequest);
             $.ajax({
                 type: "GET",
                 url: URLRequest,
@@ -1102,7 +1101,7 @@ $("#download").on('click', function(){
     {
         return null;
     }
-    var URL = ROOT+ "/ncss/" +
+    var URL = ROOT+ "/proxydownload/" +
         lstInfos.nomDataset +
         "/" + lstInfos.capteur +
         "/" + lstInfos.produit +
@@ -1420,7 +1419,6 @@ function majLayer(){
     if($("#plot").highcharts().series.length !=0){
         $("#plot").highcharts().series[0].remove(true);
     }
-    alert(URL)
     var wms = new OpenLayers.Layer.WMS(
         "wms",
         URL,

@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^minmax/(?P<path>.*)$', views.minmax, name='minmax'),
     url(r'^dates/(?P<path>.*)$', views.dates, name='mapViewer'),
     url(r'^proxywms/(?P<path>.*)$', views.proxyWMS, name='mapViewer'),
+    url(r'^proxydownload/(?P<path>.*)$', views.proxyDownload, name='mapViewer'),
     url(r'^colorbar/(?P<path>.*)$', views.colorbar, name='colorbar'),
     url(r'^proxyncss/(?P<path>.*)$', views.proxyNCSS, name='mapViewer'),
     ###tuto
