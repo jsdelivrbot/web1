@@ -7,32 +7,16 @@ from django.conf import settings
 
 
 class PathFile(object):
+
     _ddirDB = '/home/mers/Bureau/teledm/donnees'#settings.DIRDB
-#    def __init__(self, mesure='', pays='',niveau='',station='', epidemio='', echelle='', types='',sat='',prod='',res_temp='',res='', shape='', date=''):
-#        self.mesure = mesure
-#        self.pays = pays
-#        self.niveau = niveau
-#        self.station = station
-#        self.echelle = echelle
-#        self.epidemio = epidemio
-#        self.types = types
-#        self.sat = sat
-#        self.prod = prod
-#        self.res_temp = res_temp
-#        self.res = res
-#        self.shape = shape
-#        try:
-#            self.year = datetime.strptime(date,"%Y-%m-%d").strftime("%Y")
-#        except ValueError:
-#            self.year = ''
+
     def __init__(self, **kwargs):
-        #self.__dict__.update(kwargs)
         for key, value in kwargs.items():
             if isinstance(value, basestring):
                 setattr(self, key, value)
             else:
                 setattr(self, key, value[0])
-    
+
     @property
     def nc(self):
         if 'res' in self.resospatiale:
@@ -52,7 +36,6 @@ class PathFile(object):
                 pathcsv = os.path.join(self._ddirDB, 'in_situ', self.mesure, self.stations+'_'+self.mesure+'_'+self.resoTempo+'.csv')
             except AttributeError:
                 pathcsv = os.path.join(self._ddirDB, 'in_situ/epidemiologie', self.epidemio, self.pays+'_'+self.epidemio+'_'+self.echelle+'.csv')
-        print pathcsv
         return pathcsv
     
     @property

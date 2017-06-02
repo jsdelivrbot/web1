@@ -147,15 +147,15 @@ def mapDist(request):
                 level = int(POST['level1']) - 1
             else:
                 level = -1
-            shape = "merge2500"  # "all_fs" "merge1500" "merge2500"
-            kg = {'decoupage':['aire'], 'shape':['merge2500'], 'pays':kwargs['pays'], 'datefin':kwargs['datefin']}
-            ldf = calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,level,shape)
+            ncfile = PathFile(**kwargs).nc
+            fshape = PathFile(**kwargs).carto
+            ldf, filename = calc_moy(ddirout,ncfile, fshape, deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,level)
             val = [traitementDF(x,y) for x,y in [(ldf,z) for z in ldf.keys() if z != 'nbpx']]
             datas = dict(zip([val[i][0] for i in range(4)],[val[i][1] for i in range(4)]))
             list_dates = ldf['vmean'].index.values.tolist()
             geojson = pays+"_"+niveau+"_sante.geojson"
-            filename = varname + '_' + prod + '_r' + res[3:] + '_' + niveau + '_' + shape + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','') + res_temp + '.nc'
             dictdatas = {'dates':list_dates,'datas':datas,'shape':geojson, 'filename':filename}
+            print(filename)
         elif 'mesure' in POST.keys():
             variable = str(kwargs['variables'])
             fcsv = PathFile(**kwargs).csv
@@ -175,7 +175,8 @@ def mapDist(request):
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='application/json')
     else:
         if 'submit' in POST.keys():
-            filesend = os.path.join(tmpDir, POST['filename'][0])
+            print(os.path.join(tmpDir, POST['filename']))
+            filesend = os.path.join(tmpDir, POST['filename'])
             return sendfile(request, filesend)
         else:
             return render(request, 'teledm/mapDist.html')

@@ -5,13 +5,12 @@ from django.core.exceptions import ImproperlyConfigured
 import pandas as pd
 import geopandas as gpd
 import numpy as np
-from rasterstats import raster_stats, zonal_stats
+from rasterstats import zonal_stats
 from netCDF4 import Dataset, num2date,date2num
 from joblib import Parallel, delayed
 import time
 from datetime import datetime
 import os
-import glob
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -39,13 +38,13 @@ def calc_stats(rx,ry,gdf,ndist,trsfm,tps):
         v_std = np.zeros((len(tps),ndist))
         v_std[:] = np.nan
         for i in range(len(tps)):
-        # "micro-pixelisation" pour obtenir une pseudo-résolution plus fine, adéquate au découpage district/aire
+            # "micro-pixelisation" pour obtenir une pseudo-résolution plus fine, adéquate au découpage district/aire
             var1 = np.repeat(tps[i,...],100*ry, axis=0)
             var2 = np.repeat(var1,100*rx, axis=1)
             val_input=np.ma.masked_array(var2, np.isnan(var2))
             stats = zonal_stats(gdf['geometry'],val_input, transform=trsfm, stats=['min', 'max', 'mean', 'count', 'std', 'median'])#fonction stat du module rasterstats
             df = gdf.join(pd.DataFrame(stats))# chargement des stats dans la geodataframe
-    	#chargement des stats dans les différentes matrices
+            # argement des stats dans les différentes matrices
             nb_px[i,:] = np.array(df['count'].ix[:])
             v_max[i,:] = np.array(df['max'].ix[:])
             v_mean[i,:] = np.array(df['mean'].ix[:])
@@ -57,59 +56,27 @@ def calc_stats(rx,ry,gdf,ndist,trsfm,tps):
 
 
 
-def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,level, shape):
+def calc_moy(ddirout,ncfile,fshape,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,level):
     # traitement des dates
     datedeb = datetime.strptime(deb,"%Y-%m-%d")
     datefin = datetime.strptime(fin,"%Y-%m-%d")
-    anfin = datetime.strptime(fin,"%Y-%m-%d").strftime("%Y")
     
     
     ddirin = os.path.join(ddirDB, types, sat, prod, res)
     os.chdir(ddirin)
-    files = sorted(glob.glob('*'+res_temp+'.nc'))#liste des fichiers .nc
     
-    print "\n#########################################################################################################################"
-    print "############################################## PERIODE "+deb+" "+fin+" ############################################"
     
-    ################ import shapefile #############################################################################
-    if niveau == "aire":
-        if shape == "all_fs":
-    		try:
-    			#fshape = '/work/crct/se5780me/carto/fs_par_annee/'+shape+'/150409_BF_FS_2015.shp'
-    			fshape = os.path.join(ddirDB, 'carto/fs_par_annee', shape, '150409_BF_FS_'+anfin+'.shp')
-    			geodf = gpd.GeoDataFrame.from_file(fshape)
-    		except:
-    			fshape = os.path.join(ddirDB, 'carto/fs_par_annee/all_fs/150409_BF_FS_2015.shp')
-    			geodf = gpd.GeoDataFrame.from_file(fshape)
-        else:
-    		try:
-    			fshape = os.path.join(ddirDB, 'carto/fs_par_annee', shape, '150409_BF_FS_'+shape+'_'+anfin+'.shp')
-    			#fshape = '/work/crct/se5780me/carto/fs_par_annee/'+shape+'/150409_BF_FS_'+shape+'2015.shp'
-    			geodf = gpd.GeoDataFrame.from_file(fshape)
-    		except:
-    			fshape = os.path.join(ddirDB, 'carto/fs_par_annee', shape, '150409_BF_FS_'+shape+'_2015.shp')
-    			geodf = gpd.GeoDataFrame.from_file(fshape)  
-    else:
-        fshape = os.path.join(ddirDB, 'carto', niveau, pays+'_'+niveau+'_sante.shp')
-        geodf = gpd.GeoDataFrame.from_file(fshape)
+    geodf = gpd.GeoDataFrame.from_file(fshape)
     
     nbdist = len(geodf[geodf.columns[1]]) # nombre de districts/aires
-    listdist='//'.join(geodf[geodf.columns[1]].tolist())# liste des districts/aires de santé qui sera chargée dans le .nc comme attribut de la dimension index
-    print "shapefile utilise: ",fshape.split("/")[-1]
-    print "nombre de districts/aires de sante: ",nbdist
-    ###############################################################################################################
-    
+    listdist='//'.join(geodf[geodf.columns[1]].tolist())# liste des districts/aires de santé qui sera chargée dans le .nc comme attribut de la dimension index   
     
     
     ############################ CREATION NETCDF ##################################################################
     ###############################################################################################################
-    if varname == "Deep_Blue_Aerosol_Optical_Depth_550_Land":
-        varname1 = "AOT"
-    else:
-        varname1 = varname
-    print files[:]
-    output = varname1+'_'+files[0][:-5]+'_'+niveau+'_'+shape+'_'+pays+'_'+ deb.replace('-','') + fin.replace('-','')  + res_temp + '.nc'
-    ncnew = Dataset(ddirout+ '/' + output, 'w')
+
+    output = os.path.join(ddirout, varname + '_' + os.path.basename(ncfile)[:-5] + '_' + niveau + '_' + pays + '_' + deb.replace('-','') + fin.replace('-','')  + '_' + res_temp + '.nc')
+    ncnew = Dataset(output, 'w')
     # dimensions#####
     ncnew.createDimension('time', None)
     ncnew.createDimension('index_dist', nbdist)
@@ -142,9 +109,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,lev
     vmean_tmp = []
     vstd_tmp = []
     vmed_tmp = []
-    t0 = time.time() # démarrage du temps de calcul
-    print "\nfichier en traitement: ",files[0]
-    nc = Dataset(files[0], 'r')
+    nc = Dataset(ncfile, 'r')
     var_in = nc.variables[varname]
     dates = nc.variables['time']
     # definition des dates de début et fin en format numérique, à partir de l'unité de temps du .nc
@@ -154,19 +119,10 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,lev
         ndatedeb += 24-int(datetime.strftime(num2date(dates[0],dates.units),"%H"))
         ndatefin += 24-int(datetime.strftime(num2date(dates[0],dates.units),"%H"))
     # détermination des indices des dates debut et fin dans la matrice
-#    if ndatedeb >= dates[0] and ndatedeb <= dates[-1]:
     iddeb = np.abs(dates[:]-ndatedeb).argmin()
-#    else:
-#        iddeb = 0
-#    if ndatefin >= dates[0] and ndatefin <= dates[-1]:
     idfin = np.abs(dates[:]-ndatefin).argmin()-1
-#    else:
-#        idfin = len(dates[:])-1
     # extraction du bloc de dates et ajout à la variable time(tp) du newnc
     serie_dates = dates[iddeb:idfin+1]
-
-    print "date de debut: ",num2date(serie_dates[0], dates.units)
-    print "date de fin: ",num2date(serie_dates[-1], dates.units)
 
     if level == -1:
         var = np.array(var_in[iddeb:idfin+1,...])
@@ -203,14 +159,7 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,lev
     vmed_tmp.append(np.concatenate([res[n][3] for n in range(0,len(ndt))], axis=0))
     vmin_tmp.append(np.concatenate([res[n][4] for n in range(0,len(ndt))], axis=0))
     vstd_tmp.append(np.concatenate([res[n][5] for n in range(0,len(ndt))], axis=0))
-        
-    t1 = time.time()-t0
-    print "\nelapsed time: ",t1,"sec"
-    print "fichier en sortie: ",output
-    print "rep de sortie: ",ddirout
-    print "#########################################################################################################################"
-    print "#########################################################################################################################"
-    print "#########################################################################################################################\n\n"
+
     # chargement des variables dans le .nc
     tp[:] = np.append(tp[:],serie_dates)
     tp.units = dates.units
@@ -227,10 +176,9 @@ def calc_moy(ddirout,deb,fin,pays,niveau,types,sat,prod,res_temp,res,varname,lev
     for n in tmpvar_dict:
         list_df[n] = pd.DataFrame (np.concatenate([tmpvar_dict[n][d_t] for d_t in range(0,len(tmpvar_dict[n]))], axis=0), index=index, columns=columns_name).round(4)
         #df.to_csv(ddirout+'/'+output[:-3]+'_'+n+'.csv', header=True)
-        
     nc.close()
     ncnew.close()
-    return list_df
+    return list_df, output
 
 
 if __name__ == "__main__":
