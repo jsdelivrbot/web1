@@ -388,7 +388,7 @@ function setFormS2(){
     }
 }
 
-
+//aeronet form
 function setFormS3(){
     if ($("#checkboxS3").prop("checked") == true){
         $("[id$='Aeronet']").prop("disabled", false);       
@@ -409,7 +409,7 @@ function setFormS3(){
     }
 }
 
-
+// teom form
 function setFormS4(){
     if ($("#checkboxS4").prop("checked") == true){
         $("[id$='Teom']").prop("disabled", false);
@@ -423,6 +423,13 @@ function setFormS4(){
     }else{
         $("[id$='Teom']").find("option:gt(0)").remove(); 
         $("[id$='Teom']").prop("disabled", true);        
+    }
+}
+        
+// epidemio form
+function setFormS5(){
+    if ($("#checkboxS5").prop("checked") == true){
+        $("[id$='EP']").prop("disabled", false);
     }
 }
 
@@ -445,6 +452,7 @@ $("[id^='checkbox']").on('change', function() {
     setFormS2();
     setFormS3();
     setFormS4();
+    setFormS5();
     setFormIntg(); 
 });
 
@@ -566,7 +574,7 @@ function verifForm(){
         $("input[id='date1']").val(lstInfos.debut);
     }
 
-    if (($("#checkboxSr2").prop("checked") == false) && ($("#checkboxS3").prop("checked") == false) && ($("#checkboxS4").prop("checked") == false)){
+    if (($("#checkboxSr2").prop("checked") == false) && ($("#checkboxS3").prop("checked") == false) && ($("#checkboxS4").prop("checked") == false) && ($("#checkboxS5").prop("checked") == false)){
         alert("Erreur ! Sélectionner un 2eme type de données !");
         throw new Exception();
     }
@@ -644,7 +652,7 @@ function verifForm(){
         $("input[id='date2']").val(lstInfos.fin);      
     }
     
-    if (($("#buffer").val() == "Buffer") && (($("#checkboxS3").prop("checked") == true) || ($("#checkboxS4").prop("checked") == true))){
+    if (($("#buffer").val() == "Buffer") && (($("#checkboxS3").prop("checked") == true) || ($("#checkboxS4").prop("checked") == true))|| ($("#checkboxS5").prop("checked") == true))){
         alert("Erreur ! Buffer non sélectionné !");
         throw new Exception();
     }
@@ -672,6 +680,13 @@ $("#scatter").on('submit',  function(e){
     } else {
         var action = "scatterTemporel";
     }
+    if ( $("#checkboxS3").prop('checked') == true ){
+        var mesure = "aeronet";
+    } else if ( $("#checkboxS4").prop('checked') == true ){
+        var mesure = "teom";
+    } else {
+        var mesure = "";        
+    }
     $("[id^='plot']").each(function(){
         while($(this).highcharts().series.length > 0){
             $(this).highcharts().series[0].remove(true);
@@ -682,7 +697,7 @@ $("#scatter").on('submit',  function(e){
         type: "POST",
         url: '',
         //dataType: 'json',
-        data: $("#scatter").serialize()+"&action="+action,
+        data: $("#scatter").serialize()+"&action="+action+"&mesure="mesure,
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
             $("[id^='plot']").each(function(){

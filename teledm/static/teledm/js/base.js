@@ -102,6 +102,7 @@ var meningitePays = {
     'Niger':['pays', 'district'],
     //'Senegal':['pays']
 };
+var echelle = ['pays', 'district', 'aire'];
 var meningiteVar = {
     'pays':['deces', 'population', 'incidence'],
     'district':['cas', 'incidence', 'population']

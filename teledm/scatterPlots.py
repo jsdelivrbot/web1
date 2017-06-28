@@ -184,7 +184,7 @@ def heure_passage(station_aeronet):
     return heure,lonst,latst
 
 #################################
-def scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
+def scatterSatStation(ncfile,csvfile,ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1, 
                  inSitu, station,variable_station,niveau,
                  ):
@@ -193,31 +193,31 @@ def scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, dat
     start = datetime.strptime(datedeb, "%Y-%m-%d")
     end = datetime.strptime(datefin, "%Y-%m-%d")
 
-    #############################image satellite 1 ####################################
-    if sat1 == "toms":
-        fichier_sat1 = sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    elif prd_sat1 in ["chimere01","chimere02"]:
-        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
-    elif prd_sat1 == 'seviri_aerus':
-        fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    else:
-        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-
-    ########################### donnees in situ 1 ######################################
-    if niveau:
-        path_station = ddirDB+'in_situ/'+inSitu+'/niveau_'+niveau+'/'+station+'_'+inSitu+'_'+niveau+'_h24_15min.csv'
-    else:
-        path_station = ddirDB+'in_situ/'+inSitu+'/'+station+'_'+inSitu+'_h24_h.csv'
-    ####################################################################################
+#    #############################image satellite 1 ####################################
+#    if sat1 == "toms":
+#        fichier_sat1 = sat1+'_r'+res_sat1+'_d.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    elif prd_sat1 in ["chimere01","chimere02"]:
+#        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    elif prd_sat1 == 'seviri_aerus':
+#        fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    else:
+#        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#
+#    ########################### donnees in situ 1 ######################################
+#    if niveau:
+#        path_station = ddirDB+'in_situ/'+inSitu+'/niveau_'+niveau+'/'+station+'_'+inSitu+'_'+niveau+'_h24_15min.csv'
+#    else:
+#        path_station = ddirDB+'in_situ/'+inSitu+'/'+station+'_'+inSitu+'_h24_h.csv'
+#    ####################################################################################
 
     hours1,long_st1, lat_st1 = heure_passage(station)
-    df_sat1, npx, sat1_units = readNC_box(path_sat1,variable_sat1,ulx,uly,lrx,lry, start, end,prd_sat1, level_sat1,pas_de_temps, hours1, long_st1, lat_st1, z_buffer)
+    df_sat1, npx, sat1_units = readNC_box(ncfile,variable_sat1,ulx,uly,lrx,lry, start, end,prd_sat1, level_sat1,pas_de_temps, hours1, long_st1, lat_st1, z_buffer)
     #chargement des mesures in situ
-    df_sat1 = read_csv(path_station, inSitu , variable_station,start, end,periode,df_sat1)
+    df_sat1 = read_csv(csvfile, inSitu , variable_station,start, end,periode,df_sat1)
     
     if pas_de_temps == 'd':
         dfout = df_sat1
@@ -252,7 +252,7 @@ def scatterSatStation(ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, dat
     return mat
 
 
-def scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
+def scatter2Sat_Temporel(ncfile1, ncfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1, 
                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
                  ):
@@ -261,44 +261,44 @@ def scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
     start = datetime.strptime(datedeb, "%Y-%m-%d")
     end = datetime.strptime(datefin, "%Y-%m-%d")
 
-    #############################image satellite 1 ####################################
-    if sat1 == "toms":
-        fichier_sat1 = sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    elif prd_sat1 == "domaine01":
-        fichier_sat1 = 'chimere01_r'+res_sat1+'_d.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    elif prd_sat1 == "domaine02":
-        fichier_sat1 = 'chimere02_r'+res_sat1+'_d.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    elif prd_sat1 == 'seviri_aerus':
-        fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    else:
-        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    ############################ image satellite 2 ####################################
-    if sat2 == "toms":
-        fichier_sat2 = sat2+'_r'+res_sat2+'_d.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    elif prd_sat2 == "domaine01":
-        fichier_sat2 = 'chimere01_r'+res_sat2+'_d.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    elif prd_sat2 == "domaine02":
-        fichier_sat2 = 'chimere02_r'+res_sat2+'_d.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    elif prd_sat2 == 'seviri_aerus':
-        fichier_sat2 = 'seviri_r'+res_sat2+'_d.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    else:
-        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_d.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    ###################################################################################
-        
-    print path_sat1
-    print path_sat2
-    df_sat1, npx1, sat1_units = readNC_box(path_sat1,variable_sat1,ulx,uly,lrx,lry, start,end, prd_sat1, level_sat1, pas_de_temps)
-    df_sat2, npx2, sat2_units = readNC_box(path_sat2,variable_sat2,ulx,uly,lrx,lry, start,end, prd_sat2, level_sat2, pas_de_temps)
+#    #############################image satellite 1 ####################################
+#    if sat1 == "toms":
+#        fichier_sat1 = sat1+'_r'+res_sat1+'_d.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    elif prd_sat1 == "domaine01":
+#        fichier_sat1 = 'chimere01_r'+res_sat1+'_d.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    elif prd_sat1 == "domaine02":
+#        fichier_sat1 = 'chimere02_r'+res_sat1+'_d.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    elif prd_sat1 == 'seviri_aerus':
+#        fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    else:
+#        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    ############################ image satellite 2 ####################################
+#    if sat2 == "toms":
+#        fichier_sat2 = sat2+'_r'+res_sat2+'_d.nc'
+#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+#    elif prd_sat2 == "domaine01":
+#        fichier_sat2 = 'chimere01_r'+res_sat2+'_d.nc'
+#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+#    elif prd_sat2 == "domaine02":
+#        fichier_sat2 = 'chimere02_r'+res_sat2+'_d.nc'
+#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+#    elif prd_sat2 == 'seviri_aerus':
+#        fichier_sat2 = 'seviri_r'+res_sat2+'_d.nc'
+#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+#    else:
+#        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_d.nc'
+#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+#    ###################################################################################
+#        
+#    print path_sat1
+#    print path_sat2
+    df_sat1, npx1, sat1_units = readNC_box(ncfile1,variable_sat1,ulx,uly,lrx,lry, start,end, prd_sat1, level_sat1, pas_de_temps)
+    df_sat2, npx2, sat2_units = readNC_box(ncfile2,variable_sat2,ulx,uly,lrx,lry, start,end, prd_sat2, level_sat2, pas_de_temps)
     df_sat1_2 = df_sat1.join(df_sat2, how='outer')
     if pas_de_temps == 'd':
         dfout = df_sat1_2
@@ -325,7 +325,7 @@ def scatter2Sat_Temporel(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
 
 
 
-def scatter2Sat_Spatial(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
+def scatter2Sat_Spatial(ncfile1,cnfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1, 
                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
                  ):
@@ -333,37 +333,37 @@ def scatter2Sat_Spatial(ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
 
     start = datetime.strptime(datedeb, "%Y-%m-%d")
 
-    #############################image satellite 1 ####################################
-    if sat1 == "toms":
-        fichier_sat1 = sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    elif prd_sat1 in ["chimere01","chimere02"]:
-        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
-    elif prd_sat1 == 'seviri_aerus':
-        fichier_sat1 = 'seviri_r'+res_sat1+'_' + pas_de_temps + '.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    else:
-        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
-        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-    ############################ image satellite 2 ####################################
-    if sat2 == "toms":
-        fichier_sat2 = sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    elif prd_sat2 in ["chimere01","chimere02"]:
-        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
-        path_sat1 = ddirDB+type2+'/'+sat2+'/'+prd_sat2[:-2]+'/'+'res'+res_sat2+'/'+fichier_sat2
-    elif prd_sat2 == 'seviri_aerus':
-        fichier_sat2 = 'seviri_r'+res_sat2+'_' + pas_de_temps + '.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    else:
-        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
-        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+#    #############################image satellite 1 ####################################
+#    if sat1 == "toms":
+#        fichier_sat1 = sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    elif prd_sat1 in ["chimere01","chimere02"]:
+#        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    elif prd_sat1 == 'seviri_aerus':
+#        fichier_sat1 = 'seviri_r'+res_sat1+'_' + pas_de_temps + '.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    else:
+#        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
+#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
+#    ############################ image satellite 2 ####################################
+#    if sat2 == "toms":
+#        fichier_sat2 = sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
+#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+#    elif prd_sat2 in ["chimere01","chimere02"]:
+#        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
+#        path_sat1 = ddirDB+type2+'/'+sat2+'/'+prd_sat2[:-2]+'/'+'res'+res_sat2+'/'+fichier_sat2
+#    elif prd_sat2 == 'seviri_aerus':
+#        fichier_sat2 = 'seviri_r'+res_sat2+'_' + pas_de_temps + '.nc'
+#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
+#    else:
+#        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
+#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
     ###################################################################################
         
         
-    df_sat1, npx1, sat1_units = readNC_box(path_sat1,variable_sat1,ulx,uly,lrx,lry, start,start, prd_sat1, level_sat1, pas_de_temps)
-    df_sat2, npx2, sat2_units = readNC_box(path_sat2,variable_sat2,ulx,uly,lrx,lry, start,start, prd_sat2, level_sat2, pas_de_temps)
+    df_sat1, npx1, sat1_units = readNC_box(ncfile1,variable_sat1,ulx,uly,lrx,lry, start,start, prd_sat1, level_sat1, pas_de_temps)
+    df_sat2, npx2, sat2_units = readNC_box(ncfile2,variable_sat2,ulx,uly,lrx,lry, start,start, prd_sat2, level_sat2, pas_de_temps)
     mat1 = np.squeeze(df_sat1[df_sat1.columns[:npx1]].values)
     mat2 = np.squeeze(df_sat2[df_sat2.columns[:npx2]].values)
     mask = ~np.isnan(mat1) & ~np.isnan(mat2)
