@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+import geopandas as gpd
 import numpy as np
 from netCDF4 import Dataset, num2date, date2num
 from scipy.stats import linregress
 from datetime import datetime, timedelta
+from joblib import Parallel, delayed
+from rasterstats import zonal_stats
 import subprocess, os
 import warnings
 warnings.filterwarnings("ignore")
@@ -126,7 +129,7 @@ def count(x):
 
 def scatter_stats(df,prd1,prd2):
     #fonction qui extrait la pente(slope),origine(intercept),coeff corr(r_value), ... de la dataframe(df) pour les valeurs des produits prd1(sat1) et prd2(sat2 ou aeronet ou teom)
-    # retourne droite de régression(line), 
+    # retourne droite de régression(lregr, r2, pente, origine, valeurs), 
     if 'moy_'+prd2 in df.columns:
         mask = ~pd.isnull(df['moy_'+prd1]) & ~pd.isnull(df['moy_'+prd2])# masque excluant les lignes n'ayant qu'une valeur sur les 2
         slope, intercept, r_value, p_value, std_err = linregress(df[['moy_'+prd2,'moy_'+prd1]][mask])
@@ -143,8 +146,12 @@ def read_csv(csv_file,in_situ,variable_csv, debut, fin,per,df_in):
     # in_situ = teom ou aeronet, per = périodicité
     print csv_file
     df_in["moy_" + in_situ] = np.nan
-    bad_lines = skipRows(debut, fin, csv_file)
-    df_csv = pd.read_csv(csv_file, sep=',', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=[u'date', variable_csv, u"Solar_Zenith_Angle"], skiprows=bad_lines)
+    #bad_lines = skipRows(debut, fin, csv_file)
+    try:
+        csv = pd.read_csv(csv_file, sep=',', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=[u'date', variable_csv, u"Solar_Zenith_Angle"])
+        df_csv = csv[debut:fin]
+    except ValueError:
+        df_csv = pd.read_csv(csv_file, sep=',', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=[u'date', variable_csv])        
     for i in df_in.index :
         if per == '+-1h':
             # si le nombre de valeurs >=4 dansl'intervalle +-1h
@@ -154,6 +161,8 @@ def read_csv(csv_file,in_situ,variable_csv, debut, fin,per,df_in):
             # si le nombre de valeurs >=10 dansl'intervalle +-5h
             if (df_csv[variable_csv][i-pd.offsets.Hour(5):i+pd.offsets.Hour(5)].count() >= 10) and (df_csv["Solar_Zenith_Angle"][i] <= 71.):
                 df_in["moy_"+in_situ].ix[i] = df_csv[variable_csv][i-pd.offsets.Hour(5):i+pd.offsets.Hour(5)].mean()
+        else:
+            df_in["moy_"+in_situ].ix[i] = df_csv[variable_csv].ix[df_csv.index.get_loc(i,method='nearest')]
     return df_in
 
 def tempo(freq,debut,fin,df_in,prdsat1, insitu, prdsat2):
@@ -170,9 +179,8 @@ def tempo(freq,debut,fin,df_in,prdsat1, insitu, prdsat2):
     return df_out
 
 def heure_passage(station_aeronet):
-    # calcul de l'heure de passage du satellite en fonction de la staton aeronet étudiée
+    # calcul de l'heure de passage du satellite en fonction de la staton aeronet/teom étudiée
     coord_st=pd.read_csv(ddirDB+'in_situ/aeronet/carto_aeronet/coord_aeronet.csv', sep=',', header=0)
-    print coord_st
     latst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lat)
     lonst=np.asarray(coord_st[coord_st['nom'].isin([station_aeronet])].lon)
     if np.round(lonst[0]) in np.arange(-25.,-8.):
@@ -182,6 +190,96 @@ def heure_passage(station_aeronet):
     if np.round(lonst[0]) in np.arange(20.,40.):
         heure = 12
     return heure,lonst,latst
+
+def calc_stats(rx,ry,gdf,trsfm,matrice):
+        # fonction calculant les stats à partir de la géodatabase(gdf). rx,ry = reso spatiale, ndist=nb de districts, trsfm=géométrie de la matrice de la variable, tps=matrice des dates
+        # matrices vides aux dimensions du "bloc temporel" (len(tps) correspond à l'axe 0 de la mat tps) et du nombre de districts/aires/pays (ndist)
+        stats = []
+        for i in range(len(matrice)):
+            # "micro-pixelisation" pour obtenir une pseudo-résolution plus fine, adéquate au découpage district/aire
+            var1 = np.repeat(matrice[i,...],100*ry, axis=0)
+            var2 = np.repeat(var1,100*rx, axis=1)
+            val_input=np.ma.masked_array(var2, np.isnan(var2))
+            tmp = zonal_stats(gdf['geometry'],val_input, transform=trsfm, stats=['mean'])#fonction stat du module rasterstats
+            stats.append(tmp[0]['mean'])
+        return stats
+
+def jobList(li, cols=4):
+    start = 0
+    for i in xrange(cols):
+        stop = start + len(li[i::cols])
+        yield li[start:stop]
+        start = stop 
+
+
+def calc_moy(ncfile,fshape,decoupage,datedeb,datefin,sat,varname,level,district=''):
+    """
+    extaction de la moyenne des pixels inclus dans chaque entité du shapefile
+    """
+    gshape = gpd.GeoDataFrame.from_file(fshape)
+    if decoupage == 'pays':
+        geodf = gshape
+    else:
+        geodf = gshape[gshape.name == district]
+    minx = geodf.geometry.bounds.minx.values[0]
+    maxx = geodf.geometry.bounds.maxx.values[0]
+    miny = geodf.geometry.bounds.miny.values[0]
+    maxy = geodf.geometry.bounds.maxy.values[0]
+    nc = Dataset(ncfile, 'r')
+    var_in = nc.variables[varname]
+    dates = nc.variables['time']
+    # definition des dates de début et fin en format numérique, à partir de l'unité de temps du .nc
+    ndatedeb = date2num(datedeb,dates.units)
+    ndatefin = date2num(datefin,dates.units)
+    if datetime.strftime(num2date(dates[0],dates.units),"%H") != "0": # condition qui vérifie l'heure de la donnée(0h, 3h,6h,...)
+        ndatedeb += 24-int(datetime.strftime(num2date(dates[0],dates.units),"%H"))
+        ndatefin += 24-int(datetime.strftime(num2date(dates[0],dates.units),"%H"))
+    # détermination des indices des dates debut et fin dans la matrice
+    iddeb = np.abs(dates[:]-ndatedeb).argmin()
+    idfin = np.abs(dates[:]-ndatefin).argmin()
+    lat = nc.variables['latitude'][:]
+    lon = nc.variables['longitude'][:]
+    idxmin = np.abs(lon - minx).argmin()
+    idxmax = np.abs(lon - maxx).argmin()
+    idymax = np.abs(lat - miny).argmin()
+    idymin = np.abs(lat - maxy).argmin()
+    # extraction du bloc de dates et ajout à la variable time(tp) du newnc
+
+    if level == -1:
+        #var = np.array(var_in[iddeb:idfin+1,idymin:idymax+1, idxmin:idxmax+1])
+        var = np.array(var_in[iddeb:idfin+1,...])
+    else:
+        #var = np.array(var_in[iddeb:idfin+1,level,idymin:idymax+1, idxmin:idxmax+1])
+        var = np.array(var_in[iddeb:idfin+1,level,...])
+    # traitement de la matrice avec fillvalue, scalefactor et addoffset
+    if sat == 'toms':
+        var[var==var_in._FillValue]=-999
+    else:
+    	var[var==var_in._FillValue]=np.nan
+    if "scale_factor" in var_in.ncattrs():
+        var = (var[:]-var_in.add_offset)*var_in.scale_factor
+    vunits = var_in.units
+    # définition des caractéristiques géographiques transform,resolution spatiale, lat max et lon min
+    nc.close()
+    xo = min(lon)
+    yo = max(lat)
+    resx = np.abs(np.mean(np.diff(lon)))
+    resy = np.abs(np.mean(np.diff(lat)))
+    transform = [xo, 0.01, 0.0, yo, 0.0, -0.01]
+
+    #############################################################################################################
+    #############################################################################################################
+    idt = jobList(range(var.shape[0]), 8)
+    jobs = [var[j,...] for j in idt]
+    stat = np.hstack(Parallel(n_jobs=-1)(delayed(calc_stats)(resx,resy,geodf,transform,temps_x) for temps_x in jobs))# appel de la fonction calc_stats avec parallélisation
+    df = pd.DataFrame(stat, index=pd.date_range(datedeb, datefin,freq='D'), columns=[varname])
+    wday = df.index[-1].weekday()
+    if  wday != 6:
+        wday += 1
+    return df.ix[0:-1-wday].resample('W-MON').mean(), vunits#.resample('W-MON').mean()
+
+
+
 
 #################################
 def scatterSatStation(ncfile,csvfile,ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,
@@ -193,31 +291,10 @@ def scatterSatStation(ncfile,csvfile,ulx,uly,lrx,lry,z_buffer,pas_de_temps,perio
     start = datetime.strptime(datedeb, "%Y-%m-%d")
     end = datetime.strptime(datefin, "%Y-%m-%d")
 
-#    #############################image satellite 1 ####################################
-#    if sat1 == "toms":
-#        fichier_sat1 = sat1+'_r'+res_sat1+'_d.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    elif prd_sat1 in ["chimere01","chimere02"]:
-#        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    elif prd_sat1 == 'seviri_aerus':
-#        fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    else:
-#        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#
-#    ########################### donnees in situ 1 ######################################
-#    if niveau:
-#        path_station = ddirDB+'in_situ/'+inSitu+'/niveau_'+niveau+'/'+station+'_'+inSitu+'_'+niveau+'_h24_15min.csv'
-#    else:
-#        path_station = ddirDB+'in_situ/'+inSitu+'/'+station+'_'+inSitu+'_h24_h.csv'
-#    ####################################################################################
-
     hours1,long_st1, lat_st1 = heure_passage(station)
     df_sat1, npx, sat1_units = readNC_box(ncfile,variable_sat1,ulx,uly,lrx,lry, start, end,prd_sat1, level_sat1,pas_de_temps, hours1, long_st1, lat_st1, z_buffer)
     #chargement des mesures in situ
-    df_sat1 = read_csv(csvfile, inSitu , variable_station,start, end,periode,df_sat1)
+    df_sat1 = read_csv(csvfile,inSitu,variable_station,start, end,periode,df_sat1)
     
     if pas_de_temps == 'd':
         dfout = df_sat1
@@ -252,51 +329,70 @@ def scatterSatStation(ncfile,csvfile,ulx,uly,lrx,lry,z_buffer,pas_de_temps,perio
     return mat
 
 
+def scatterSatEpidemio(ncfile,fshape,csvfile,sat1,prd_sat1,datedeb,datefin,variable_sat1,
+                       level_sat1,pas_de_temps,epidemio,pays,echelle,district,variable
+                       ):
+
+    start = datetime.strptime(datedeb, "%Y-%m-%d")
+    end = datetime.strptime(datefin, "%Y-%m-%d")
+    csv = pd.read_csv(csvfile, parse_dates={'':['date']}, header=0, index_col=0)
+    epidemio = csv[variable][csv.district==district][datedeb:datefin]
+    if district:
+        stats,sat1_units = calc_moy(ncfile,fshape,echelle,start, end,sat1,variable_sat1,level_sat1, district)
+    else:
+        stats = calc_moy(ncfile,fshape,echelle,start, end,sat1,variable_sat1,level_sat1)
+    stats[variable] = epidemio[stats.index[0]:stats.index[-1]]
+    
+    if pas_de_temps in ['d', 'w']:
+        pas_de_temps = 'w'
+        dfout = stats
+    elif pas_de_temps == 'm':
+        dfout = stats.resample('MS').mean()
+    else:
+        dfout = stats.resample('QS').mean()
+    try:
+        mask = dfout.dropna()
+        slope, intercept, r_value, p_value, std_err = linregress(mask)
+        r2 = round(r_value**2, 5)
+        line = slope*mask.values+intercept
+        lregr = [list(a) for a in zip(mask[variable_sat1].values.tolist(), line)]
+        scatterValues = [list(a) for a in zip(mask[variable_sat1].values.tolist(), mask[variable].values.tolist())]
+    except ValueError:
+        line, r2, slope,intercept, scatterValues = np.nan, np.nan, np.nan, np.nan, np.nan
+
+    mat = {}
+    mat["sat"] = prd_sat1
+    mat["satVar"] = variable_sat1
+    mat["satVar_units"] = sat1_units
+    mat["zone"] = pays
+    mat["prd"] = epidemio
+    if district:
+        mat["station"] = pays + ' : ' + district
+    else:
+        mat["station"] = ""
+    mat["prdVar"] = variable
+    mat["prdVar_units"] = ""
+    mat["dates"] = [str(d.date()) for d in dfout.index[:].to_datetime()]
+    mat["periode"] = pas_de_temps
+    for c in dfout.columns:
+        mat[c] = dfout[c].values.tolist()
+    mat["scatterValues"] = scatterValues       # liste des valeurs epidemio/sat
+    mat["line"] = lregr                        # droite de regression epidemio/sat
+    mat["rCarre"] = r2                         # rCarre scatterplot epidemio/sat
+    mat["a"] = slope                           # pente de la droite de regr
+    mat["b"] = intercept                       # intersection
+    js = simplejson.dumps(mat, ignore_nan=True,default=datetime.isoformat)
+    return mat
+
+
 def scatter2Sat_Temporel(ncfile1, ncfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1, 
                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
                  ):
 
-
     start = datetime.strptime(datedeb, "%Y-%m-%d")
     end = datetime.strptime(datefin, "%Y-%m-%d")
 
-#    #############################image satellite 1 ####################################
-#    if sat1 == "toms":
-#        fichier_sat1 = sat1+'_r'+res_sat1+'_d.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    elif prd_sat1 == "domaine01":
-#        fichier_sat1 = 'chimere01_r'+res_sat1+'_d.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    elif prd_sat1 == "domaine02":
-#        fichier_sat1 = 'chimere02_r'+res_sat1+'_d.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    elif prd_sat1 == 'seviri_aerus':
-#        fichier_sat1 = 'seviri_r'+res_sat1+'_d.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    else:
-#        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_d.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    ############################ image satellite 2 ####################################
-#    if sat2 == "toms":
-#        fichier_sat2 = sat2+'_r'+res_sat2+'_d.nc'
-#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-#    elif prd_sat2 == "domaine01":
-#        fichier_sat2 = 'chimere01_r'+res_sat2+'_d.nc'
-#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-#    elif prd_sat2 == "domaine02":
-#        fichier_sat2 = 'chimere02_r'+res_sat2+'_d.nc'
-#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-#    elif prd_sat2 == 'seviri_aerus':
-#        fichier_sat2 = 'seviri_r'+res_sat2+'_d.nc'
-#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-#    else:
-#        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_d.nc'
-#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-#    ###################################################################################
-#        
-#    print path_sat1
-#    print path_sat2
     df_sat1, npx1, sat1_units = readNC_box(ncfile1,variable_sat1,ulx,uly,lrx,lry, start,end, prd_sat1, level_sat1, pas_de_temps)
     df_sat2, npx2, sat2_units = readNC_box(ncfile2,variable_sat2,ulx,uly,lrx,lry, start,end, prd_sat2, level_sat2, pas_de_temps)
     df_sat1_2 = df_sat1.join(df_sat2, how='outer')
@@ -325,42 +421,12 @@ def scatter2Sat_Temporel(ncfile1, ncfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,
 
 
 
-def scatter2Sat_Spatial(ncfile1,cnfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
+def scatter2Sat_Spatial(ncfile1,ncfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,datedeb, datefin,
                  type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1, 
                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2,
                  ):
 
-
-    start = datetime.strptime(datedeb, "%Y-%m-%d")
-
-#    #############################image satellite 1 ####################################
-#    if sat1 == "toms":
-#        fichier_sat1 = sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    elif prd_sat1 in ["chimere01","chimere02"]:
-#        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1[:-2]+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    elif prd_sat1 == 'seviri_aerus':
-#        fichier_sat1 = 'seviri_r'+res_sat1+'_' + pas_de_temps + '.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    else:
-#        fichier_sat1 = prd_sat1+'_r'+res_sat1+'_' + pas_de_temps + '.nc'
-#        path_sat1 = ddirDB+type1+'/'+sat1+'/'+prd_sat1+'/'+'res'+res_sat1+'/'+fichier_sat1
-#    ############################ image satellite 2 ####################################
-#    if sat2 == "toms":
-#        fichier_sat2 = sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
-#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-#    elif prd_sat2 in ["chimere01","chimere02"]:
-#        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
-#        path_sat1 = ddirDB+type2+'/'+sat2+'/'+prd_sat2[:-2]+'/'+'res'+res_sat2+'/'+fichier_sat2
-#    elif prd_sat2 == 'seviri_aerus':
-#        fichier_sat2 = 'seviri_r'+res_sat2+'_' + pas_de_temps + '.nc'
-#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-#    else:
-#        fichier_sat2 = prd_sat2+'_r'+res_sat2+'_' + pas_de_temps + '.nc'
-#        path_sat2 = ddirDB+type2+'/'+sat2+'/'+prd_sat2+'/'+'res'+res_sat2+'/'+fichier_sat2
-    ###################################################################################
-        
+    start = datetime.strptime(datedeb, "%Y-%m-%d")       
         
     df_sat1, npx1, sat1_units = readNC_box(ncfile1,variable_sat1,ulx,uly,lrx,lry, start,start, prd_sat1, level_sat1, pas_de_temps)
     df_sat2, npx2, sat2_units = readNC_box(ncfile2,variable_sat2,ulx,uly,lrx,lry, start,start, prd_sat2, level_sat2, pas_de_temps)
@@ -440,3 +506,19 @@ if __name__ == '__main__':
     #resultats["matrice"].to_csv(ddirout+"qlt_flag.csv")
     #print resultats[0]
     print "fichier traite"
+    ncfile,csvfile,ulx,uly,lrx,lry,z_buffer,pas_de_temps,periode,datedeb, datefin,type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,inSitu, station,variable_station,niveau = u'/home/mers/Bureau/teledm/donnees/satellite/modis/MYD07/res025/MYD07_r025_d.nc', u'/home/mers/Bureau/teledm/donnees/in_situ/meteo/Banizoumbou_meteo_12h.csv', u'', u'', u'', u'', 9, u'd', u'Integration', u'2007-01-01', u'2007-01-31', u'satellite', u'modis', u'MYD07', u'025', u'Total_Ozone', -1, u'meteo', u'Banizoumbou', u'wind', ''
+    ncfile='/home/mers/Bureau/teledm/donnees/satellite/modis/MYD07/res025/MYD07_r025_d.nc'
+    csvfile='/home/mers/Bureau/teledm/donnees/in_situ/epidemiologie/meningite/Burkina_meningite_district.csv'
+    csvfile='/home/mers/Bureau/teledm/donnees/in_situ/aeronet/niveau_1_5/Banizoumbou_aeronet_1_5_diurne_15min.csv'
+    fshape='/home/mers/Bureau/teledm/donnees/carto/district/Burkina_district_sante.shp'
+    datedeb = "2007-01-01"
+    datefin = "2007-01-31"
+    pas_de_temps = 'd'
+    sat1 = "modis"
+    variable_sat1 = "Total_Ozone"
+    prd_sat1 = "MYD07"
+    level_sat1 = -1
+    pays = "Burkina"
+    echelle = "pays"
+    district = "Barsalogo"
+    variable = 'incidence'

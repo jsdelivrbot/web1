@@ -383,153 +383,77 @@ function setFormS2(){
         $("[id$='S2']").find("option:gt(0)").remove();
         $("[id$='S2']").prop("disabled", true);
         $("#Option").prop("disabled", true);
-        $("#Option").prop('checked', false);
         $("#levelSr2").prop("disabled", true);
         $("#levelSr2").find("option:gt(0)").remove();
     }
 }
 
-//in situ form
+//aeronet form
 function setFormS3(){
     if ($("#checkboxS3").prop("checked") == true){
-        $("[id$='IS']").prop("disabled", false);
-        $.each(mesures, function(i, item){
-            $("#mesureIS").append($("<option></option>").attr("value", item).text(item));
+        $("[id$='Aeronet']").prop("disabled", false);       
+        $.each(stationsAeronet, function(i, item){
+            $("#stationsAeronet").append($("<option></option>").attr("value", item).text(item));
         });
-        $("#mesureIS").on('change', function(){
-            $("#stationsIS").find("option:gt(0)").remove();
-            $("#niveauIS").find("option:gt(0)").remove();
-            $("#variablesIS").find("option:gt(0)").remove();
-            $("#resoTempoIS").find("option:gt(0)").remove();
-            if($(this).val() == 'aeronet'){
-                $.each(stationsAeronet, function(i, item){
-                    $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
-                });
-                $("#niveauIS").prop("disabled", false);
-                $.each(niveau, function(i, item){
-                    $("#niveauIS").append($("<option></option>").attr("value", item).text(item));
-                });
-                $.each(variablesAeronet1, function(i, item){
-                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-                });
-                $("#niveauIS").prop('selectedIndex', 1);
-                $.each(resoTempo[$(this).val()], function(i, item){
-                    $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
-                });
-                $.each(integration, function(i, item){
-                    $("#integrationIS").append($("<option></option>").attr("value", item).text(item));
-                });
-                $("#integrationIS").prop('selectedIndex', 1);
-            }else if($(this).val() == 'teom'){
-                alert($(this).val());
-                $("#niveauIS").prop("disabled", true);
-                $.each(stationsTeom, function(i, item){
-                    $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
-                });
-                $.each(variablesTeom, function(i, item){
-                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-                });
-                $.each(integration, function(i, item){
-                    $("#integrationIS").append($("<option></option>").attr("value", item).text(item));
-                });
-                $("#integrationIS").prop('selectedIndex', 1);
-            }else{
-                $("#niveauIS").prop("disabled", true);
-                $.each(stationsMeteo, function(i, item){
-                    $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
-                });
-                $.each(variablesMeteo, function(i, item){
-                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-                });
-            }
+        $.each(variablesAeronet1, function(i, item){
+            $("#variablesAeronet").append($("<option></option>").attr("value", item).text(item));
         });
-        $("#stationsIS").on('change', function(){
-            alert($(this).val());
-            if ($(this).val()!='Dedougou'){
-                  $("#integrationIS").prop("disabled", true);
-                  $("#integrationIS").find("option:gt(0)").remove();
-            }      
+        $.each(niveau, function(i, item){
+            $("#niveauAeronet").append($("<option></option>").attr("value", item).text(item));
         });
-        $("#niveauIS").on('change', function(){
-            $("#variablesIS").find("option:gt(0)").remove();
-            if($(this).val() == '1_5'){
-                $.each(variablesAeronet1, function(i, item){
-                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-                });
-            }else{
-                $.each(variablesAeronet2, function(i, item){
-                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
-                });
-            }
-        });
+        $("#niveauAeronet").prop('selectedIndex', 1);
     }else{
-        $("[id$='IS']").find("option:gt(0)").remove();
-        $("[id$='IS']").prop("disabled", true);
+        $("[id$='Aeronet']").find("option:gt(0)").remove();
+        $("#integration").find("option:gt(0)").remove();
+        $("[id$='Aeronet']").prop("disabled", true);
     }
 }
 
-//epidemio form
+// teom form
 function setFormS4(){
     if ($("#checkboxS4").prop("checked") == true){
-        $("[id$='EP']").prop("disabled", false);
-        $.each(epidemio, function(i, item){
-            $("#epidemioEP").append($("<option></option>").attr("value", item).text(item));
+        $("[id$='Teom']").prop("disabled", false);
+        $.each(stationsAeronet, function(i, item){
+            $("#stationsTeom").append($("<option></option>").attr("value", item).text(item));
         });
-        $("#epidemioEP").on('change', function(){
-            $("#paysEP").find("option:gt(0)").remove();
-            $("#echelleEP").find("option:gt(0)").remove();
-            $("#districtEP").find("option:gt(0)").remove();
-            $("#districtEP").prop("disabled", false);
-            $("#variableEP").find("option:gt(0)").remove();
-            if($(this).val() == 'meningite'){
-                $.each(Object.keys(meningitePays), function(i, item){
-                    $("#paysEP").append($("<option></option>").attr("value", item).text(item));
-                });
-            }
+        $.each(variablesTeom, function(i, item){
+            $("#variablesTeom").append($("<option></option>").attr("value", item).text(item));
         });
-        
-        $("#paysEP").on('change', function(){
-            $("#echelleEP").find("option:gt(0)").remove();
-            $("#districtEP").find("option:gt(0)").remove();
-            $("#districtEP").prop("disabled", false);
-            $("#variableEP").find("option:gt(0)").remove();
-            $.each(meningitePays[$(this).val()], function(i, item){
-                $("#echelleEP").append($("<option></option>").attr("value", item).text(item));
-            });
-        });
-        
-        
-        $("#echelleEP").on('change', function(){
-            $("#districtEP").find("option:gt(0)").remove();
-            $("#variableEP").find("option:gt(0)").remove();
-            if($(this).val() == 'district'){
-                $("#districtEP").prop("disabled", false);
-                $.each(meningiteDist[$("#paysEP").val()], function(i, item){
-                    $("#districtEP").append($("<option></option>").attr("value", item).text(item))
-                });
-                $.each(meningiteVar.district, function(i, item){
-                    $("#variableEP").append($("<option></option>").attr("value", item).text(item));
-                });
-            }else{
-                $("#districtEP").prop("disabled", true);
-                $.each(meningiteVar.pays, function(i, item){
-                    $("#variableEP").append($("<option></option>").attr("value", item).text(item));
-                });
-            }
-        });
+        $("#variablesTeom").prop('selectedIndex', 1);
     }else{
-        $("[id$='EP']").find("option:gt(0)").remove(); 
-        $("[id$='EP']").prop("disabled", true);        
+        $("[id$='Teom']").find("option:gt(0)").remove(); 
+        $("[id$='Teom']").prop("disabled", true);        
+    }
+}
+        
+// epidemio form
+function setFormS5(){
+    if ($("#checkboxS5").prop("checked") == true){
+        $("[id$='EP']").prop("disabled", false);
     }
 }
 
 
+function setFormIntg(){
+    if ($("#checkboxS3").prop("checked") == true || $("#checkboxS4").prop("checked") == true){
+        $("#integration").prop("disabled", false);
+        $.each(integration, function(i, item){
+            $("#integration").append($("<option></option>").attr("value", item).text(item));
+        });
+        $("#integration").prop('selectedIndex', 1);
+    }else{
+        $("#integration").find("option:gt(0)").remove();
+        $("#integration").prop("disabled", true);
+    }
+}
 
 $("[id^='checkbox']").on('change', function() {
     $("[id^='checkbox']").not(this).prop('checked', false);
     setFormS2();
     setFormS3();
     setFormS4();
+    setFormS5();
+    setFormIntg(); 
 });
 
 function getDateRange(url){
@@ -650,7 +574,7 @@ function verifForm(){
         $("input[id='date1']").val(lstInfos.debut);
     }
 
-    if (($("#checkboxSr2").prop("checked") == false) && ($("#checkboxS3").prop("checked") == false) && ($("#checkboxS4").prop("checked") == false)){
+    if (($("#checkboxSr2").prop("checked") == false) && ($("#checkboxS3").prop("checked") == false) && ($("#checkboxS4").prop("checked") == false) && ($("#checkboxS5").prop("checked") == false)){
         alert("Erreur ! Sélectionner un 2eme type de données !");
         throw new Exception();
     }
@@ -695,38 +619,18 @@ function verifForm(){
 
 
     if ($("#checkboxS3").prop("checked") == true){
-        if($('#mesureIS').val() == 'Type'){
-            alert("Erreur ! Aucun type de mesure sélectionné !");
+        if($('#stationsAeronet').val() == 'Station'){
+            alert("Erreur ! Aucune station Aeronet sélectionnée !");
             throw new Exception();
         }
-        if($('#stationsIS').val() == 'Station'){
-            alert("Erreur ! Aucune station de mesure sélectionnée !");
-            throw new Exception();
-        }
-        if($('#variablesIS').val() == 'Variable'){
-            alert("Erreur ! Aucune variable mesuree sélectionnée !");
+        if($('#variablesAeronet').val() == 'Variable'){
+            alert("Erreur ! Aucune variable Aeronet sélectionnée !");
             throw new Exception();
         }
     }
     if ($("#checkboxS4").prop("checked") == true){
-        if($('#epidemioEP').val() == 'Type'){
-            alert("Erreur ! Aucun type epidemio sélectionné !");
-            throw new Exception();
-        }
-        if($('#paysEP').val() == 'Pays'){
-            alert("Erreur ! Aucun pays sélectionné !");
-            throw new Exception();
-        }
-        if($('#echelleEP').val() == 'Echelle'){
-            alert("Erreur ! Aucune echelle geographique sélectionnée !");
-            throw new Exception();
-        }
-        if(($('#districtEP').prop("disabled") == false) && ($('#districtEP').val() == 'District')){
-            alert("Erreur ! Aucun district sélectionné !");
-            throw new Exception();
-        }
-        if($('#variableEP').val() == 'Variable'){
-            alert("Erreur ! Aucune variable epidemio sélectionnée !");
+        if($('#stationsTeom').val() == 'Station'){
+            alert("Erreur ! Aucune station Aeronet sélectionnée !");
             throw new Exception();
         }
     }
@@ -748,7 +652,7 @@ function verifForm(){
         $("input[id='date2']").val(lstInfos.fin);      
     }
     
-    if (($("#buffer").val() == "Buffer") && (($("#checkboxS3").prop("checked") == true) || ($("#checkboxS4").prop("checked") == true))){
+    if (($("#buffer").val() == "Buffer") && (($("#checkboxS3").prop("checked") == true) || ($("#checkboxS4").prop("checked") == true))|| ($("#checkboxS5").prop("checked") == true))){
         alert("Erreur ! Buffer non sélectionné !");
         throw new Exception();
     }
@@ -776,6 +680,13 @@ $("#scatter").on('submit',  function(e){
     } else {
         var action = "scatterTemporel";
     }
+    if ( $("#checkboxS3").prop('checked') == true ){
+        var mesure = "aeronet";
+    } else if ( $("#checkboxS4").prop('checked') == true ){
+        var mesure = "teom";
+    } else {
+        var mesure = "";        
+    }
     $("[id^='plot']").each(function(){
         while($(this).highcharts().series.length > 0){
             $(this).highcharts().series[0].remove(true);
@@ -786,7 +697,7 @@ $("#scatter").on('submit',  function(e){
         type: "POST",
         url: '',
         //dataType: 'json',
-        data: $("#scatter").serialize()+"&action="+action,
+        data: $("#scatter").serialize()+"&action="+action+"&mesure="mesure,
         beforeSend: function(xhr, settings) {
             xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
             $("[id^='plot']").each(function(){

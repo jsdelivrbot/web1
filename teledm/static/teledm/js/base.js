@@ -5,7 +5,7 @@ const ROOT = "http://localhost:8000/climdata.u-bourgogne.fr/teledm"
 //-----------------------------------------------------------------------------
 //------------variables concernant les traitements donnees in situ-------------
 //-----------------------------------------------------------------------------
-var geoDist = ['niger_district_sante', 'mali_district_sante','burkina_aire_sante', 'burkina_district_sante',];
+var geoDist = ['Niger_district_sante', 'Mali_district_sante','Burkina_aire_sante', 'Burkina_district_sante',];
 var mesures = ["aeronet", "teom", "meteo"];
 var integration = ['+-1h','+-5h'];
 
@@ -107,34 +107,37 @@ var meningiteVar = {
     'pays':['deces', 'population', 'incidence'],
     'district':['cas', 'incidence', 'population']
 };
-var selection_geographique = {"benin":["district","pays"],
-                              "burkina":["aire","district","pays"],
-                              "mali":["district","pays"],
-                              "senegal":["pays"]
+var selection_geographique = {"Benin":["district","pays"],
+                              "Burkina":["aire","district","pays"],
+                              "Mali":["district","pays"],
+                              "Senegal":["pays"]
                              };
 var meningiteDist = {
     'Burkina':['Banfora', 'Barsalogo', 'Batie', 'Bogande', 'Boromo', 'Boulsa', 'Bousse',
-    'Dande', 'Dano', 'Dedougou', 'Diapaga', 'Diebougou', 'Djibo', 'Dori', 'Fada', 'Fadgay',
+    'Dande', 'Dano', 'Dedougou', 'Diapaga', 'Diebougou', 'Djibo', 'Dori', 'Fada',
     'Gaoua', 'Gayeri', 'Gorom-Gorom', 'Gourcy', 'Hounde', 'Kaya', 'Kombissiri', 'Kongoussi',
-    'Kossodo', 'Koudougou', 'Koupela', 'Leo', 'Leosap', 'Manga', 'Nanoro', 'Nouna', 'Orodara',
-    'Ouagou', 'Ouahigouya', 'Ouargaye', 'Pama', 'Paul6', 'Pissy', 'Po', 'Reo', 'Sapone', 'Sapouy',
-    'Sebba', 'Secteur15', 'Secteur22', 'Secteur30', 'Seguenega', 'Sindou', 'Solenzo', 'Tenkodogo',
+    'Koudougou', 'Koupela', 'Leo', 'Manga', 'Nanoro', 'Nouna', 'Orodara',
+    'Ouahigouya', 'Ouargaye', 'Pama', 'Po', 'Reo', 'Sapone', 'Sapouy',
+    'Sebba', 'Seguenega', 'Sindou', 'Solenzo', 'Tenkodogo',
     'Titao', 'Toma', 'Tougan', 'Yako', 'Zabre', 'Ziniare', 'Zorgho'],
+               //['Fadgay', 'Kossodo', 'Leosap', 'Ouagou', 'Paul6', 'Pissy', 'Secteur15', 'Secteur22', 'Secteur30']
 
     'Mali':['Abeibara', 'Ansongo', 'Bafoulabe', 'Banamba', 'Bandiagara', 'Bankass', 'Baraoueli', 'Bla',
     'Bougouni', 'Bourem', 'Commune1', 'Commune2', 'Commune3', 'Commune4', 'Commune5', 'Commune6', 'Diema',
-    'Diofan', 'Dioila', 'Dire', 'Djenne', 'Douentza', 'Fana', 'Gao', 'Goundam', 'Gourma-Rharous', 'Kadiolo',
-    'Kangaba', 'Kati', 'Katoue', 'Kayes', 'Kenieba', 'Kidal', 'Kita', 'Kolokani', 'Kolondieba', 'Koro', 'Koulikoro',
+    'Dioila', 'Dire', 'Djenne', 'Douentza', 'Fana', 'Gao', 'Goundam', 'Gourma-Rharous', 'Kadiolo',
+    'Kangaba', 'Kati', 'Kayes', 'Kenieba', 'Kidal', 'Kita', 'Kolokani', 'Kolondieba', 'Koro', 'Koulikoro',
     'Koutiala', 'Macina', 'Markala', 'Menaka', 'Mopti', 'Nara', 'Niafunke', 'Niono', 'Nioro', 'Ouelessebougou', 'San',
-    'Segmar', 'Segou', 'Selingue', 'Sikasso', 'Tenenkou', 'Tessalit', 'Tin-Essako', 'Tombouctou', 'Tominian',
-    'Yanfolila', 'Yansel', 'Yelimane', 'Yorosso', 'Youwarou'],
+    'Segou', 'Selingue', 'Sikasso', 'Tenenkou', 'Tessalit', 'Tin-Essako', 'Tombouctou', 'Tominian',
+    'Yanfolila', 'Yelimane', 'Yorosso', 'Youwarou'],
+            //['Diofan', 'Katoue', 'Segmar', 'Yansel']
 
-    'Niger':['Abalak', 'Agadez', 'Agatch', 'Aguie', 'Arlit', 'Bilma', 'Birni-Nkonni',
+    'Niger':['Agatch', 'Aguie', 'Arlit', 'Bilma', 'Birni-Nkonni',
     'Boboye', 'Bouza', 'Dakoro', 'Diffa', 'Dogon-Doutchi', 'Dosso', 'Filingue', 'Gaya',
     'Goure', 'Guidan-Roumdji', 'Illela', 'Keita', 'Kollo', 'Loga', 'Madaoua', 'Madarounfa',
-    'Magaria', 'Maine-Soroa', 'Maradi', 'Matameye', 'Mayahi', 'Mirriah', 'Nguigmi', 'Niamey',
-    'Niamey1', 'Niamey2', 'Niamey3', 'Ouallam', 'Say', 'Tahoua', 'Tanout', 'Tchiab', 'Tchintabaraden',
+    'Magaria', 'Maine-Soroa', 'Maradi', 'Matameye', 'Mayahi', 'Mirriah', 'Nguigmi',
+    'Niamey1', 'Niamey2', 'Niamey3', 'Ouallam', 'Say', 'Tahoua', 'Tanout', 'Tchintabaraden',
     'Tchirozerine', 'Tera', 'Tessaoua', 'Tillaberi', 'Zinder'],
+             //['Abalak', 'Agatch', 'Niamey', 'Tchiab']
 };
 
 //-----------------------------------------------------------------------------

@@ -383,77 +383,144 @@ function setFormS2(){
         $("[id$='S2']").find("option:gt(0)").remove();
         $("[id$='S2']").prop("disabled", true);
         $("#Option").prop("disabled", true);
+        $("#Option").prop('checked', false);
         $("#levelSr2").prop("disabled", true);
         $("#levelSr2").find("option:gt(0)").remove();
     }
 }
 
-//aeronet form
+//in situ form
 function setFormS3(){
     if ($("#checkboxS3").prop("checked") == true){
-        $("[id$='Aeronet']").prop("disabled", false);       
-        $.each(stationsAeronet, function(i, item){
-            $("#stationsAeronet").append($("<option></option>").attr("value", item).text(item));
+        alert('ok');
+        $("[id$='IS']").prop("disabled", false);
+        $.each(mesures, function(i, item){
+            $("#mesureIS").append($("<option></option>").attr("value", item).text(item));
         });
-        $.each(variablesAeronet1, function(i, item){
-            $("#variablesAeronet").append($("<option></option>").attr("value", item).text(item));
+        $("#mesureIS").on('change', function(){
+            $("#stationsIS").find("option:gt(0)").remove();
+            $("#niveauIS").find("option:gt(0)").remove();
+            $("#variablesIS").find("option:gt(0)").remove();
+            $("#resoTempoIS").find("option:gt(0)").remove();
+            if($(this).val() == 'aeronet'){
+                $.each(stationsAeronet, function(i, item){
+                    $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+                });
+                $("#niveauIS").prop("disabled", false);
+                $.each(niveau, function(i, item){
+                    $("#niveauIS").append($("<option></option>").attr("value", item).text(item));
+                });
+                $.each(variablesAeronet1, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+                $("#niveauIS").prop('selectedIndex', 1);
+                $.each(resoTempo[$(this).val()], function(i, item){
+                    $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }else if($(this).val() == 'teom'){
+                $("#niveauIS").prop("disabled", true);
+                $.each(stationsTeom, function(i, item){
+                    $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+                });
+                $.each(variablesTeom, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+                $.each(resoTempo[$(this).val()], function(i, item){
+                    $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }else{
+                $("#niveauIS").prop("disabled", true);
+                $.each(stationsMeteo, function(i, item){
+                    $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
+                });
+                $.each(variablesMeteo, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+                $.each(resoTempo[$(this).val()], function(i, item){
+                    $("#resoTempoIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }
         });
-        $.each(niveau, function(i, item){
-            $("#niveauAeronet").append($("<option></option>").attr("value", item).text(item));
+        $("#niveauIS").on('change', function(){
+            $("#variablesIS").find("option:gt(0)").remove();
+            if($(this).val() == '1_5'){
+                $.each(variablesAeronet1, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }else{
+                $.each(variablesAeronet2, function(i, item){
+                    $("#variablesIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }
         });
-        $("#niveauAeronet").prop('selectedIndex', 1);
     }else{
-        $("[id$='Aeronet']").find("option:gt(0)").remove();
-        $("#integration").find("option:gt(0)").remove();
-        $("[id$='Aeronet']").prop("disabled", true);
+        $("[id$='IS']").find("option:gt(0)").remove();
+        $("[id$='IS']").prop("disabled", true);
     }
 }
 
-// teom form
+//epidemio form
 function setFormS4(){
     if ($("#checkboxS4").prop("checked") == true){
-        $("[id$='Teom']").prop("disabled", false);
-        $.each(stationsAeronet, function(i, item){
-            $("#stationsTeom").append($("<option></option>").attr("value", item).text(item));
-        });
-        $.each(variablesTeom, function(i, item){
-            $("#variablesTeom").append($("<option></option>").attr("value", item).text(item));
-        });
-        $("#variablesTeom").prop('selectedIndex', 1);
-    }else{
-        $("[id$='Teom']").find("option:gt(0)").remove(); 
-        $("[id$='Teom']").prop("disabled", true);        
-    }
-}
-        
-// epidemio form
-function setFormS5(){
-    if ($("#checkboxS5").prop("checked") == true){
         $("[id$='EP']").prop("disabled", false);
-    }
-}
-
-
-function setFormIntg(){
-    if ($("#checkboxS3").prop("checked") == true || $("#checkboxS4").prop("checked") == true){
-        $("#integration").prop("disabled", false);
-        $.each(integration, function(i, item){
-            $("#integration").append($("<option></option>").attr("value", item).text(item));
+        $.each(epidemio, function(i, item){
+            $("#epidemioEP").append($("<option></option>").attr("value", item).text(item));
         });
-        $("#integration").prop('selectedIndex', 1);
+        $("#epidemioEP").on('change', function(){
+            $("#paysEP").find("option:gt(0)").remove();
+            $("#echelleEP").find("option:gt(0)").remove();
+            $("#districtEP").find("option:gt(0)").remove();
+            $("#districtEP").prop("disabled", false);
+            $("#variableEP").find("option:gt(0)").remove();
+            if($(this).val() == 'meningite'){
+                $.each(Object.keys(meningitePays), function(i, item){
+                    $("#paysEP").append($("<option></option>").attr("value", item).text(item));
+                });
+            }
+        });
+        
+        $("#paysEP").on('change', function(){
+            $("#echelleEP").find("option:gt(0)").remove();
+            $("#districtEP").find("option:gt(0)").remove();
+            $("#districtEP").prop("disabled", false);
+            $("#variableEP").find("option:gt(0)").remove();
+            $.each(meningitePays[$(this).val()], function(i, item){
+                $("#echelleEP").append($("<option></option>").attr("value", item).text(item));
+            });
+        });
+        
+        
+        $("#echelleEP").on('change', function(){
+            $("#districtEP").find("option:gt(0)").remove();
+            $("#variableEP").find("option:gt(0)").remove();
+            if($(this).val() == 'district'){
+                $("#districtEP").prop("disabled", false);
+                $.each(meningiteDist[$("#paysEP").val()], function(i, item){
+                    $("#districtEP").append($("<option></option>").attr("value", item).text(item))
+                });
+                $.each(meningiteVar.district, function(i, item){
+                    $("#variableEP").append($("<option></option>").attr("value", item).text(item));
+                });
+            }else{
+                $("#districtEP").prop("disabled", true);
+                $.each(meningiteVar.pays, function(i, item){
+                    $("#variableEP").append($("<option></option>").attr("value", item).text(item));
+                });
+            }
+        });
     }else{
-        $("#integration").find("option:gt(0)").remove();
-        $("#integration").prop("disabled", true);
+        $("[id$='EP']").find("option:gt(0)").remove(); 
+        $("[id$='EP']").prop("disabled", true);        
     }
 }
+
+
 
 $("[id^='checkbox']").on('change', function() {
     $("[id^='checkbox']").not(this).prop('checked', false);
     setFormS2();
     setFormS3();
     setFormS4();
-    setFormS5();
-    setFormIntg(); 
 });
 
 function getDateRange(url){

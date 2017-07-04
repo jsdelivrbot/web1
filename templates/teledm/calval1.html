@@ -23,7 +23,7 @@
             </div>
             <div class="col-lg-3">
                 <div class="checkbox">
-                    <label><input type="checkbox" id="Option" value="Option" onclick="" ><em>Spatial</em></label>
+                    <label><input type="checkbox" id="Option" value="Option" onclick="" ><em>Option</em></label>
                 </div>
             </div>
         </div>
@@ -142,48 +142,79 @@
     </div>
     <div class="row" id="InSitu">
         <div class="row">
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="checkbox">
-                        <label><input type="checkbox" id="checkboxS3" value="S3" onclick=""><em>Mesures</em></label>
+            <label>Données In Situ</label>
+        </div>
+        <div class="row">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="checkbox">
+                            <label><input type="checkbox" id="checkboxS3" value="S3" onclick=""><em>Aeronet</em></label>
+                        </div>
+                        <select class="form-control" name="stations" id="stationsAeronet" disabled="true">
+                            <option data-hidden="true">Station</option>
+                        </select>
+                        <select class="form-control" name="niveau" id="niveauAeronet" disabled="true">
+                            <option data-hidden="true">niveau de traitement</option>
+                        </select>
                     </div>
-                    <select class="form-control" name="mesure" id="mesureIS" disabled="true">
-                        <option selected hidden>Type</option>
-                    </select>
-                    <select class="form-control" name="stations" id="stationsIS" disabled="true">
-                        <option selected hidden>Station</option>
-                    </select>
-                    <select class="form-control" name="niveau" id="niveauIS" disabled="true">
-                        <option selected hidden>Niveau</option>
-                    </select>
-                    <select class="form-control" name="variables" id="variablesIS" disabled="true">
-                        <option selected hidden>Variable</option>
-                    </select>
-                    <select class="form-control" name="integration" id="integrationIS" disabled="true">
-                        <option data-hidden="true">Integration</option>
+                    <div class="row">
+                        <select class="form-control" name="variablesaeronet" id="variablesAeronet" disabled="true">
+                            <option data-hidden="true">Variable</option>
+                        </select>
+                    </div>
+                    <br/>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="checkbox">
+                            <label><input type="checkbox" id="checkboxS4" value="S4" onclick=""><em>Teom</em></label>
+                        </div>
+                        <select class="form-control" name="stations" id="stationsTeom" disabled="true">
+                            <option data-hidden="true">Station</option>
+                        </select>
+                        <select class="form-control" name="variablesteom" id="variablesTeom" disabled="true">
+                            <option data-hidden="true">Variable</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <h5>Periode d'intégration</h5>
+                    <h6>(Aeronet/Teom)</h6>
+                </div>
+                <div class="col-lg-6">
+                    <select class="form-control" name="integration" id="integration" disabled="true" >
+                        <option data-hidden="true"></option>
                     </select>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="checkbox">
-                        <label><input type="checkbox" id="checkboxS4" value="S4" onclick=""><em>Epidemiologie</em></label>
+            <div class="row">
+                    <div class="row">
+                        <label><input type="checkbox" id="checkboxS5" value="S5" onclick=""><em>Epidemiologie</em></label>
                     </div>
-                    <select class="form-control" name="epidemio" id="epidemioEP" disabled="true">
-                        <option selected hidden>Type</option>
-                    </select>
-                    <select class="form-control" name="pays" id="paysEP" disabled="true">
-                        <option selected hidden>Pays</option>
-                    </select>
-                    <select class="form-control" name="echelle" id="echelleEP" disabled="true">
-                        <option selected hidden>Echelle</option>
-                    </select>
-                    <select class="form-control" name="district" id="districtEP" disabled="true">
-                        <option selected hidden>District</option>
-                    </select>
-                    <select class="form-control" name="variables" id="variableEP" disabled="true">
-                        <option selected hidden>Variable</option>
-                    </select>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <select class="form-control" name="epidemio" id="epidemioEP" disabled="true">
+                                <option selected hidden>Type</option>
+                            </select>
+                            <select class="form-control" name="pays" id="paysEP" disabled="true">
+                                <option selected hidden>Pays</option>
+                            </select>
+                            <select class="form-control" name="echelle" id="echelleEP" disabled="true">
+                                <option selected hidden>Echelle</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-6">
+                            <select class="form-control" name="district" id="districtEP" disabled="true">
+                                <option selected hidden>District</option>
+                            </select>
+                            <select class="form-control" name="variables" id="variableEP" disabled="true">
+                                <option selected hidden>Variable</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

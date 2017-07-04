@@ -18,7 +18,7 @@ from datetime import datetime
 from moy_dist_parallel import calc_moy
 from traitement import traitementDF
 from pathFiles import PathFile
-from scatterPlots import scatterSatStation, scatter2Sat_Temporel, scatter2Sat_Spatial
+from scatterPlots import scatterSatStation, scatterSatEpidemio, scatter2Sat_Temporel, scatter2Sat_Spatial
 from Util import *
 
 import logging
@@ -235,33 +235,40 @@ def calval(request):
                                  type2,sat2,prd_sat2,res_sat2,variable_sat2,level_sat2
                                  )
         else:
-            print('integration')
-            periode = POST['integration']
-            POST.__setitem__('resoTempo', 'h24_h')
             if 'mesure' in POST.keys():
-                inSitu = "aeronet"
+                periode = request.POST.get('is_private', '')
+                inSitu = POST['mesure']
                 station = POST['stations']
                 varStation = POST['variables']
                 try:
                     niveau = POST['niveau']
                 except MultiValueDictKeyError:
                     niveau = ''
+                if inSitu == 'meteo':
+                    POST.__setitem__('resoTempo', '5min')
+                    
+                else:
+                    POST.__setitem__('resoTempo', 'h24_h')
+                csvfile = PathFile(**POST).csv
+                df = scatterSatStation(ncfile1, csvfile, ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,
+                                   type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
+                                   inSitu, station, varStation, niveau
+                                   )
             else:
+                POST.__setitem__('decoupage', POST['echelle'].lower())
                 epidemio = POST['epidemio']
                 pays = POST['pays']
                 echelle = POST['echelle']
                 district = POST['district']
                 variables = POST['variables']
-            csvfile = PathFile(**POST).csv
-            df = scatterSatStation(ncfile1, csvfile, ulx,uly,lrx,lry,z_buffer,pas_de_temps1,periode,datedebut, datefin,
-                                   type1,sat1,prd_sat1,res_sat1,variable_sat1,level_sat1,
-                                   inSitu, station, varStation, niveau
-                                   )
-            
-        for k in ['a', 'prd', 'dates', 'b', 'prdVar_units', 'zone', 'satVar', 'prdVar', 'satVar_units', 'line', 'rCarre', 'sat']:
-            print('%s, %s' % (k,df[k]))
-        print type(df['dates'])
-        print type(df['scatterValues'])
+                fshape = PathFile(**POST).carto
+                csvfile = PathFile(**POST).csv
+                print fshape
+                print csvfile
+                print ncfile1
+                df = scatterSatEpidemio(ncfile1, fshape, csvfile, sat1, prd_sat1,datedebut, datefin, variable_sat1, level_sat1,pas_de_temps1,
+                                        epidemio, pays, echelle, district, variables)
+        print df
         return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
     else:
         return render(request,'teledm/calval.html')
