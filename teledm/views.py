@@ -161,6 +161,7 @@ def mapDist(request):
             fcsv = PathFile(**kwargs).csv
             df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
             geo = kwargs['stations']
+            dictdatas = {'header':geo, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
         else:
             variable = str(kwargs['variables'])
             fcsv = PathFile(**kwargs).csv
@@ -171,7 +172,7 @@ def mapDist(request):
             except KeyError:
                 geo = kwargs['pays']
                 df = pd.read_csv(fcsv, parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=['date', variable])
-            dictdatas = {'header':pays, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
+            dictdatas = {'header':geo, 'varName':variable, 'datas':df[variable].replace(np.nan,'NaN').values.tolist(), 'dates':df.index.tolist()}
         return HttpResponse(json.dumps(dictdatas, cls=DjangoJSONEncoder), content_type='application/json')
     else:
         if 'submit' in kwargs.keys():
@@ -270,6 +271,7 @@ def calval(request):
                                         epidemio, pays, echelle, district, variables)
         print df
         return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
+        #return HttpResponse(json.dumps(df, cls=DjangoJSONEncoder), content_type='text/json')
     else:
         return render(request,'teledm/calval.html')
 

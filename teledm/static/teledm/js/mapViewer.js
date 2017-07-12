@@ -1101,8 +1101,8 @@ $("#download").on('click', function(){
     {
         return null;
     }
-    var URL = ROOT+ "/proxydownload/" +
-        lstInfos.nomDataset +
+    var URL = ROOT+ "/proxydownload/"
+         + lstInfos.nomDataset +
         "/" + lstInfos.capteur +
         "/" + lstInfos.produit +
         "/" + lstInfos.resspatiale +
@@ -1455,8 +1455,7 @@ function autoScale()
     //getInfos();
     console.log(lstInfos);
     if (lstInfos.level){
-        var URLRequest = 
-            ROOT+"/minmax/wms/"
+        var URLRequest = ROOT+"/minmax/wms/"
             + lstInfos.nomDataset
             + "/" + lstInfos.capteur
             + "/" + lstInfos.produit
@@ -1476,8 +1475,7 @@ function autoScale()
             + "&HEIGHT=50"
             ;
     }else{
-        var URLRequest = 
-        ROOT+"/minmax/wms/"
+        var URLRequest = ROOT+"/minmax/wms/"
         + lstInfos.nomDataset
         + "/" + lstInfos.capteur
         + "/" + lstInfos.produit

@@ -330,7 +330,7 @@ def scatterSatStation(ncfile,csvfile,ulx,uly,lrx,lry,z_buffer,pas_de_temps,perio
 
 
 def scatterSatEpidemio(ncfile,fshape,csvfile,sat1,prd_sat1,datedeb,datefin,variable_sat1,
-                       level_sat1,pas_de_temps,epidemio,pays,echelle,district,variable
+                       level_sat1,pas_de_temps,epidemiologie,pays,echelle,district,variable
                        ):
 
     start = datetime.strptime(datedeb, "%Y-%m-%d")
@@ -354,18 +354,20 @@ def scatterSatEpidemio(ncfile,fshape,csvfile,sat1,prd_sat1,datedeb,datefin,varia
         mask = dfout.dropna()
         slope, intercept, r_value, p_value, std_err = linregress(mask)
         r2 = round(r_value**2, 5)
-        line = slope*mask.values+intercept
+        line = slope*mask[variable].values+intercept
         lregr = [list(a) for a in zip(mask[variable_sat1].values.tolist(), line)]
         scatterValues = [list(a) for a in zip(mask[variable_sat1].values.tolist(), mask[variable].values.tolist())]
     except ValueError:
-        line, r2, slope,intercept, scatterValues = np.nan, np.nan, np.nan, np.nan, np.nan
-
+        lregr, r2, slope,intercept, scatterValues = np.nan, np.nan, np.nan, np.nan, np.nan
+    print(mask[variable_sat1].values.tolist())
+    print(line)
+    print(lregr)
     mat = {}
     mat["sat"] = prd_sat1
     mat["satVar"] = variable_sat1
     mat["satVar_units"] = sat1_units
     mat["zone"] = pays
-    mat["prd"] = epidemio
+    mat["prd"] = epidemiologie
     if district:
         mat["station"] = pays + ' : ' + district
     else:
@@ -381,7 +383,7 @@ def scatterSatEpidemio(ncfile,fshape,csvfile,sat1,prd_sat1,datedeb,datefin,varia
     mat["rCarre"] = r2                         # rCarre scatterplot epidemio/sat
     mat["a"] = slope                           # pente de la droite de regr
     mat["b"] = intercept                       # intersection
-    js = simplejson.dumps(mat, ignore_nan=True,default=datetime.isoformat)
+    #js = json.dumps(mat, ignore_nan=True,default=datetime.isoformat)
     return mat
 
 
