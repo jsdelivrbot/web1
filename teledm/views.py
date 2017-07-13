@@ -187,7 +187,6 @@ def mapDist(request):
 def calval(request):
     if request.is_ajax():
         POST = request.POST.copy()
-        print POST
         if POST['ulx']:
             ulx = float(POST['ulx'])
             uly = float(POST['uly'])

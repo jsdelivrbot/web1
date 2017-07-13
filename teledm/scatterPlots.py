@@ -355,8 +355,9 @@ def scatterSatEpidemio(ncfile,fshape,csvfile,sat1,prd_sat1,datedeb,datefin,varia
         slope, intercept, r_value, p_value, std_err = linregress(mask)
         r2 = round(r_value**2, 5)
         line = slope*mask[variable].values+intercept
-        lregr = [list(a) for a in zip(mask[variable_sat1].values.tolist(), line)]
-        scatterValues = [list(a) for a in zip(mask[variable_sat1].values.tolist(), mask[variable].values.tolist())]
+        lregr = [list(a) for a in zip(mask[variable].values.tolist(), line)]
+        print(lregr)
+        scatterValues = [list(a) for a in zip(mask[variable].values.tolist(), mask[variable_sat1].values.tolist())]
     except ValueError:
         lregr, r2, slope,intercept, scatterValues = np.nan, np.nan, np.nan, np.nan, np.nan
     print(mask[variable_sat1].values.tolist())
