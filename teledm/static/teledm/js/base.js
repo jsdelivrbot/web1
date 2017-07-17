@@ -93,7 +93,7 @@ var resoTempo = {
                         "h24_15min", "h24_h", "h24_d", "h24_w", "h24_m", "h24_t"],
     "meteo":['3h', '6h', '12h', 'd', 'w', 'm']
 };
-
+var buffers = [9, 25, 49];
 //------------variables epidemio ------------------------------------
 var epidemio = ["meningite"];
 var meningitePays = {

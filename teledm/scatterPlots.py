@@ -104,11 +104,11 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
     df['pre_moy_'+prd_sat] = np.nanmean(vals.filled(np.nan),axis=(1,2))# moyenne des pixels excluant les px nuls
     df['std_'+prd_sat] = np.nanstd(vals.filled(np.nan),axis=(1,2))# écart-type des pixels excluant les px nuls
     df['nbpxvalide_'+prd_sat] = np.nan
-    df['moy_'+prd_sat] = np.nan
+    df[prd_sat] = np.nan
     df['px_flag_'+prd_sat] = np.nan
     mpx = df[df.columns[:colpx+3]].values
     lmpx = [np.squeeze(x,0) for x in np.split(mpx,mpx.shape[0], axis=0)]
-    df[['nbpxvalide_'+prd_sat, 'moy_'+prd_sat, 'px_flag_'+prd_sat]] = np.vstack([pxFlag(m) for m in lmpx])
+    df[['nbpxvalide_'+prd_sat, prd_sat, 'px_flag_'+prd_sat]] = np.vstack([pxFlag(m) for m in lmpx])
     return df, colpx, var_units
     
 def count_nb_pixel(x):
@@ -130,13 +130,13 @@ def count(x):
 def scatter_stats(df,prd1,prd2):
     #fonction qui extrait la pente(slope),origine(intercept),coeff corr(r_value), ... de la dataframe(df) pour les valeurs des produits prd1(sat1) et prd2(sat2 ou aeronet ou teom)
     # retourne droite de régression(lregr, r2, pente, origine, valeurs), 
-    if 'moy_'+prd2 in df.columns:
-        mask = ~pd.isnull(df['moy_'+prd1]) & ~pd.isnull(df['moy_'+prd2])# masque excluant les lignes n'ayant qu'une valeur sur les 2
-        slope, intercept, r_value, p_value, std_err = linregress(df[['moy_'+prd2,'moy_'+prd1]][mask])
+    if prd2 in df.columns:
+        mask = ~pd.isnull(df[prd1]) & ~pd.isnull(df[prd2])# masque excluant les lignes n'ayant qu'une valeur sur les 2
+        slope, intercept, r_value, p_value, std_err = linregress(df[[prd2,prd1]][mask])
         r2 = round(r_value**2, 5)
-        line = slope*df['moy_'+prd2][mask].values+intercept
-        lregr = [list(a) for a in zip(df['moy_'+prd2][mask].values.tolist(), line)]
-        scatValues = [list(a) for a in zip(df['moy_'+prd2][mask].values.tolist(), df['moy_'+prd1][mask].values.tolist())]
+        line = slope*df[prd2][mask].values+intercept
+        lregr = [list(a) for a in zip(df[prd2][mask].values.tolist(), line)]
+        scatValues = [list(a) for a in zip(df[prd2][mask].values.tolist(), df[prd1][mask].values.tolist())]
         return lregr, r2, slope, intercept, scatValues
     else:
         return 0,0,0,0,0
@@ -145,7 +145,7 @@ def read_csv(csv_file,in_situ,variable_csv, debut, fin,per,df_in):
     # fonction intégrant les données issues du .csv(csv_file) dans le dataframe (df_in), dans l'intervalle de temps debut/fin
     # in_situ = teom ou aeronet, per = périodicité
     print csv_file
-    df_in["moy_" + in_situ] = np.nan
+    df_in[in_situ] = np.nan
     #bad_lines = skipRows(debut, fin, csv_file)
     try:
         csv = pd.read_csv(csv_file, sep=',', parse_dates={'datetime':['date']}, header=0, index_col=0, usecols=[u'date', variable_csv, u"Solar_Zenith_Angle"])
@@ -156,26 +156,26 @@ def read_csv(csv_file,in_situ,variable_csv, debut, fin,per,df_in):
         if per == '+-1h':
             # si le nombre de valeurs >=4 dansl'intervalle +-1h
             if (df_csv[variable_csv][i-pd.offsets.Hour(1):i+pd.offsets.Hour(1)].count() >= 4) and (df_csv["Solar_Zenith_Angle"][i] <= 71.):
-                df_in["moy_"+in_situ].ix[i] = df_csv[variable_csv][i-pd.offsets.Hour(1):i+pd.offsets.Hour(1)].mean()
+                df_in[in_situ].ix[i] = df_csv[variable_csv][i-pd.offsets.Hour(1):i+pd.offsets.Hour(1)].mean()
         elif per == '+-5h':
             # si le nombre de valeurs >=10 dansl'intervalle +-5h
             if (df_csv[variable_csv][i-pd.offsets.Hour(5):i+pd.offsets.Hour(5)].count() >= 10) and (df_csv["Solar_Zenith_Angle"][i] <= 71.):
-                df_in["moy_"+in_situ].ix[i] = df_csv[variable_csv][i-pd.offsets.Hour(5):i+pd.offsets.Hour(5)].mean()
+                df_in[in_situ].ix[i] = df_csv[variable_csv][i-pd.offsets.Hour(5):i+pd.offsets.Hour(5)].mean()
         else:
-            df_in["moy_"+in_situ].ix[i] = df_csv[variable_csv].ix[df_csv.index.get_loc(i,method='nearest')]
+            df_in[in_situ].ix[i] = df_csv[variable_csv].ix[df_csv.index.get_loc(i,method='nearest')]
     return df_in
 
 def tempo(freq,debut,fin,df_in,prdsat1, insitu, prdsat2):
         # fonction recalculant la période considérée(debut/fin) au pas de temps hebdo ou mensuel(freq) et intégrant les données méningite(path_mening) pour le district considéré(dist) pour les produits (prdsat1,prdsat2) de la dataframe df_in
     # freq = pas de temps, 
     df_out = pd.DataFrame(df_in['pre_moy_'+prdsat1].resample(freq[0], lambda x: count(x)), columns=['pre_moy_'+prdsat1])
-    df_out['nb_px_'+prdsat1] = df_in['moy_'+prdsat1].resample(freq[0], lambda x: count_nb_pixel(x)).values
-    df_out['moy_'+prdsat1] = df_in['moy_'+prdsat1].resample(freq[0], lambda x: count(x)).values
+    df_out['nb_px_'+prdsat1] = df_in[prdsat1].resample(freq[0], lambda x: count_nb_pixel(x)).values
+    df_out[prdsat1] = df_in[prdsat1].resample(freq[0], lambda x: count(x)).values
     if prdsat2:
-        df_out['moy_'+prdsat2] = df_in['moy_'+prdsat2].resample(freq[0], lambda x: count(x)).values
+        df_out[prdsat2] = df_in[prdsat2].resample(freq[0], lambda x: count(x)).values
         df_out['pre_moy_'+prdsat2] = df_in['pre_moy_'+prdsat2].resample(freq[0], lambda x: count(x)).values
     if insitu:
-        df_out['moy_'+insitu] = df_in['moy_'+insitu].resample(freq[0], lambda x: count(x)).values
+        df_out[insitu] = df_in[insitu].resample(freq[0], lambda x: count(x)).values
     return df_out
 
 def heure_passage(station_aeronet):
@@ -221,10 +221,6 @@ def calc_moy(ncfile,fshape,decoupage,datedeb,datefin,sat,varname,level,district=
         geodf = gshape
     else:
         geodf = gshape[gshape.name == district]
-    minx = geodf.geometry.bounds.minx.values[0]
-    maxx = geodf.geometry.bounds.maxx.values[0]
-    miny = geodf.geometry.bounds.miny.values[0]
-    maxy = geodf.geometry.bounds.maxy.values[0]
     nc = Dataset(ncfile, 'r')
     var_in = nc.variables[varname]
     dates = nc.variables['time']
@@ -239,10 +235,6 @@ def calc_moy(ncfile,fshape,decoupage,datedeb,datefin,sat,varname,level,district=
     idfin = np.abs(dates[:]-ndatefin).argmin()
     lat = nc.variables['latitude'][:]
     lon = nc.variables['longitude'][:]
-    idxmin = np.abs(lon - minx).argmin()
-    idxmax = np.abs(lon - maxx).argmin()
-    idymax = np.abs(lat - miny).argmin()
-    idymin = np.abs(lat - maxy).argmin()
     # extraction du bloc de dates et ajout à la variable time(tp) du newnc
 
     if level == -1:
@@ -295,7 +287,7 @@ def scatterSatStation(ncfile,csvfile,ulx,uly,lrx,lry,z_buffer,pas_de_temps,perio
     df_sat1, npx, sat1_units = readNC_box(ncfile,variable_sat1,ulx,uly,lrx,lry, start, end,prd_sat1, level_sat1,pas_de_temps, hours1, long_st1, lat_st1, z_buffer)
     #chargement des mesures in situ
     df_sat1 = read_csv(csvfile,inSitu,variable_station,start, end,periode,df_sat1)
-    
+    # gestion du pas de temps
     if pas_de_temps == 'd':
         dfout = df_sat1
     else:
@@ -306,19 +298,22 @@ def scatterSatStation(ncfile,csvfile,ulx,uly,lrx,lry,z_buffer,pas_de_temps,perio
         line_station1, rCarre_1, a1,b1, scatterValues1 = np.nan, np.nan, np.nan, np.nan, np.nan
 
     mat = {}
-    mat["sat"] = prd_sat1
-    mat["satVar"] = variable_sat1
-    mat["satVar_units"] = sat1_units
+    # def sources et variables
+    mat["source1"] = prd_sat1
+    mat["var1"] = variable_sat1
+    mat["units1"] = sat1_units
+    mat["source2"] = inSitu
+    mat["var2"] = variable_station
+    mat["units2"] = ""
+    # zone etude
     if z_buffer:
         mat["zone"] = "buffer %d px" % z_buffer
     else:
         mat["zone"] = "zone %.2f, %.2f, %.2f, %.2f " % (ulx, uly, lrx, lry)
-    mat["prd"] = inSitu
     mat["station"] = station
-    mat["prdVar"] = variable_station
-    mat["prdVar_units"] = ""
     mat["dates"] = [str(d.date()) for d in dfout.index[:].to_datetime()]
     mat["periode"] = pas_de_temps
+    # resultats stats
     for c in dfout.columns:
         mat[c] = dfout[c].values.tolist()
     mat["scatterValues"] = scatterValues1      # liste des valeurs sat1/aeronet
@@ -336,11 +331,12 @@ def scatterSatEpidemio(ncfile,fshape,csvfile,sat1,prd_sat1,datedeb,datefin,varia
     start = datetime.strptime(datedeb, "%Y-%m-%d")
     end = datetime.strptime(datefin, "%Y-%m-%d")
     csv = pd.read_csv(csvfile, parse_dates={'':['date']}, header=0, index_col=0)
-    epidemio = csv[variable][csv.district==district][datedeb:datefin]
     if district:
         stats,sat1_units = calc_moy(ncfile,fshape,echelle,start, end,sat1,variable_sat1,level_sat1, district)
+        epidemio = csv[variable][csv.district==district][datedeb:datefin]
     else:
-        stats = calc_moy(ncfile,fshape,echelle,start, end,sat1,variable_sat1,level_sat1)
+        stats, sat1_units = calc_moy(ncfile,fshape,echelle,start, end,sat1,variable_sat1,level_sat1)
+        epidemio = csv[variable][datedeb:datefin]
     stats[variable] = epidemio[stats.index[0]:stats.index[-1]]
     
     if pas_de_temps in ['d', 'w']:
@@ -356,27 +352,26 @@ def scatterSatEpidemio(ncfile,fshape,csvfile,sat1,prd_sat1,datedeb,datefin,varia
         r2 = round(r_value**2, 5)
         line = slope*mask[variable].values+intercept
         lregr = [list(a) for a in zip(mask[variable].values.tolist(), line)]
-        print(lregr)
         scatterValues = [list(a) for a in zip(mask[variable].values.tolist(), mask[variable_sat1].values.tolist())]
     except ValueError:
         lregr, r2, slope,intercept, scatterValues = np.nan, np.nan, np.nan, np.nan, np.nan
-    print(mask[variable_sat1].values.tolist())
-    print(line)
-    print(lregr)
     mat = {}
-    mat["sat"] = prd_sat1
-    mat["satVar"] = variable_sat1
-    mat["satVar_units"] = sat1_units
+    # def source et variables
+    mat["source1"] = prd_sat1
+    mat["var1"] = variable_sat1
+    mat["units1"] = sat1_units
+    mat["source2"] = epidemiologie
+    mat["var2"] = variable
+    mat["units2"] = ""
+    # zone etude periode
     mat["zone"] = pays
-    mat["prd"] = epidemiologie
     if district:
         mat["station"] = pays + ' : ' + district
     else:
         mat["station"] = ""
-    mat["prdVar"] = variable
-    mat["prdVar_units"] = ""
     mat["dates"] = [str(d.date()) for d in dfout.index[:].to_datetime()]
     mat["periode"] = pas_de_temps
+    #resultats stats
     for c in dfout.columns:
         mat[c] = dfout[c].values.tolist()
     mat["scatterValues"] = scatterValues       # liste des valeurs epidemio/sat
@@ -384,7 +379,6 @@ def scatterSatEpidemio(ncfile,fshape,csvfile,sat1,prd_sat1,datedeb,datefin,varia
     mat["rCarre"] = r2                         # rCarre scatterplot epidemio/sat
     mat["a"] = slope                           # pente de la droite de regr
     mat["b"] = intercept                       # intersection
-    #js = json.dumps(mat, ignore_nan=True,default=datetime.isoformat)
     return mat
 
 
@@ -405,14 +399,19 @@ def scatter2Sat_Temporel(ncfile1, ncfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,
         dfout = tempo(pas_de_temps,start,end,df_sat1_2,prd_sat1, '' , prd_sat2)
     line_sat, rCarre_sat,a1,b1, scatterValues = scatter_stats(dfout,prd_sat1, prd_sat2)
     mat = {}
-    mat["sat"] = prd_sat1
-    mat["satVar"] = variable_sat1
-    mat["satVar_units"] = sat1_units
+    # def source et variables
+    mat["source1"] = prd_sat1
+    mat["var1"] = variable_sat1
+    mat["units1"] = sat1_units
+    mat["source2"] = prd_sat2
+    mat["var2"] = variable_sat2
+    mat["units2"] = sat2_units
+    # zone etude periode
     mat["zone"] = "zone %.2f, %.2f, %.2f, %.2f " % (ulx, uly, lrx, lry)
-    mat["prd"] = prd_sat2
-    mat["prdVar"] = variable_sat2
-    mat["prdVar_units"] = sat2_units
+    mat['station'] = ''
     mat["dates"] = [str(d.date()) for d in dfout.index[:].to_datetime()]
+    mat['periode'] = ""
+    #resultats stats
     for c in dfout.columns:
         mat[c] = dfout[c].values.tolist()
     mat["scatterValues"] = scatterValues          # liste des valeurs sat1 (nan enleves) / sat2
@@ -441,14 +440,18 @@ def scatter2Sat_Spatial(ncfile1,ncfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,da
     line_sat = [list(a) for a in zip(mat2[mask].tolist(), line_regr.tolist())]
     scatterValues = [list(a) for a in zip(mat1.tolist(),mat2.tolist())]
     mat = {}
-    mat["sat"] = prd_sat1
-    mat["satVar"] = variable_sat1
-    mat["satVar_units"] = sat1_units
+    mat["source1"] = prd_sat1
+    mat["var1"] = variable_sat1
+    mat["units1"] = sat1_units
+    mat["source2"] = prd_sat2
+    mat["var2"] = variable_sat2
+    mat["units2"] = sat2_units
+    # zone etude periode
     mat["zone"] = "zone %.2f, %.2f, %.2f, %.2f " % (ulx, uly, lrx, lry)
-    mat["prd"] = prd_sat2
-    mat["prdVar"] = variable_sat2
-    mat["prdVar_units"] = sat2_units
+    mat['station'] = ""
     mat["dates"] = [str(start.date())]
+    mat['periode'] = ""
+    # resultats stats
     mat["scatterValues"] = scatterValues          # liste des valeurs sat1 (nan enleves) / sat2
     mat["line"] = line_sat                        # droite de regression sat1/sat2
     mat["rCarre"] = r_value ** 2                  # rCarre scatterplot sat1/sat2

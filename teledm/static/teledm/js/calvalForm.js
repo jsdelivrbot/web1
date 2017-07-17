@@ -273,13 +273,13 @@ function setForm(){
         }
     });
 
-    $('#buffer').on('change', function(){
+    $('#bufferIS').on('change', function(){
         $('.input-small').val("");
     });
 
     $('.input-small').on('click', function(){
         if ( !$("#ulx").val() && !$("#uly").val() && !$("#lrx").val() && !$("#lry").val()){
-            $("#buffer").prop('selectedIndex', 0).change();
+            $("#bufferIS").prop('selectedIndex', 0).change();
         }
     });
 }
@@ -294,9 +294,6 @@ function setFormS2(){
         createURL('', selectSource2[0], selectSource2); //chargement du type1
         $('#Option').prop('disabled', false);
         $('#levelSr2').prop('disabled', true);
-        //$("#buffer").prop('disabled', true);
-        //$("#buffer").prop('selectedIndex', 0).change();
-        document.getElementById("buffer").options.length = 1;
         for (i = 0; i < selectSource2.length; i++){
             selectSource2[i].disabled=false;
         }
@@ -421,7 +418,6 @@ function setFormS3(){
                 });
                 $("#integrationIS").prop('selectedIndex', 1);
             }else if($(this).val() == 'teom'){
-                alert($(this).val());
                 $("#niveauIS").prop("disabled", true);
                 $.each(stationsTeom, function(i, item){
                     $("#stationsIS").append($("<option></option>").attr("value", item).text(item));
@@ -444,11 +440,15 @@ function setFormS3(){
             }
         });
         $("#stationsIS").on('change', function(){
-            alert($(this).val());
-            if ($(this).val()!='Dedougou'){
+            if (($(this).val()!='Dedougou') && ($("#mesureIS").val()=='teom')){
                   $("#integrationIS").prop("disabled", true);
                   $("#integrationIS").find("option:gt(0)").remove();
-            }      
+            }else{
+                $("#integrationIS").prop("disabled", false);
+                $.each(integration, function(i, item){
+                    $("#integrationIS").append($("<option></option>").attr("value", item).text(item));
+                });
+            }
         });
         $("#niveauIS").on('change', function(){
             $("#variablesIS").find("option:gt(0)").remove();
@@ -462,6 +462,10 @@ function setFormS3(){
                 });
             }
         });
+        $("#bufferIS").prop('disabled', false);
+        $.each(buffers, function(i, item){
+                $("#bufferIS").append($("<option></option>").attr("value", item).text(item));
+            });
     }else{
         $("[id$='IS']").find("option:gt(0)").remove();
         $("[id$='IS']").prop("disabled", true);
@@ -748,7 +752,7 @@ function verifForm(){
         $("input[id='date2']").val(lstInfos.fin);      
     }
     
-    if (($("#buffer").val() == "Buffer") && (($("#checkboxS3").prop("checked") == true) || ($("#checkboxS4").prop("checked") == true))){
+    if (($("#bufferIS").val() == "Buffer") && (($("#checkboxS3").prop("checked") == true))){
         alert("Erreur ! Buffer non sélectionné !");
         throw new Exception();
     }
@@ -767,7 +771,7 @@ window.onload = function(){
     setForm();
 }
 
-
+// requete ajax scatter plot
 $("#scatter").on('submit',  function(e){
     e.preventDefault(); 
     verifForm();
@@ -815,9 +819,9 @@ $("#scatter").on('submit',  function(e){
                     },
                     enableMouseTracking: false
                 });
-            $("#plot1").highcharts().xAxis[0].setTitle({text: data.prdVar});
+            $("#plot1").highcharts().xAxis[0].setTitle({text: data.var2});
             }else{
-                $("#plot1").highcharts().xAxis[0].setTitle({text: data.prdVar+'(Absence de données)'});
+                $("#plot1").highcharts().xAxis[0].setTitle({text: data.var2+'(Absence de données)'});
             }
             $("#plot1").highcharts().addSeries({
                 name: 'Observations',
@@ -828,31 +832,31 @@ $("#scatter").on('submit',  function(e){
                     radius: 2,
                 }
             });
-            $("#plot1").highcharts().setTitle({text: data.prd + "-" + data.sat}, {text: data.dates[0]+' - '+data.dates[data.dates.length-1]+'<br>(Source CRC)'});
+            $("#plot1").highcharts().setTitle({text: data.source1 + "-" + data.source2}, {text: data.dates[0]+' - '+data.dates[data.dates.length-1]+'<br>(Source CRC)'});
             
-            $("#plot1").highcharts().yAxis[0].setTitle({text: data.satVar});
+            $("#plot1").highcharts().yAxis[0].setTitle({text: data.var1});
             $("#plot2").highcharts().addSeries({
                 yAxis: 0,                
-                name: data.satVar,
-                data: data['moy_'+data.sat],
+                name: data.var1,
+                data: data[data.source1],
                 color: 'rgb(80,80,80)',
             });
             $("#plot2").highcharts().addSeries({
                 yAxis: 1,
-                name: data.prdVar,
-                data: data['moy_'+data.prd],
+                name: data.var2,
+                data: data[data.source2],
                 color: 'rgb(116,223,0)',
             });
             $("#plot2").highcharts().xAxis[0].setCategories(data.dates);
         },
         error : function(xhr,errmsg,err) {
             console.log('erreur: '+errmsg);
-            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            console.log(xhr.status + ": " + xhr.responseText);
         }
     });
 });
 
-
+//initialisation graphique scatter plot
 $('#plot1').highcharts({
     xAxis: {
         title: {
@@ -886,7 +890,7 @@ $('#plot1').highcharts({
     }
 });
 
-
+// initialisation graphique profil temporel
 $('#plot2').highcharts({
     chart: {
         zoomType: 'xy'

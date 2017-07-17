@@ -187,18 +187,21 @@ def mapDist(request):
 def calval(request):
     if request.is_ajax():
         POST = request.POST.copy()
-        if POST['ulx']:
+        try:
             ulx = float(POST['ulx'])
             uly = float(POST['uly'])
             lrx = float(POST['lrx'])
             lry = float(POST['lry'])
-            z_buffer = POST['buffer']
-        else:
-            z_buffer = int(POST['buffer'])
+        except:
             ulx = POST['ulx']
             uly = POST['uly']
             lrx = POST['lrx']
             lry = POST['lry']
+        z_buffer = POST.get('buffer', '')
+        try:
+            z_buffer = int(z_buffer)
+        except:
+            pass
         pas_de_temps1 = POST['pasdetemps1']
         datedebut = POST['datedebut']
         datefin = POST['datefin']
@@ -212,7 +215,6 @@ def calval(request):
         else:
             level_sat1 = -1
         ncfile1 = PathFile(**POST).nc1
-        print(ncfile1)
         if 'type2' in POST.keys():
             ncfile2 = PathFile(**POST).nc2
             type2 = POST['type2']
@@ -236,7 +238,7 @@ def calval(request):
                                  )
         else:
             if 'mesure' in POST.keys():
-                periode = request.POST.get('is_private', '')
+                periode = request.POST.get('periode', '')
                 inSitu = POST['mesure']
                 station = POST['stations']
                 varStation = POST['variables']
@@ -259,7 +261,7 @@ def calval(request):
                 epidemio = POST['epidemio']
                 pays = POST['pays']
                 echelle = POST['echelle']
-                district = POST['district']
+                district = POST.get('district', '')
                 variables = POST['variables']
                 fshape = PathFile(**POST).carto
                 csvfile = PathFile(**POST).csv
@@ -268,7 +270,7 @@ def calval(request):
                 print ncfile1
                 df = scatterSatEpidemio(ncfile1, fshape, csvfile, sat1, prd_sat1,datedebut, datefin, variable_sat1, level_sat1,pas_de_temps1,
                                         epidemio, pays, echelle, district, variables)
-        print df
+        print df.keys()
         return HttpResponse(simplejson.dumps(df, ignore_nan=True,default=datetime.isoformat), content_type='text/json')
         #return HttpResponse(json.dumps(df, cls=DjangoJSONEncoder), content_type='text/json')
     else:
