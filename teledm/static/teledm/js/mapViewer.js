@@ -1377,7 +1377,28 @@ function majLayer(){
         return null;
     }
     autoScale();
-    setMinMax();//met a jour les valeurs min max du colorbar présent sur la carte
+    //setMinMax();//met a jour les valeurs min max du colorbar présent sur la carte
+    function setMinMax(){
+    	if(lstInfos.unit=='K'){
+            	lstInfos.scaleMin -=272,15;
+    		lstInfos.scaleMax -=272,15;
+    	}
+    	var min = parseFloat(lstInfos.scaleMin);
+    	var max = parseFloat(lstInfos.scaleMax);
+    	var smid = (min + max) /2;
+    	var smidmax = (max+smid)/2;
+    	var smidmin = (min+smid)/2;
+    	
+    	//Extremes
+    	$("#smin").html(parseFloat(lstInfos.scaleMin).toPrecision(3));	
+    	$("#smax").html(parseFloat(lstInfos.scaleMax).toPrecision(3));	
+    	//Tiers
+    	$("#smidmax").html(smidmax.toPrecision(3));	
+    	$("#smidmin").html(smidmin.toPrecision(3));	
+    	//Milieu
+    	$("#smid").html(smid.toPrecision(3));
+    	
+    }
     //setDescLayer();  //mise a jour description du layer
     //pour tout les dataset selectionnés : générer l'URL à parser
     if (lstInfos.level){
@@ -1543,27 +1564,6 @@ function setColorband(){
     }	
 }
 
-function setMinMax(){
-	if(lstInfos.unit=='K'){
-        	lstInfos.scaleMin -=272,15;
-		lstInfos.scaleMax -=272,15;
-	}
-	var min = parseFloat(lstInfos.scaleMin);
-	var max = parseFloat(lstInfos.scaleMax);
-	var smid = (min + max) /2;
-	var smidmax = (max+smid)/2;
-	var smidmin = (min+smid)/2;
-	
-	//Extremes
-	$("#smin").html(parseFloat(lstInfos.scaleMin).toPrecision(3));	
-	$("#smax").html(parseFloat(lstInfos.scaleMax).toPrecision(3));	
-	//Tiers
-	$("#smidmax").html(smidmax.toPrecision(3));	
-	$("#smidmin").html(smidmin.toPrecision(3));	
-	//Milieu
-	$("#smid").html(smid.toPrecision(3));
-	
-}
 // #############################################################################################################
 
 

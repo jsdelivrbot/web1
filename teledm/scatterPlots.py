@@ -3,7 +3,7 @@
 import pandas as pd
 import geopandas as gpd
 import numpy as np
-from netCDF4 import Dataset, num2date, date2num
+from netCDF4 import Dataset, num2date, date2num, date2index
 from scipy.stats import linregress
 from datetime import datetime, timedelta
 from joblib import Parallel, delayed
@@ -62,8 +62,16 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
     print nc_file
     nc = Dataset(nc_file, 'r')
     temps = nc.variables['time']
-    idj1 = np.abs(temps[:]-date2num(date1,temps.units)).argmin()#indice de la date de debut
-    idj2 = np.abs(temps[:]-date2num(date2,temps.units)).argmin()#indice de la date de fin
+    try:
+        idj1 = date2index(date1, temps, select='exact')
+        print(idj1)
+    except ValueError:
+        return 0, 0, 0
+    try:
+        idj2 = date2index(date2, temps, select='exact')
+        print(idj2)
+    except ValueError:
+        return 0, 0, 0
     lat = nc.variables['latitude'][:]
     lon = nc.variables['longitude'][:]
     mat_var = nc.variables[variable]
@@ -101,8 +109,12 @@ def readNC_box(nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev,
     nc.close()
     df.columns = [(str(df.columns[n])+"_"+prd_sat) for n in range(len(df.columns))]
     df['nbpx_'+prd_sat] = (vals.shape[1]*vals.shape[2])-np.ma.count_masked(vals,axis=(1,2))#calcul du nb de pixels non nuls
-    df['pre_moy_'+prd_sat] = np.nanmean(vals.filled(np.nan),axis=(1,2))# moyenne des pixels excluant les px nuls
-    df['std_'+prd_sat] = np.nanstd(vals.filled(np.nan),axis=(1,2))# écart-type des pixels excluant les px nuls
+    try:
+        df['pre_moy_'+prd_sat] = np.nanmean(vals.filled(np.nan),axis=(1,2))# moyenne des pixels excluant les px nuls
+        df['std_'+prd_sat] = np.nanstd(vals.filled(np.nan),axis=(1,2))# écart-type des pixels excluant les px nuls
+    except AttributeError:
+        df['pre_moy_'+prd_sat] = np.nanmean(vals,axis=(1,2))# moyenne des pixels excluant les px nuls
+        df['std_'+prd_sat] = np.nanstd(vals,axis=(1,2))
     df['nbpxvalide_'+prd_sat] = np.nan
     df[prd_sat] = np.nan
     df['px_flag_'+prd_sat] = np.nan
@@ -293,9 +305,9 @@ def scatterSatStation(ncfile,csvfile,ulx,uly,lrx,lry,z_buffer,pas_de_temps,perio
     else:
         dfout = tempo(pas_de_temps,start,end,df_sat1,prd_sat1, inSitu, "")
     try:
-        line_station1, rCarre_1, a1,b1, scatterValues1 = scatter_stats(dfout,prd_sat1, inSitu)
+        line_station1, r2, a1,b1, scatterValues1 = scatter_stats(dfout,prd_sat1, inSitu)
     except ValueError:
-        line_station1, rCarre_1, a1,b1, scatterValues1 = np.nan, np.nan, np.nan, np.nan, np.nan
+        line_station1, r2, a1,b1, scatterValues1 = [None] * 5 #np.nan, np.nan, np.nan, np.nan, np.nan
 
     mat = {}
     # def sources et variables
@@ -314,11 +326,11 @@ def scatterSatStation(ncfile,csvfile,ulx,uly,lrx,lry,z_buffer,pas_de_temps,perio
     mat["dates"] = [str(d.date()) for d in dfout.index[:].to_datetime()]
     mat["periode"] = pas_de_temps
     # resultats stats
-    for c in dfout.columns:
-        mat[c] = dfout[c].values.tolist()
+#    for c in dfout.columns:
+#        mat[c] = dfout[c].values.tolist()
     mat["scatterValues"] = scatterValues1      # liste des valeurs sat1/aeronet
     mat["line"] = line_station1                # droite de regression sat1/aeronet
-    mat["rCarre"] = rCarre_1                   # rCarre scatterplot sat1/aeronet
+    mat["rCarre"] = r2                         # rCarre scatterplot sat1/aeronet
     mat["a"] = a1                              # pente de la droite de regr
     mat["b"] = b1                              # intersection
     return mat
@@ -354,7 +366,7 @@ def scatterSatEpidemio(ncfile,fshape,csvfile,sat1,prd_sat1,datedeb,datefin,varia
         lregr = [list(a) for a in zip(mask[variable].values.tolist(), line)]
         scatterValues = [list(a) for a in zip(mask[variable].values.tolist(), mask[variable_sat1].values.tolist())]
     except ValueError:
-        lregr, r2, slope,intercept, scatterValues = np.nan, np.nan, np.nan, np.nan, np.nan
+        lregr, r2, slope,intercept, scatterValues = [None] * 5 #np.nan, np.nan, np.nan, np.nan, np.nan
     mat = {}
     # def source et variables
     mat["source1"] = prd_sat1
@@ -392,12 +404,17 @@ def scatter2Sat_Temporel(ncfile1, ncfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,
 
     df_sat1, npx1, sat1_units = readNC_box(ncfile1,variable_sat1,ulx,uly,lrx,lry, start,end, prd_sat1, level_sat1, pas_de_temps)
     df_sat2, npx2, sat2_units = readNC_box(ncfile2,variable_sat2,ulx,uly,lrx,lry, start,end, prd_sat2, level_sat2, pas_de_temps)
-    df_sat1_2 = df_sat1.join(df_sat2, how='outer')
-    if pas_de_temps == 'd':
-        dfout = df_sat1_2
+    if isinstance(df_sat2, pd.DataFrame):
+        df_sat1_2 = df_sat1.join(df_sat2, how='outer')
+        if pas_de_temps == 'd':
+            dfout = df_sat1_2
+        else:
+            dfout = tempo(pas_de_temps,start,end,df_sat1_2,prd_sat1, '' , prd_sat2)
+        line_sat, r2,a1,b1, scatterValues = scatter_stats(dfout,prd_sat1, prd_sat2)
     else:
-        dfout = tempo(pas_de_temps,start,end,df_sat1_2,prd_sat1, '' , prd_sat2)
-    line_sat, rCarre_sat,a1,b1, scatterValues = scatter_stats(dfout,prd_sat1, prd_sat2)
+        dfout = df_sat1
+        line_sat, r2,a1,b1, scatterValues = [None] * 5
+        
     mat = {}
     # def source et variables
     mat["source1"] = prd_sat1
@@ -416,7 +433,7 @@ def scatter2Sat_Temporel(ncfile1, ncfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,
         mat[c] = dfout[c].values.tolist()
     mat["scatterValues"] = scatterValues          # liste des valeurs sat1 (nan enleves) / sat2
     mat["line"] = line_sat                        # droite de regression sat1/sat2
-    mat["rCarre"] = rCarre_sat                    # rCarre scatterplot sat1/sat2
+    mat["rCarre"] = r2                            # rCarre scatterplot sat1/sat2
     mat["a"] = a1                                 # pente de la droite de regr
     mat["b"] = b1                                 # intersection
     return mat
@@ -432,13 +449,20 @@ def scatter2Sat_Spatial(ncfile1,ncfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,da
         
     df_sat1, npx1, sat1_units = readNC_box(ncfile1,variable_sat1,ulx,uly,lrx,lry, start,start, prd_sat1, level_sat1, pas_de_temps)
     df_sat2, npx2, sat2_units = readNC_box(ncfile2,variable_sat2,ulx,uly,lrx,lry, start,start, prd_sat2, level_sat2, pas_de_temps)
-    mat1 = np.squeeze(df_sat1[df_sat1.columns[:npx1]].values)
-    mat2 = np.squeeze(df_sat2[df_sat2.columns[:npx2]].values)
-    mask = ~np.isnan(mat1) & ~np.isnan(mat2)
-    a1, b1, r_value, p_value, std_err = linregress(mat2[mask], mat1[mask])
-    line_regr = a1 * mat2[mask] + b1
-    line_sat = [list(a) for a in zip(mat2[mask].tolist(), line_regr.tolist())]
-    scatterValues = [list(a) for a in zip(mat1.tolist(),mat2.tolist())]
+    print(df_sat1)
+    print(df_sat2.shape)
+    if isinstance(df_sat2, pd.DataFrame):
+        mat1 = np.squeeze(df_sat1[df_sat1.columns[:npx1]].values)
+        mat2 = np.squeeze(df_sat2[df_sat2.columns[:npx2]].values)
+        mask = ~np.isnan(mat1) & ~np.isnan(mat2)
+        a1, b1, r_value, p_value, std_err = linregress(mat2[mask], mat1[mask])
+        r2 = r_value ** 2 
+        line_regr = a1 * mat2[mask] + b1
+        line_sat = [list(a) for a in zip(mat2[mask].tolist(), line_regr.tolist())]
+        scatterValues = [list(a) for a in zip(mat2.tolist(),mat1.tolist())]
+    else:
+        line_sat, a1, b1, r2, scatterValues = [None]*5
+        
     mat = {}
     mat["source1"] = prd_sat1
     mat["var1"] = variable_sat1
@@ -454,7 +478,7 @@ def scatter2Sat_Spatial(ncfile1,ncfile2,ulx,uly,lrx,lry,z_buffer,pas_de_temps,da
     # resultats stats
     mat["scatterValues"] = scatterValues          # liste des valeurs sat1 (nan enleves) / sat2
     mat["line"] = line_sat                        # droite de regression sat1/sat2
-    mat["rCarre"] = r_value ** 2                  # rCarre scatterplot sat1/sat2
+    mat["rCarre"] = r2                            # rCarre scatterplot sat1/sat2
     mat["a"] = a1                                 # pente de la droite de regr
     mat["b"] = b1                                 # intersection
     return mat
@@ -473,22 +497,22 @@ if __name__ == '__main__':
     z_buffer = 9
     pas_de_temps = "d"
     periode = "+-5h"
-    datedebut = "2007-01-01"
+    datedeb = "2007-01-01"
     datefin = "2007-01-31"
     log = ""#'ok'
     ##############################image satellite 1 ####################################
     type1 = "satellite"
     sat1 = "modis"
-    prd_sat1 = "MYD04"
+    prd_sat1 = "MYD07"
     res_sat1 = "009"
-    variable_sat1 = "Deep_Blue_Surface_Reflectance_Land_412_nm"
+    variable_sat1 = "Surface_Temperature"
     level_sat1 = ""
     ############################# image satellite 2 ####################################
     type2 = "satellite"
-    sat2 = "modis"
-    prd_sat2 = "MYD07"
-    res_sat2 = "009"
-    variable_sat2 = "Surface_Temperature"
+    sat2 = "msg"
+    prd_sat2 = "seviri_aerus"
+    res_sat2 = "025"
+    variable_sat2 = "AOD_VIS06"
     level_sat2 = ""
     ############################ donnees in situ 1 ######################################
     type0 = 'in_situ'
@@ -528,3 +552,17 @@ if __name__ == '__main__':
     echelle = "pays"
     district = "Barsalogo"
     variable = 'incidence'
+    nc_file, variable, xhg, yhg, xbd, ybd, date1, date2,prd_sat, lev, frequence, h_passage, station_lon,sattion_lat, buff = '/home/mers/Bureau/teledm/donnees/satellite/msg/seviri_aerus/res025/seviri_r025_d.nc','AOD_VIS06',10,10,15,5,datetime(2007,1,1),datetime(2007,1,31),'seviri','','d',13,3,6,''
+    
+    ncfile1 = '/home/mers/Bureau/teledm/donnees/satellite/modis/MYD07/res009/MYD07_r009_d.nc'
+    ncfile2 = '/home/mers/Bureau/teledm/donnees/satellite/msg/seviri_aerus/res025/seviri_r025_d.nc'
+    ulx = 0.5
+    uly = 20
+    lrx = 1.7
+    lry = 18.3
+    z_buffer = 9
+    pas_de_temps = "d"
+    periode = "+-5h"
+    datedeb = "2007-01-01"
+    datefin = "2007-01-31"
+    
