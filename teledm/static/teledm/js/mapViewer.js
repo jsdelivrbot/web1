@@ -1376,31 +1376,7 @@ function majLayer(){
     {
         return null;
     }
-    autoScale();
-    //setMinMax();//met a jour les valeurs min max du colorbar présent sur la carte
-    function setMinMax(){
-    	if(lstInfos.unit=='K'){
-            	lstInfos.scaleMin -=272,15;
-    		lstInfos.scaleMax -=272,15;
-    	}
-    	var min = parseFloat(lstInfos.scaleMin);
-    	var max = parseFloat(lstInfos.scaleMax);
-    	var smid = (min + max) /2;
-    	var smidmax = (max+smid)/2;
-    	var smidmin = (min+smid)/2;
-    	
-    	//Extremes
-    	$("#smin").html(parseFloat(lstInfos.scaleMin).toPrecision(3));	
-    	$("#smax").html(parseFloat(lstInfos.scaleMax).toPrecision(3));	
-    	//Tiers
-    	$("#smidmax").html(smidmax.toPrecision(3));	
-    	$("#smidmin").html(smidmin.toPrecision(3));	
-    	//Milieu
-    	$("#smid").html(smid.toPrecision(3));
-    	
-    }
-    //setDescLayer();  //mise a jour description du layer
-    //pour tout les dataset selectionnés : générer l'URL à parser
+    var minmax = autoScale();
     if (lstInfos.level){
         var URL = ROOT+ "/proxywms/wms/" +
             lstInfos.nomDataset +
@@ -1429,9 +1405,9 @@ function majLayer(){
             "&TRANSPARENT=true&FORMAT=image%2Fpng" +
             "&SRS=EPSG";
     }
-    csr = lstInfos.scaleMin+","+lstInfos.scaleMax;
+    var csr = minmax.vmin+","+ minmax.vmax;
+    alert(csr);
     style = "boxfill/"+lstInfos.colorbar;
-    console.log('csr' + lstInfos.scaleMin);
     if (typeof map.layers[1] !== 'undefined'){
         if (map.layers[1].name == 'wms'){
             map.removeLayer(map.layers[1])
@@ -1474,7 +1450,10 @@ function updateMap()
 function autoScale()
 {
     //getInfos();
-    console.log(lstInfos);
+    var minmax = {
+        vmin: "",
+        vmax: ""        
+    };
     if (lstInfos.level){
         var URLRequest = ROOT+"/minmax/wms/"
             + lstInfos.nomDataset
@@ -1528,11 +1507,16 @@ function autoScale()
                 {
                     lstInfos.unit="K";
                 };
+            alert(json.min);
+            setMinMax(json.min, json.max);
+            minmax.vmin = json.min;
+            minmax.vmax = json.max;
         },
         error: function(request, status, error){
             console.log(error);
         }
     });
+    return minmax;
 }
 
 
@@ -1564,6 +1548,27 @@ function setColorband(){
     }	
 }
 
+    
+function setMinMax(vmin, vmax){
+	if(lstInfos.unit=='K'){
+        	lstInfos.scaleMin -=272,15;
+		lstInfos.scaleMax -=272,15;
+	}
+	var min = parseFloat(vmin);
+	var max = parseFloat(vmax);
+	var smid = (min + max) /2;
+	var smidmax = (max+smid)/2;
+	var smidmin = (min+smid)/2;
+	
+	//Extremes
+	$("#smin").html(parseFloat(vmin).toPrecision(3));	
+	$("#smax").html(parseFloat(vmax).toPrecision(3));	
+	//Tiers
+	$("#smidmax").html(smidmax.toPrecision(3));	
+	$("#smidmin").html(smidmin.toPrecision(3));	
+	//Milieu
+	$("#smid").html(smid.toPrecision(3));
+}
 // #############################################################################################################
 
 
